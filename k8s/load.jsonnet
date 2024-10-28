@@ -31,7 +31,7 @@
                env: [
                  {
                     name: "LOAD",
-                    value: "100"
+                    value: "1"
                  },
                  {
                     name: "SIMULATION",
