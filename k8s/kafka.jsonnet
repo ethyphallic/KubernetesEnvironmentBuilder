@@ -44,6 +44,15 @@
             }
           }
         ],
+        metricsConfig: {
+          type: "jmxPrometheusExporter",
+          valueFrom: {
+            configMapKeyRef: {
+              name: "kafka-metrics",
+              key: "kafka-metrics-config.yml"
+            }
+          }
+        },
         storage: {
           type: "ephemeral"
         },
@@ -54,7 +63,8 @@
         storage: {
           type: "ephemeral"
         }
-      }
+      },
+      kafkaExporter: {}
     }
   },
   kafkaTopic(topicName, clusterName, partitions, replicas):: {
@@ -95,6 +105,54 @@
           }
         }
       }
+    }
+  },
+  kafkaExporterPodMonitor(clusterName, namespace):: {
+    apiVersion: "monitoring.coreos.com/v1",
+    kind: "PodMonitor",
+    metadata: {
+      name: clusterName + "-kafka-exporter-podmonitor",
+      namespace: namespace,
+      labels: {
+        release: "prometheus"
+      }
+    },
+    spec: {
+      selector: {
+        matchLabels: {
+          "strimzi.io/name": clusterName + "-kafka-exporter"
+        }
+      },
+      podMetricsEndpoints: [
+        {
+          path: "/metrics",
+          port: "tcp-prometheus"
+        }
+      ]
+    }
+  },
+  kafkaPodMonitor(clusterName, namespace):: {
+    apiVersion: "monitoring.coreos.com/v1",
+    kind: "PodMonitor",
+    metadata: {
+      name: clusterName + "-kafka-resources-metrics",
+      namespace: namespace,
+      labels: {
+        release: "prometheus"
+      }
+    },
+    spec: {
+      selector: {
+        matchLabels: {
+          "strimzi.io/name": clusterName + "-kafka"
+        }
+      },
+      podMetricsEndpoints: [
+        {
+          path: "/metrics",
+          port: "tcp-prometheus"
+        }
+      ]
     }
   }
 }

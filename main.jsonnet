@@ -1,6 +1,7 @@
 local load = import 'k8s/load.jsonnet';
 local flink = import 'k8s/flink.jsonnet';
 local kafka = import 'k8s/kafka.jsonnet';
+local kafkaMetricsConfigMap = import 'k8s/kafka-metrics.jsonnet';
 local kafkaNamespace = "kafka";
 local inputTopicName = "testi";
 local modelTopicName = "model";
@@ -11,6 +12,16 @@ local kafkaDefinition = kafka.kafkaCluster(
     clusterName=kafkaClusterName,
     brokerReplicas=3,
     zookeeperReplicas=1
+);
+
+local kafkaExporterPodMonitor = kafka.kafkaExporterPodMonitor(
+    clusterName=kafkaClusterName,
+    namespace=kafkaNamespace
+);
+
+local kafkaPodMonitor = kafka.kafkaPodMonitor(
+    clusterName=kafkaClusterName,
+    namespace=kafkaNamespace
 );
 
 local inputTopic = kafka.kafkaTopic(
@@ -60,6 +71,9 @@ local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
 
 {
     "../build/kafka/kafka.json": kafkaDefinition,
+    "../build/kafka/kafka-metrics-configmap.json": kafkaMetricsConfigMap,
+    "../build/kafka/kafka-exporter-podmonitor.json": kafkaExporterPodMonitor,
+    "../build/kafka/kafka-podmonitor.json": kafkaPodMonitor,
     "../build/kafka/input-topic.json": inputTopic,
     "../build/kafka/model-topic.json": modelTopic,
     "../build/kafka-ui/values.json": kafkaUi,

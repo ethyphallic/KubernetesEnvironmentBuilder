@@ -3,3 +3,4 @@
 helm/install-strimzi.sh
 ./build-k8s.sh
 helm/install-kafka-ui.sh
+helm/install-prometheus.sh
