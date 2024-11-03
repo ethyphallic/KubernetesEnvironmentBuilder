@@ -1,0 +1,14 @@
+{
+   "apiVersion": "kafka.strimzi.io/v1beta2",
+   "kind": "KafkaTopic",
+   "metadata": {
+      "labels": {
+         "strimzi.io/cluster": "power"
+      },
+      "name": "model"
+   },
+   "spec": {
+      "partitions": 1,
+      "replicas": 1
+   }
+}

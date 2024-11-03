@@ -1,0 +1,1 @@
+kubectl expose service prometheus-grafana --type=NodePort --target-port=3000 --name=grafana-nodeport-service -n monitoring
