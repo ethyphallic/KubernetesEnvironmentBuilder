@@ -1,7 +1,9 @@
 local load = import 'k8s/load.jsonnet';
 local flink = import 'k8s/flink.jsonnet';
 local kafka = import 'k8s/kafka.jsonnet';
-local kafkaMetricsConfigMap = import 'k8s/kafka-metrics.jsonnet';
+local loadConfig = import 'k8s/load-cm.jsonnet';
+local loadConfigDataSource = import 'k8s/datasource/assembly-line.jsonnet';
+local loadBackendName = "load-backend";
 local kafkaNamespace = "kafka";
 local inputTopicName = "testi";
 local modelTopicName = "model";
@@ -38,6 +40,8 @@ local modelTopic = kafka.kafkaTopic(
     replicas=1
 );
 
+local kafkaMetricsConfigMap = kafka.kafkaMetricsConfigmap(kafkaNamespace);
+
 local kafkaUi = kafka.kafkaUiValuesYaml(
     namespace=kafkaNamespace,
     clusterName=kafkaClusterName,
@@ -54,7 +58,7 @@ local defBackendDeployment = load.loadBackendDeployment(
     bootstrapServer=bootstrapServer
 );
 
-local defBackendService = load.loadBackendService(kafkaNamespace);
+local defBackendService = load.loadBackendService(loadBackendName, kafkaNamespace);
 
 local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
     namespace = kafkaNamespace,
@@ -69,6 +73,17 @@ local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
     dependencyThreshold = "0.5"
 );
 
+local loadConfigmap = loadConfig.simulation(genTimeframesTilStart=100);
+local sinkConfigmap = loadConfig.sink(serviceDomainName="%s.%s.svc" %[loadBackendName, kafkaNamespace], timeframe=1000);
+local startSensor = loadConfigDataSource.startSensor();
+local goodsDelivery = loadConfigDataSource.goodsDelivery();
+local materialPreparation = loadConfigDataSource.materialPreparation();
+local assemblyLineSetup = loadConfigDataSource.assemblyLineSetup();
+local assembling = loadConfigDataSource.assembling();
+local qualityControl = loadConfigDataSource.qualityControl();
+local packaging = loadConfigDataSource.packaging();
+local shipping = loadConfigDataSource.shipping();
+
 {
     "../build/kafka/kafka.json": kafkaDefinition,
     "../build/kafka/kafka-metrics-configmap.json": kafkaMetricsConfigMap,
@@ -80,5 +95,15 @@ local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
     "../build/flink/flink-deployment.json": flinkDeployment,
     "../build/load/def-deployment.json": defDeployment,
     "../build/load/def-backend-deployment.json": defBackendDeployment,
-    "../build/load/def-backend-service.json": defBackendService
+    "../build/load/def-backend-service.json": defBackendService,
+    "../build/load-config/load/load-config.json": loadConfigmap,
+    "../build/load-config/sink/sink-config.json": sinkConfigmap,
+    "../build/load-config/datasource/00-start.json": startSensor,
+    "../build/load-config/datasource/01-goods-delivery.json": goodsDelivery,
+    "../build/load-config/datasource/02-materialPreparation.json": materialPreparation,
+    "../build/load-config/datasource/03-assemblyLineSetup.json": assemblyLineSetup,
+    "../build/load-config/datasource/04-assembling.json": assembling,
+    "../build/load-config/datasource/05-quality-control.json": qualityControl,
+    "../build/load-config/datasource/06-packaging.json": packaging,
+    "../build/load-config/datasource/07-shipping.json": shipping,
 }

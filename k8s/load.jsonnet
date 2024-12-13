@@ -26,7 +26,7 @@
            containers: [
              {
                name: "distributed-event-factory",
-               image: "hendrikreiter/distributed_event_factory:0.2.0-SNAPSHOT",
+               image: "hendrikreiter/distributed_event_factory:0.2.1",
                imagePullPolicy: "Always",
                env: [
                  {
@@ -35,7 +35,7 @@
                  },
                  {
                     name: "SIMULATION",
-                    value: "loadtest"
+                    value: "load-config.json"
                  },
                  {
                     name: "DATASOURCE",
@@ -43,7 +43,7 @@
                  },
                  {
                     name: "SINK",
-                    value: "loadtest-sink"
+                    value: "sink-config.json"
                  },
                  {
                     name: "ROOT",
@@ -54,7 +54,41 @@
                  {
                    containerPort: 8080
                  }
+               ],
+               volumeMounts: [
+                 {
+                    name: "def-datasource-config",
+                    mountPath: "/app/config/datasource/assemblyline"
+                 },
+                 {
+                    name: "def-load-config",
+                    mountPath: "/app/config/simulation"
+                 },
+                 {
+                    name: "def-sink-config",
+                    mountPath: "/app/config/sink"
+                 }
                ]
+             }
+           ],
+           volumes: [
+             {
+               name: "def-datasource-config",
+               configMap: {
+                 name: "def-datasource"
+               }
+             },
+             {
+               name: "def-load-config",
+               configMap: {
+                 name: "def-load"
+               }
+             },
+             {
+               name: "def-sink-config",
+               configMap: {
+                 name: "def-sink"
+               }
              }
            ]
          }
@@ -111,11 +145,11 @@
        }
      }
    },
-   loadBackendService(namespace):: {
+   loadBackendService(name, namespace):: {
      apiVersion: "v1",
      kind: "Service",
      metadata: {
-        name: "load-backend",
+        name: name,
         namespace: namespace
      },
      spec: {

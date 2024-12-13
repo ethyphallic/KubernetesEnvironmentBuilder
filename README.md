@@ -1,4 +1,4 @@
-# Installation Guide for Kafka on Kubernetes
+minikube s# Installation Guide for Kafka on Kubernetes
 
 First install the following programs: 
 - [minikube](https://kubernetes.io/de/docs/tasks/tools/install-minikube/)
@@ -17,6 +17,7 @@ sudo -- sh -c -e "echo '$(minikube ip) minikube' >> /etc/hosts"
 
 Build the environment with all helm charts and 
 ```shell
+chmod +x build-examples.sh
 ./build-examples.sh
 ```
 
@@ -24,4 +25,8 @@ Apply the Kafka files and wait until all components get into the Ready state
 ```shell
 kubectl apply -f examples/kafka
 kubectl get pods -n kafka -w
+```
+
+```shell
+source interact.sh
 ```
