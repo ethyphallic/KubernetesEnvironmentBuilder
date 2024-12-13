@@ -24,17 +24,20 @@ function prometheus() {
 }
 
 function grafana() {
+  ./build-grafana-dashboards.sh
+  ./helm/expose-grafana-nodeport.sh
+  export GRAFANA_NODE_PORT=$(kubectl get --namespace monitoring -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
+  export GRAFANA_URL=minikube:$GRAFANA_NODE_PORT
   GRAFANA_PORT=$1
   if [ -z $1 ]; then
     GRAFANA_PORT=9091
   fi
-  export GRAFANA_URL="localhost:${GRAFANA_PORT}"
+  export GRAFANA_URL="minikube:${GRAFANA_PORT}"
   export GRAFANA_USERNAME=admin
   export GRAFANA_PASSWORD=prom-operator
   echo "Grafana url: ${GRAFANA_URL}"
   echo "Username: ${GRAFANA_USERNAME}"
   echo "Password: ${GRAFANA_PASSWORD}"
-  kubectl port-forward svc/prometheus-grafana "$GRAFANA_PORT:80" -n monitoring
 }
 
 ### KAFKA ###

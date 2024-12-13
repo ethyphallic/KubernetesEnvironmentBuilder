@@ -28,6 +28,7 @@ local kafkaPodMonitor = kafka.kafkaPodMonitor(
 
 local inputTopic = kafka.kafkaTopic(
     topicName=inputTopicName,
+    namespace=kafkaNamespace,
     clusterName=kafkaClusterName,
     partitions=10,
     replicas=1
@@ -35,6 +36,7 @@ local inputTopic = kafka.kafkaTopic(
 
 local modelTopic = kafka.kafkaTopic(
     topicName=modelTopicName,
+    namespace=kafkaNamespace,
     clusterName=kafkaClusterName,
     partitions=1,
     replicas=1
@@ -49,7 +51,7 @@ local kafkaUi = kafka.kafkaUiValuesYaml(
 );
 
 local defDeployment = load.loadDefDeployment(
-    namespace=kafkaNamespace,
+    namespace=kafkaNamespace
 );
 
 local defBackendDeployment = load.loadBackendDeployment(

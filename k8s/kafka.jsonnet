@@ -67,11 +67,12 @@
       kafkaExporter: {}
     }
   },
-  kafkaTopic(topicName, clusterName, partitions, replicas):: {
+  kafkaTopic(topicName, namespace, clusterName, partitions, replicas):: {
     apiVersion: "kafka.strimzi.io/v1beta2",
     kind: "KafkaTopic",
     metadata: {
         name: topicName,
+        namespace: namespace,
         labels: {
             "strimzi.io/cluster": clusterName
         }
