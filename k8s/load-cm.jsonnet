@@ -8,7 +8,7 @@
             genTimeframesTilStart: genTimeframesTilStart,
             load: {
                 loadBehavior: "constant",
-                load: 1000
+                load: 1
             }
         }
     },
