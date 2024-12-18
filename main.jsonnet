@@ -2,8 +2,8 @@ local load = import 'k8s/load.jsonnet';
 local flink = import 'k8s/flink.jsonnet';
 local kafka = import 'k8s/kafka.jsonnet';
 local loadConfig = import 'k8s/load-cm.jsonnet';
+local podChoas = import 'k8s/chaos/pod-chaos.jsonnet';
 local loadConfigDataSource = import 'k8s/datasource/assembly-line.jsonnet';
-
 local loadBackendName = "load-backend";
 local kafkaNamespace = "kafka";
 local inputTopicName = "testi";
@@ -88,6 +88,12 @@ local qualityControl = loadConfigDataSource.qualityControl();
 local packaging = loadConfigDataSource.packaging();
 local shipping = loadConfigDataSource.shipping();
 
+local podFailure = podChoas.podFailure(
+    duration='5s',
+    namespace=kafkaNamespace,
+    labelSelector={"strimzi.io/name": "power-kafka"}
+);
+
 {
     "../build/kafka/kafka.json": kafkaDefinition,
     "../build/kafka/kafka-metrics-configmap.json": kafkaMetricsConfigMap,
@@ -110,4 +116,5 @@ local shipping = loadConfigDataSource.shipping();
     "../build/load-config/datasource/05-quality-control.json": qualityControl,
     "../build/load-config/datasource/06-packaging.json": packaging,
     "../build/load-config/datasource/07-shipping.json": shipping,
+    "../build/chaos/pod-failure.json": podFailure
 }

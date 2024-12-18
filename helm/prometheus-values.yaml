@@ -1,0 +1,7 @@
+prometheus:
+  prometheusSpec:
+    scrapeInterval: 1s
+
+grafana:
+  serviceMonitor:
+    interval: 5s

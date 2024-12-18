@@ -1,0 +1,1 @@
+kubectl expose service prometheus-operated --type=NodePort --target-port=9090 --name=prometheus-nodeport-service -n monitoring

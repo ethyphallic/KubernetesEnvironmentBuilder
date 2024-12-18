@@ -19,14 +19,15 @@ function build() {
 
 ### MONITORING ###
 function prometheus() {
+  chmod +x helm/expose-prometheus-nodeport.sh
+  ./helm/expose-prometheus-nodeport.sh
   PROMETHEUS_PORT=$1
   if [ -z $1 ]; then
     PROMETHEUS_PORT=9090
   fi
-  export PROMETHEUS_URL="localhost:${PROMETHEUS_PORT}"
-  echo "Prometheus url:"
-  echo $PROMETHEUS_URL
-  kubectl port-forward svc/prometheus-operated "$PROMETHEUS_PORT:9090"
+  export PROMETHEUS_NODE_PORT=$(kubectl get --namespace monitoring -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-nodeport-service)
+  export PROMETHEUS_URL="minikube:${PROMETHEUS_NODE_PORT}"
+  echo "Prometheus url: $PROMETHEUS_URL"
 }
 
 function grafana() {
