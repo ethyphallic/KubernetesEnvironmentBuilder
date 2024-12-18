@@ -1,0 +1,7 @@
+{
+  "loadBackendName": "load-backend",
+  "kafkaNamespace": "kafka",
+  "inputTopicName": "testi",
+  "modelTopicName": "model",
+  "kafkaClusterName": "power"
+}

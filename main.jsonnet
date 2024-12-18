@@ -3,11 +3,13 @@ local flink = import 'k8s/flink.jsonnet';
 local kafka = import 'k8s/kafka.jsonnet';
 local loadConfig = import 'k8s/load-cm.jsonnet';
 local loadConfigDataSource = import 'k8s/datasource/assembly-line.jsonnet';
+
 local loadBackendName = "load-backend";
 local kafkaNamespace = "kafka";
 local inputTopicName = "testi";
 local modelTopicName = "model";
 local kafkaClusterName = "power";
+
 local bootstrapServer = kafkaClusterName + "-kafka-bootstrap:9092";
 
 local kafkaDefinition = kafka.kafkaCluster(

@@ -21,7 +21,7 @@ chmod +x build-examples.sh
 ./build-examples.sh
 ```
 
-Apply the Kafka files and wait until all components get into the Ready state
+Apply the Kafka files and wait until all components get into the `Running` state
 ```shell
 kubectl apply -f examples/kafka
 kubectl get pods -n kafka -w
