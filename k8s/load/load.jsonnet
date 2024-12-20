@@ -1,10 +1,12 @@
+local global = import '../../global.jsonnet';
+
 {
-   loadDefDeployment(namespace):: {
+   loadDefDeployment():: {
      apiVersion: "apps/v1",
      kind: "Deployment",
      metadata: {
        name: "distributed-event-factory",
-       namespace: namespace,
+       namespace: "load",
        labels: {
          app: "distributed-event-factory"
        }
@@ -95,12 +97,12 @@
        }
      }
    },
-   loadBackendDeployment(namespace, topic, bootstrapServer):: {
+   loadBackendDeployment(topic):: {
      apiVersion: "apps/v1",
      kind: "Deployment",
      metadata: {
        name: "load-backend",
-       namespace: namespace,
+       namespace: "load",
        labels: {
          app: "load-backend"
        }
@@ -131,7 +133,7 @@
                  },
                  {
                     name: "BOOTSTRAP_SERVER",
-                    value: bootstrapServer
+                    value: global.bootstrapServer
                  }
                ],
                ports: [
@@ -145,12 +147,12 @@
        }
      }
    },
-   loadBackendService(name, namespace):: {
+   loadBackendService():: {
      apiVersion: "v1",
      kind: "Service",
      metadata: {
-        name: name,
-        namespace: namespace
+        name: "load-backend",
+        namespace: "load"
      },
      spec: {
         selector: {

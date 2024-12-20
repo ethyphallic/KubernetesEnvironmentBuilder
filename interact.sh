@@ -17,7 +17,7 @@ function build() {
     echo "Build Finished"
 }
 
-### MONITORING ###
+### MONITOR ###
 function prometheus() {
   chmod +x helm/expose-prometheus-nodeport.sh
   ./helm/expose-prometheus-nodeport.sh
@@ -25,7 +25,7 @@ function prometheus() {
   if [ -z $1 ]; then
     PROMETHEUS_PORT=9090
   fi
-  export PROMETHEUS_NODE_PORT=$(kubectl get --namespace monitoring -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-nodeport-service)
+  export PROMETHEUS_NODE_PORT=$(kubectl get --namespace monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-nodeport-service)
   export PROMETHEUS_URL="minikube:${PROMETHEUS_NODE_PORT}"
   echo "Prometheus url: $PROMETHEUS_URL"
 }
@@ -33,7 +33,7 @@ function prometheus() {
 function grafana() {
   ./build-grafana-dashboards.sh
   ./helm/expose-grafana-nodeport.sh
-  export GRAFANA_NODE_PORT=$(kubectl get --namespace monitoring -o jsonpath="{.spec.ports[0].nodePort}" services grafana-nodeport-service)
+  export GRAFANA_NODE_PORT=$(kubectl get --namespace monitor -o jsonpath="{.spec.ports[0].nodePort}" services grafana-nodeport-service)
   export GRAFANA_URL=minikube:$GRAFANA_NODE_PORT
   GRAFANA_PORT=$1
   if [ -z $1 ]; then
@@ -49,3 +49,16 @@ function grafana() {
 ### KAFKA ###
 export KAFKA_UI_NODE_PORT=$(kubectl get --namespace kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
 export KAFKA_UI_URL=minikube:$KAFKA_UI_NODE_PORT
+
+function run() {
+    python3 $(pwd)/main.py
+}
+
+function stop_load() {
+  kubectl delete deploy distributed-event-factory -n kafka
+  kubectl delete deploy load-backend -n kafka
+}
+
+function start_load() {
+    kubectl apply -f $(pwd)/k8s/build/load
+}

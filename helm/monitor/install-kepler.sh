@@ -1,0 +1,2 @@
+helm repo add kepler https://sustainable-computing-io.github.io/kepler-helm-chart
+helm install kepler kepler/kepler --namespace monitor --create-namespace --set serviceMonitor.enabled=true --set serviceMonitor.labels.release=prometheus

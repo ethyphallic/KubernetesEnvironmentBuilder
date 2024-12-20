@@ -8,7 +8,9 @@
     },
     spec: {
       entityOperator: {
-        topicOperator: {},
+        topicOperator: {
+          watchedNamespace: '*'
+        },
         userOperator: {}
       },
       kafka: {
@@ -65,21 +67,6 @@
         }
       },
       kafkaExporter: {}
-    }
-  },
-  kafkaTopic(topicName, namespace, clusterName, partitions, replicas):: {
-    apiVersion: "kafka.strimzi.io/v1beta2",
-    kind: "KafkaTopic",
-    metadata: {
-        name: topicName,
-        namespace: namespace,
-        labels: {
-            "strimzi.io/cluster": clusterName
-        }
-    },
-    spec: {
-        partitions: partitions,
-        replicas: replicas
     }
   },
   kafkaUiValuesYaml(namespace, clusterName, bootstrapServer):: {

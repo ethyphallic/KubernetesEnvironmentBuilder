@@ -1,5 +1,5 @@
 {
-    simulation(genTimeframesTilStart):: {
+    simulation(intensity, genTimeframesTilStart):: {
         kind: "simulation",
         name: "assembly-line-simulation",
         spec: {
@@ -8,7 +8,7 @@
             genTimeframesTilStart: genTimeframesTilStart,
             load: {
                 loadBehavior: "constant",
-                load: 1
+                load: intensity
             }
         }
     },

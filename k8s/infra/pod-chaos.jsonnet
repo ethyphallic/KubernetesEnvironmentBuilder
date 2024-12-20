@@ -4,7 +4,7 @@
         kind: "PodChaos",
         metadata: {
           name: "pod-failure-%s" %[iteration],
-          namespace: chaos-mesh
+          namespace: "infra"
         },
         spec: {
             action: "pod-failure",

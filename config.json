@@ -1,7 +1,23 @@
 {
-  "loadBackendName": "load-backend",
-  "kafkaNamespace": "kafka",
-  "inputTopicName": "testi",
-  "modelTopicName": "model",
-  "kafkaClusterName": "power"
+  "infra" : {
+    "chaosMeshEnabled": false
+  },
+  "monitor": {
+    "prometheusEnabled": true,
+    "energyMonitorEnabled": false
+  },
+  "kafka": {
+    "enabled": true,
+    "clusterName": "power",
+    "brokerReplicas": 5,
+    "uiEnabled": true
+  },
+  "load": {
+    "intensity": 1
+  },
+  "sut": {
+    "topics": {
+      "model": "model"
+    }
+  }
 }

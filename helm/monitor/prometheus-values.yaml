@@ -1,7 +1,11 @@
 prometheus:
   prometheusSpec:
     scrapeInterval: 1s
+  service:
+    type: NodePort
 
 grafana:
   serviceMonitor:
-    interval: 5s
+    interval: 1s
+  service:
+    type: NodePort

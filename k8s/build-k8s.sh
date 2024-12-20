@@ -8,4 +8,5 @@ mkdir -p "build/load-config/datasource"
 mkdir -p "build/load-config/load"
 mkdir -p "build/load-config/sink"
 mkdir -p "build/chaos"
-jsonnet -m k8s main.jsonnet
+#docker run --rm --name jsonnet -v $(pwd):/src syseleven/jsonnet-builder -m . main.jsonnet
+jsonnet -m . main.jsonnet

@@ -1,4 +1,13 @@
 {
+  all(): [
+    $.startSensor(),
+    $.goodsDelivery(),
+    $.materialPreparation(),
+    $.assemblyLineSetup(),
+    $.qualityControl(),
+    $.packaging(),
+    $.shipping()
+  ],
   startSensor():: {
     kind: "datasource",
     name: "<start>",
