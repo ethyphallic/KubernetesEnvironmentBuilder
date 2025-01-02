@@ -9,10 +9,20 @@
   "kafka": {
     "enabled": true,
     "clusterName": "power",
-    "brokerReplicas": 5,
-    "uiEnabled": true
+    "brokerReplicas": 3,
+    "zookeeperReplicas": 1,
+    "uiEnabled": true,
+    "topics": [
+      {
+        "name": "input"
+      },
+      {
+        "name": "model"
+      }
+    ]
   },
   "load": {
+    "inputTopic": "input",
     "intensity": 1
   },
   "sut": {

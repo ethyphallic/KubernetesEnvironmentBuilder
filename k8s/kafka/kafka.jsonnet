@@ -8,13 +8,17 @@
     },
     spec: {
       entityOperator: {
-        topicOperator: {
-          watchedNamespace: '*'
-        },
+        topicOperator: {},
         userOperator: {}
       },
       kafka: {
         replicas: brokerReplicas,
+        resources: {
+          limits: {
+            memory: "500Mi",
+            cpu: "500m"
+          }
+        },
         config: {
           "default.replication.factor": 3,
           "inter.broker.protocol.version": "3.8",

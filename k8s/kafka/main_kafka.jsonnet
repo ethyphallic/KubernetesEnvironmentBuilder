@@ -1,9 +1,15 @@
 local kafka = import 'kafka.jsonnet';
+local global = import '../../global.jsonnet';
+local config = import '../../config.json';
+local kafkaNamespace = 'kafka';
+local kafkaTopic = import 'kafka-topic.jsonnet';
+
+local kafkaClusterName = config.kafka.clusterName;
 
 local kafkaCluster = kafka.kafkaCluster(
-    clusterName="kafkaClusterName",
-    brokerReplicas=2,
-    zookeeperReplicas=1
+    clusterName=kafkaClusterName,
+    brokerReplicas=config.kafka.brokerReplicas,
+    zookeeperReplicas=config.kafka.zookeeperReplicas
 );
 
 local kafkaExporterPodMonitor = kafka.kafkaExporterPodMonitor(
@@ -18,16 +24,10 @@ local kafkaPodMonitor = kafka.kafkaPodMonitor(
 
 local kafkaMetricsConfigMap = kafka.kafkaMetricsConfigmap(kafkaNamespace);
 
-local kafkaUi = kafka.kafkaUiValuesYaml(
-    namespace=kafkaNamespace,
-    clusterName=kafkaClusterName,
-    bootstrapServer=bootstrapServer
-);
 
 {
     "build/kafka/kafka.json": kafkaCluster,
     "build/kafka/kafka-metrics-configmap.json": kafkaMetricsConfigMap,
     "build/kafka/kafka-exporter-podmonitor.json": kafkaExporterPodMonitor,
     "build/kafka/kafka-podmonitor.json": kafkaPodMonitor,
-    "build/kafka/values.json": kafkaUi
-}
+} + { ["build/kafka/%s-topic.json" %[topic.name]] : kafkaTopic.kafkaTopic(topicName=topic.name) for topic in config.kafka.topics}

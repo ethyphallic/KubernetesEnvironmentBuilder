@@ -13,4 +13,4 @@ class Experiment:
     def execute_continuously(self, duration=60):
         for i in range(duration):
             self.prometheus_probe.execute_query(self.prometheus_query.get_query_string())
-            sleep(1)
+            sleep(5)

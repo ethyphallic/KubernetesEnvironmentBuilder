@@ -1,55 +1,34 @@
 local load = import 'load.jsonnet';
 local loadConfig = import 'load-cm.jsonnet';
 local loadConfigDataSource = import 'datasource/assembly-line.jsonnet';
-local config = import '../../config';
+local config = import '../../config.json';
+local global = import '../../global.jsonnet';
 local kafkaTopic = import '../kafka/kafka-topic.jsonnet';
 
+local inputTopicName = config.load.inputTopic;
+local loadNamespace = "load";
 
-local inputTopic = kafka.kafkaTopic(
+local inputTopic = kafkaTopic.kafkaTopic(
     topicName=inputTopicName,
 );
 
-local defDeployment = load.loadDefDeployment(
-    namespace=kafkaNamespace
-);
+local defDeployment = load.loadDefDeployment();
 
 local defBackendDeployment = load.loadBackendDeployment(
-    namespace=kafkaNamespace,
-    topic=inputTopicName,
-    bootstrapServer=bootstrapServer
+    topic=inputTopicName
 );
 
-local defBackendService = load.loadBackendService(kafkaNamespace);
+local defBackendService = load.loadBackendService();
 
 local loadConfigmap = loadConfig.simulation(intensity=config.load.intensity, genTimeframesTilStart=100);
-local sinkConfigmap = loadConfig.sink(serviceDomainName="%s.%s.svc" %["load-backend", kafkaNamespace], timeframe=1000);
-
-#local startSensor = loadConfigDataSource.startSensor();
-#local goodsDelivery = loadConfigDataSource.goodsDelivery();
-#local materialPreparation = loadConfigDataSource.materialPreparation();
-#local assemblyLineSetup = loadConfigDataSource.assemblyLineSetup();
-#local assembling = loadConfigDataSource.assembling();
-#local qualityControl = loadConfigDataSource.qualityControl();
-#local packaging = loadConfigDataSource.packaging();
-#local shipping = loadConfigDataSource.shipping();
-#"build/load/config/assemblyline/00-start.json": startSensor,
-#"build/load/config/assemblyline/01-goods-delivery.json": goodsDelivery,
-#"build/load/config/assemblyline/02-materialPreparation.json": materialPreparation,
-#"build/load/config/assemblyline/03-assemblyLineSetup.json": assemblyLineSetup,
-#"build/load/config/assemblyline/04-assembling.json": assembling,
-#"build/load/config/assemblyline/05-quality-control.json": qualityControl,
-#"build/load/config/assemblyline/06-packaging.json": packaging,
-#"build/load/config/assemblyline/07-shipping.json": shipping]
-
+local sinkConfigmap = loadConfig.sink(serviceDomainName="%s.%s.svc" %["load-backend", loadNamespace], timeframe=1000);
 
 local output = {
-    "build/load/input-topic": inputTopic,
     "build/load/def-deployment.json": defDeployment,
     "build/load/def-backend-deployment.json": defBackendDeployment,
     "build/load/def-backend-service.json": defBackendService,
-    "build/load/config/load-config.json": loadConfigmap,
-    "build/load/config/sink-config.json": sinkConfigmap
+    "build/load/load/load-config.json": loadConfigmap,
+    "build/load/sink/sink-config.json": sinkConfigmap
 };
 
-output + { ["build/load/config/assemblyline/%s" %[datasource]] : datasource for datasource in loadConfigDataSource.all()}
-
+output + { ["build/load/datasource/%s.json" %[datasource.name]] : datasource for datasource in loadConfigDataSource.all()}

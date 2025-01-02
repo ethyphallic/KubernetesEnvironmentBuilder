@@ -1,8 +1,12 @@
+local flink = import 'flink.jsonnet';
+local global = import '../../global.jsonnet';
+local config = import '../../config.json';
+
 local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
-    namespace = kafkaNamespace,
-    bootstrapServer = bootstrapServer,
-    inputTopic = inputTopicName,
-    modelTopic = modelTopicName,
+    namespace = "sut",
+    bootstrapServer = global.bootstrapServer,
+    inputTopic = config.load.inputTopic,
+    modelTopic = config.sut.topics.model,
     group = "heuristics-miner",
     parallelism = "1",
     sampleSize = "200",
@@ -10,8 +14,6 @@ local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
     andThreshold = "0.5",
     dependencyThreshold = "0.5"
 );
-
-local flink = import 'sut/flink.jsonnet';
 
 {
     "build/flink/flink-deployment.json": flinkDeployment

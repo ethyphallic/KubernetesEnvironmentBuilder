@@ -4,6 +4,7 @@
     $.goodsDelivery(),
     $.materialPreparation(),
     $.assemblyLineSetup(),
+    $.assembling(),
     $.qualityControl(),
     $.packaging(),
     $.shipping()

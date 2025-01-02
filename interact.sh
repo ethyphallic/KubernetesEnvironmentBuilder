@@ -1,4 +1,6 @@
 ### KUBERNETES ###
+DIR=$(pwd)
+
 alias k=kubectl
 function kn() {
   kubectl get ns ; echo
@@ -19,21 +21,14 @@ function build() {
 
 ### MONITOR ###
 function prometheus() {
-  chmod +x helm/expose-prometheus-nodeport.sh
-  ./helm/expose-prometheus-nodeport.sh
-  PROMETHEUS_PORT=$1
-  if [ -z $1 ]; then
-    PROMETHEUS_PORT=9090
-  fi
-  export PROMETHEUS_NODE_PORT=$(kubectl get --namespace monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-nodeport-service)
+  export PROMETHEUS_NODE_PORT=$(kubectl get -n monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-kube-prometheus-prometheus)
   export PROMETHEUS_URL="minikube:${PROMETHEUS_NODE_PORT}"
   echo "Prometheus url: $PROMETHEUS_URL"
 }
 
 function grafana() {
-  ./build-grafana-dashboards.sh
-  ./helm/expose-grafana-nodeport.sh
-  export GRAFANA_NODE_PORT=$(kubectl get --namespace monitor -o jsonpath="{.spec.ports[0].nodePort}" services grafana-nodeport-service)
+  $DIR/helm/monitor/build-grafana-dashboards.sh
+  export GRAFANA_NODE_PORT=$(kubectl get --namespace monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
   export GRAFANA_URL=minikube:$GRAFANA_NODE_PORT
   GRAFANA_PORT=$1
   if [ -z $1 ]; then
@@ -47,7 +42,7 @@ function grafana() {
 }
 
 ### KAFKA ###
-export KAFKA_UI_NODE_PORT=$(kubectl get --namespace kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
+export KAFKA_UI_NODE_PORT=$(kubectl get -n kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
 export KAFKA_UI_URL=minikube:$KAFKA_UI_NODE_PORT
 
 function run() {
@@ -55,10 +50,13 @@ function run() {
 }
 
 function stop_load() {
-  kubectl delete deploy distributed-event-factory -n kafka
-  kubectl delete deploy load-backend -n kafka
+  kubectl delete deploy distributed-event-factory -n load
+  kubectl delete deploy load-backend -n load
 }
 
 function start_load() {
+    k create cm def-datasource --from-file k8s/build/load/datasource -n load
+    k create cm def-load --from-file k8s/build/load/load -n load
+    k create cm def-sink --from-file k8s/build/load/sink -n load
     kubectl apply -f $(pwd)/k8s/build/load
 }
