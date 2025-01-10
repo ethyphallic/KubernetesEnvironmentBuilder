@@ -46,7 +46,7 @@ export KAFKA_UI_NODE_PORT=$(kubectl get -n kafka -o jsonpath="{.spec.ports[0].no
 export KAFKA_UI_URL=minikube:$KAFKA_UI_NODE_PORT
 
 function run() {
-    python3 $(pwd)/main.py
+    python3 $(pwd)/main.py $1
 }
 
 function stop_load() {
@@ -55,8 +55,17 @@ function stop_load() {
 }
 
 function start_load() {
-    k create cm def-datasource --from-file k8s/build/load/datasource -n load
-    k create cm def-load --from-file k8s/build/load/load -n load
-    k create cm def-sink --from-file k8s/build/load/sink -n load
+    kubectl create cm def-datasource --from-file k8s/build/load/datasource -n load
+    kubectl create cm def-load --from-file k8s/build/load/load -n load
+    kubectl create cm def-sink --from-file k8s/build/load/sink -n load
     kubectl apply -f $(pwd)/k8s/build/load
 }
+
+function start_chaos() {
+    kubectl apply -f k8s/build/chaos
+}
+
+function delete_chaos() {
+    kubectl delete -f k8s/build/chaos
+}
+

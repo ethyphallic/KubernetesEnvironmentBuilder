@@ -31,4 +31,4 @@ local output = {
     "build/load/sink/sink-config.json": sinkConfigmap
 };
 
-output + { ["build/load/datasource/%s.json" %[datasource.name]] : datasource for datasource in loadConfigDataSource.all()}
+output + { ["build/load/datasource/%s.json" %[std.stripChars(datasource.name, "<>")]] : datasource for datasource in loadConfigDataSource.all()}

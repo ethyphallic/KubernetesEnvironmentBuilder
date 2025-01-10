@@ -214,7 +214,7 @@
               "options": {
                 "mode": "exclude",
                 "names": [
-                  "testi"
+                  "input"
                 ],
                 "prefix": "All except:",
                 "readOnly": true
@@ -260,7 +260,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(topic) (kafka_server_brokertopicmetrics_messagesin_total{topic=\"testi\"})",
+          "expr": "sum by(topic) (kafka_server_brokertopicmetrics_messagesin_total{topic=\"input\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,

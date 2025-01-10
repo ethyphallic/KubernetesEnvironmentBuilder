@@ -29,7 +29,7 @@ local global = import '../../global.jsonnet';
              {
                name: "distributed-event-factory",
                image: "hendrikreiter/distributed_event_factory:0.2.1",
-               imagePullPolicy: "Always",
+               imagePullPolicy: "IfNotPresent",
                env: [
                  {
                     name: "LOAD",
@@ -125,7 +125,7 @@ local global = import '../../global.jsonnet';
              {
                name: "load-backend",
                image: "hendrikreiter/def-loadtest-backend:0.1.0",
-               imagePullPolicy: "Always",
+               imagePullPolicy: "IfNotPresent",
                env: [
                  {
                     name: "TOPIC",

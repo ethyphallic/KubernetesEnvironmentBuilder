@@ -16,5 +16,5 @@ local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
 );
 
 {
-    "build/flink/flink-deployment.json": flinkDeployment
+    "build/sut/flink-deployment.json": flinkDeployment
 }
