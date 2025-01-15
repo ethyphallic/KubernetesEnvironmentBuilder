@@ -69,3 +69,7 @@ function delete_chaos() {
     kubectl delete -f k8s/build/chaos
 }
 
+function kafka() {
+    export BOOTSTRAP_URL=$(kubectl get -n kafka -o jsonpath="{.spec.ports[0].nodePort}" services power-kafka-external-bootstrap)
+    echo "Kafka bootstrap server url: minikube:$BOOTSTRAP_URL"
+}

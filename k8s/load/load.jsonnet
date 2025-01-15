@@ -28,7 +28,7 @@ local global = import '../../global.jsonnet';
            containers: [
              {
                name: "distributed-event-factory",
-               image: "hendrikreiter/distributed_event_factory:0.2.1",
+               image: "hendrikreiter/distributed_event_factory:0.2.2",
                imagePullPolicy: "IfNotPresent",
                env: [
                  {

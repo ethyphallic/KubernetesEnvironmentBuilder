@@ -11,8 +11,9 @@ class SLO:
 
     def is_uphold(self) -> bool:
         query_result = self.query.execute()
-        print(query_result)
-        return query_result < self.threshold
+        is_uphold = query_result < self.threshold
+        print(f"{query_result} ({is_uphold})" )
+        return is_uphold
 
 class Scenario:
     def __init__(
@@ -32,11 +33,6 @@ class Scenario:
         self.load_generator_delay = load_generator_delay
         self.sut_deployment = sut_deployment
         self.mode = mode
-
-    def check_slo(self):
-        while True:
-            print(self.slo.is_uphold())
-            sleep(1)
 
     def _insert(self, dictionary: Dict, key, value):
         if key in dictionary:
@@ -76,13 +72,17 @@ class Scenario:
                     for transition in transitions[i]:
                         print(transition)
                         subprocess.run(transition, shell=True)
+                self.slo.is_uphold()
                 sleep(1)
 
     def run(self):
         print("start")
-        self.deploy_sut()
-        self.load.start()
-        self.apply_transitions()
+        try:
+            self.deploy_sut()
+            self.load.start()
+            self.apply_transitions()
+        except KeyboardInterrupt:
+            print("program has been ended by user")
         self.stop_load()
         self.remove_sut()
         print("end")

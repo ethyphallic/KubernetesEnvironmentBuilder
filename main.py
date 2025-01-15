@@ -19,7 +19,7 @@ if __name__ == '__main__':
     ]
 
     Scenario(
-        duration=60,
+        duration=30,
         slo=SLO(query, 0.5),
         load=Load(
             start_command='''
