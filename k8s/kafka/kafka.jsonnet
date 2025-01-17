@@ -20,12 +20,12 @@
           }
         },
         config: {
-          "default.replication.factor": 3,
+          "default.replication.factor": std.min(brokerReplicas, 3),
           "inter.broker.protocol.version": "3.8",
-          "min.insync.replicas": 2,
-          "offsets.topic.replication.factor": 3,
-          "transaction.state.log.min.isr": 2,
-          "transaction.state.log.replication.factor": 3
+          "min.insync.replicas": std.min(brokerReplicas, 2),
+          "offsets.topic.replication.factor": std.min(brokerReplicas, 3),
+          "transaction.state.log.min.isr": std.min(brokerReplicas, 2),
+          "transaction.state.log.replication.factor": std.min(brokerReplicas, 3)
         },
         listeners: [
           {

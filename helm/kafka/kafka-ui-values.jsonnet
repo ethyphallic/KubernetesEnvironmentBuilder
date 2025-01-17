@@ -1,5 +1,5 @@
-local config = import '../../config.json';
-local global = (import '../../global.jsonnet').bootstrapServer;
+local config = import 'config.json';
+local global = (import 'global.jsonnet').bootstrapServer;
 
 local values = {
   namespace: "kafka",

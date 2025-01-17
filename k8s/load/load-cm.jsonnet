@@ -5,6 +5,7 @@
         spec: {
             type: "loadTest",
             caseId: "increasing",
+            maxConcurrentCases: 1,
             genTimeframesTilStart: genTimeframesTilStart,
             load: {
                 loadBehavior: "constant",

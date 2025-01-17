@@ -57,6 +57,12 @@ local global = import '../../global.jsonnet';
                    containerPort: 8080
                  }
                ],
+               resources: {
+                 requests: {
+                   cpu: "300m",
+                   memory: "200Mi"
+                 },
+               },
                volumeMounts: [
                  {
                     name: "def-datasource-config",
@@ -136,6 +142,12 @@ local global = import '../../global.jsonnet';
                     value: global.bootstrapServer
                  }
                ],
+               resources: {
+                 requests: {
+                   cpu: "750m",
+                   memory: "250Mi"
+                 },
+               },
                ports: [
                  {
                    containerPort: 8080

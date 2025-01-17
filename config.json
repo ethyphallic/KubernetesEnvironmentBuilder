@@ -1,15 +1,15 @@
 {
   "infra" : {
-    "chaosMeshEnabled": true
+    "chaosMeshEnabled": false
   },
   "monitor": {
     "prometheusEnabled": true,
-    "energyMonitorEnabled": true
+    "energyMonitorEnabled": false
   },
   "kafka": {
     "enabled": true,
     "clusterName": "power",
-    "brokerReplicas": 3,
+    "brokerReplicas": 1,
     "zookeeperReplicas": 1,
     "uiEnabled": true,
     "topics": [
@@ -23,7 +23,7 @@
   },
   "load": {
     "inputTopic": "input",
-    "intensity": 1
+    "intensity": 1000
   },
   "sut": {
     "topics": {

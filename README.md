@@ -1,32 +1,56 @@
-minikube s# Installation Guide for Kafka on Kubernetes
+# Installation Guide
 
 First install the following programs: 
 - [minikube](https://kubernetes.io/de/docs/tasks/tools/install-minikube/)
 - [helm](https://helm.sh/docs/intro/install/) 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
-Start minikube with additional memory
-```shell
-minikube start --memory 8192
+
+# Build steps 
+
+1. Start minikube
+```bash
+minikube addons enable metrics-server
+minikube start minikube start --memory 8192 --cpus 2
 ```
 
-Create a dns name for minikube.
+Then create a dns name for minikube.
 ```shell
 sudo -- sh -c -e "echo '$(minikube ip) minikube' >> /etc/hosts"
 ```
 
-Build the environment with all helm charts and 
-```shell
-chmod +x build-examples.sh
-./build-examples.sh
+2. Install the Kubernetes operators using helm
+```bash
+helm/build-helm.sh
 ```
 
-Apply the Kafka files and wait until all components get into the `Running` state
-```shell
-kubectl apply -f examples/kafka
+3. Build Kubernetes resource files
+```bash
+./build-k8s.sh
+```
+
+4. Build kafka resources. 
+```bash
+kubectl apply -f k8s/build/kafka
+```
+Please wait after executing the command until all components are Ready. 
+You can monitor them by running:
+```bash
 kubectl get pods -n kafka -w
 ```
 
-```shell
+To interact with the cluster you can source the `interact.sh` script in your shell. 
+Then you have access to additional interaction commands.
+```bash
 source interact.sh
 ```
+
+In that shell you can now use some fancy commands:
+
+`kafka_ui`: Gives you the url to the Kafka-UI
+
+`grafana`: Gives you the url to your Grafana Dashboards
+
+`start_load`: Starts the load generator
+
+`stop_load`: Stops the load generator

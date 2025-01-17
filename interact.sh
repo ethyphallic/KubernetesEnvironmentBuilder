@@ -15,7 +15,7 @@ function kn() {
 
 function build() {
     chmod +x build-k8s.sh
-    ./build-k8s.sh > /dev/null
+    ./build-k8s.sh
     echo "Build Finished"
 }
 
@@ -41,24 +41,22 @@ function grafana() {
   echo "Password: ${GRAFANA_PASSWORD}"
 }
 
-### KAFKA ###
-export KAFKA_UI_NODE_PORT=$(kubectl get -n kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
-export KAFKA_UI_URL=minikube:$KAFKA_UI_NODE_PORT
-
 function run() {
     python3 $(pwd)/main.py $1
 }
 
 function stop_load() {
-  kubectl delete deploy distributed-event-factory -n load
-  kubectl delete deploy load-backend -n load
+  kubectl delete cm def-datasource
+  kubectl delete cm def-load
+  kubectl delete cm def-sink
+  kubectl delete -f $(pwd)/build/load
 }
 
 function start_load() {
-    kubectl create cm def-datasource --from-file k8s/build/load/datasource -n load
-    kubectl create cm def-load --from-file k8s/build/load/load -n load
-    kubectl create cm def-sink --from-file k8s/build/load/sink -n load
-    kubectl apply -f $(pwd)/k8s/build/load
+    kubectl create cm def-datasource --from-file build/load/datasource -n load
+    kubectl create cm def-load --from-file build/load/load -n load
+    kubectl create cm def-sink --from-file build/load/sink -n load
+    kubectl apply -f $(pwd)/build/load
 }
 
 function start_chaos() {
@@ -69,7 +67,25 @@ function delete_chaos() {
     kubectl delete -f k8s/build/chaos
 }
 
+function kafka_deploy() {
+    kubectl apply -f build/kafka
+}
+
+function kafka_destroy() {
+    kubectl delete -f build/kafka
+}
+
+function kafka_operator_restart() {
+    kubectl delete pod -l name=strimzi-cluster-operator
+}
+
 function kafka() {
     export BOOTSTRAP_URL=$(kubectl get -n kafka -o jsonpath="{.spec.ports[0].nodePort}" services power-kafka-external-bootstrap)
     echo "Kafka bootstrap server url: minikube:$BOOTSTRAP_URL"
+}
+
+function kafka_ui() {
+    export KAFKA_UI_NODE_PORT=$(kubectl get -n kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
+    export KAFKA_UI_URL=minikube:$KAFKA_UI_NODE_PORT
+    echo "Kafka-UI url: $KAFKA_UI_URL"
 }
