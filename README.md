@@ -10,8 +10,7 @@ First install the following programs:
 
 1. Start minikube
 ```bash
-minikube addons enable metrics-server
-minikube start minikube start --memory 8192 --cpus 2
+minikube start --memory 8192 --cpus 2
 ```
 
 Then create a dns name for minikube.

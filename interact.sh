@@ -1,5 +1,5 @@
 ### KUBERNETES ###
-DIR=$(pwd)
+export DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 alias k=kubectl
 function kn() {
@@ -49,30 +49,30 @@ function stop_load() {
   kubectl delete cm def-datasource
   kubectl delete cm def-load
   kubectl delete cm def-sink
-  kubectl delete -f $(pwd)/build/load
+  kubectl delete -f $DIR/build/load
 }
 
 function start_load() {
-    kubectl create cm def-datasource --from-file build/load/datasource -n load
-    kubectl create cm def-load --from-file build/load/load -n load
-    kubectl create cm def-sink --from-file build/load/sink -n load
-    kubectl apply -f $(pwd)/build/load
+    kubectl create cm def-datasource --from-file $DIR/build/load/datasource -n load
+    kubectl create cm def-load --from-file $DIR/build/load/load -n load
+    kubectl create cm def-sink --from-file $DIR/build/load/sink -n load
+    kubectl apply -f $DIR/build/load
 }
 
 function start_chaos() {
-    kubectl apply -f k8s/build/chaos
+    kubectl apply -f $DIR/build/chaos
 }
 
 function delete_chaos() {
-    kubectl delete -f k8s/build/chaos
+    kubectl delete -f $DIR/build/chaos
 }
 
 function kafka_deploy() {
-    kubectl apply -f build/kafka
+    kubectl apply -f $DIR/build/kafka
 }
 
 function kafka_destroy() {
-    kubectl delete -f build/kafka
+    kubectl delete -f $DIR/build/kafka
 }
 
 function kafka_operator_restart() {

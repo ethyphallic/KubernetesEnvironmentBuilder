@@ -23,7 +23,7 @@
   },
   "load": {
     "inputTopic": "input",
-    "intensity": 1000
+    "intensity": 1
   },
   "sut": {
     "topics": {
