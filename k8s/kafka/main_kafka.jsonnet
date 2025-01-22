@@ -24,7 +24,6 @@ local kafkaPodMonitor = kafka.kafkaPodMonitor(
 
 local kafkaMetricsConfigMap = kafka.kafkaMetricsConfigmap(kafkaNamespace);
 
-
 {
     "build/kafka/kafka.json": kafkaCluster,
     "build/kafka/kafka-metrics-configmap.json": kafkaMetricsConfigMap,
