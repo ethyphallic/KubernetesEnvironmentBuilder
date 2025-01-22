@@ -89,3 +89,11 @@ function kafka_ui() {
     export KAFKA_UI_URL=minikube:$KAFKA_UI_NODE_PORT
     echo "Kafka-UI url: $KAFKA_UI_URL"
 }
+
+function get_clusters() {
+    k config get-contexts
+}
+
+function sc() {
+  k config use-context $1
+}
