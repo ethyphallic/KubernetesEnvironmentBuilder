@@ -1,0 +1,51 @@
+{
+  "topology": {
+    "node1": {
+      "network": {
+        "node2": {
+          "latency": "500"
+        },
+        "node3": {
+          "latency": "200"
+        }
+      }
+    },
+    "node2": {
+      "network": {
+        "node3": {
+          "latency": "300"
+        }
+      }
+    }
+  },
+  "data": {
+    "data1": {
+      "sendRate": "3",
+      "location": "node1"
+    },
+    "data2": {
+      "sendRate": "1",
+      "location": "node2"
+    },
+    "data3": {
+      "sendRate": "1",
+      "location": "node3"
+    }
+  },
+  "system": {
+    "worker1": {
+      "ram": "1Gi",
+      "cpu": "1",
+      "replicas": 2,
+      "location": "node1",
+      "modelDepth": "101"
+    },
+    "worker2": {
+      "ram": "1Gi",
+      "cpu": "1",
+      "replicas": 1,
+      "location": "node2",
+      "modelDepth": "50"
+    }
+  }
+}

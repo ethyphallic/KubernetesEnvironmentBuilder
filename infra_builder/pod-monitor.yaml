@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: worker-metrics-podmonitor
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: node1
+  podMetricsEndpoints:
+    - path: /metrics
+      port: metrics

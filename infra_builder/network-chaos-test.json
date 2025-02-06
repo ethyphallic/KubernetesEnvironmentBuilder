@@ -1,0 +1,36 @@
+{
+   "apiVersion": "chaos-mesh.org/v1alpha1",
+   "kind": "NetworkChaos",
+   "metadata": {
+      "name": "network-delay-chaos"
+   },
+   "spec": {
+      "action": "delay",
+      "delay": {
+         "correlation": "100",
+         "jitter": "0ms",
+         "latency": "2000ms"
+      },
+      "direction": "to",
+      "mode": "all",
+      "selector": {
+         "labelSelectors": {
+            "app": "node1"
+         },
+         "namespaces": [
+            "kafka"
+         ]
+      },
+      "target": {
+         "mode": "all",
+         "selector": {
+            "labelSelectors": {
+               "strimzi.io/pod-name": "power-kafka-0"
+            },
+            "namespaces": [
+               "kafka"
+            ]
+         }
+      }
+   }
+}

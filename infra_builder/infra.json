@@ -1,0 +1,61 @@
+{
+  "nodes": [
+    {
+      "name": "node1",
+      "cpu": "500m",
+      "ram": "1G",
+      "network": {
+        "links": [
+          {
+            "target": "node2",
+            "bandwidth": 20,
+            "latency": 20
+          },
+          {
+            "target": "node3",
+            "bandwidth": 25,
+            "latency": 30
+          }
+        ]
+      }
+    },
+    {
+      "name": "node2",
+      "cpu": "500m",
+      "ram": "1G",
+      "network": {
+        "links": [
+          {
+            "target": "node1",
+            "bandwidth": 20,
+            "latency": 20
+          },
+          {
+            "target": "node3",
+            "bandwidth": 25,
+            "latency": 30
+          }
+        ]
+      }
+    },
+    {
+      "name": "node3",
+      "cpu": "500m",
+      "ram": "1G",
+      "network": {
+        "links": [
+          {
+            "target": "node1",
+            "bandwidth": 20,
+            "latency": 20
+          },
+          {
+            "target": "node2",
+            "bandwidth": 25,
+            "latency": 30
+          }
+        ]
+      }
+    }
+  ]
+}

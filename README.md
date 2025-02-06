@@ -30,7 +30,7 @@ helm/build-helm.sh
 
 4. Build kafka resources. 
 ```bash
-kubectl apply -f k8s/build/kafka
+kubectl apply -f build/kafka
 ```
 Please wait after executing the command until all components are Ready. 
 You can monitor them by running:

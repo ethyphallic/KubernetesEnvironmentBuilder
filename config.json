@@ -1,6 +1,6 @@
 {
   "infra" : {
-    "chaosMeshEnabled": false
+    "chaosMeshEnabled": true
   },
   "monitor": {
     "prometheusEnabled": true,
