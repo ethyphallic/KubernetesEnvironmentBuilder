@@ -97,3 +97,8 @@ function get_clusters() {
 function sc() {
   k config use-context $1
 }
+
+alias yaml2json="yq e -o=json | sed -E 's/\"(\w+)\":/\1:/'"
+alias clip="xclip -selection clipboard"
+alias pclip="xclip -o -selection clipboard"
+alias y2j="pclip | yaml2json | clip"

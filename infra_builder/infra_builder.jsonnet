@@ -5,6 +5,7 @@ local stressors = import 'stressors.jsonnet';
 local global = import '../global.jsonnet';
 local nodes = config.nodes;
 local topic = "dog3";
+local podMonitor = import 'podmonitor.jsonnet';
 
 local new_config = import 'infra_new.json';
 local data_node_config = new_config.data;
@@ -39,17 +40,24 @@ local worker_nodes = [
     local worker_node_def = std.get(worker_node_definition, worker_node);
     nodeBuilder.build(
         appName=worker_node,
-        appLabel=worker_node_def.location,
+        locationLabel=worker_node_def.location,
         memory=worker_node_def.ram,
         cpu=worker_node_def.cpu,
         bootstrapServer=global.bootstrapServer,
         topic=topic,
         modelDepth=worker_node_def.modelDepth,
         replicas=worker_node_def.replicas
-    ) for worker_node in std.objectFields(worker_node_definition)];
+    ) for worker_node in std.objectFields(worker_node_definition)
+];
+
+local pod_monitors = [
+    podMonitor.createPodMonitor(name="%s-pod-monitor" %[worker_node], matchLabel={app: worker_node})
+    for worker_node in std.objectFields(worker_node_definition)
+];
 
 local data_node_manifests = { ["build/load/data-%s.json" %[i]] : data_nodes[i] for i in std.range(0, std.length(data_nodes) - 1) };
 local network_manifests   = { ["build/infra/network-%s.json" %[i]] : network_links[i] for i in std.range(0, std.length(network_links) - 1) };
 local worker_manifests   = { ["build/sut/worker-%s.json" %[i]] : worker_nodes[i] for i in std.range(0, std.length(worker_nodes) - 1) };
+local worker_pod_monitor_manifests   = { ["build/monitor/podmonitor-%s.json" %[i]] : pod_monitors[i] for i in std.range(0, std.length(pod_monitors) - 1) };
 
-data_node_manifests + network_manifests + worker_manifests
+data_node_manifests + network_manifests + worker_manifests + worker_pod_monitor_manifests

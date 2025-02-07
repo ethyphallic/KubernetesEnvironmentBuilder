@@ -56,13 +56,14 @@ class Scenario:
             self.sut_deployment.remove()
 
     def start_load(self):
+        print(f"Wait {self.load_generator_delay} seconds until load starts")
         sleep(self.load_generator_delay)
         if self.mode.is_start_load():
-            self.sut_deployment.remove()
+            self.load.start()
 
     def stop_load(self):
         if self.mode.is_start_load():
-            self.sut_deployment.remove()
+            self.load.stop()
 
     def apply_transitions(self):
         if self.mode.is_apply_transitions():
@@ -79,10 +80,13 @@ class Scenario:
         print("start")
         try:
             self.deploy_sut()
-            self.load.start()
+            self.start_load()
             self.apply_transitions()
         except KeyboardInterrupt:
             print("program has been ended by user")
+        except Exception as e:
+            print("program failed")
+            print(e)
         self.stop_load()
         self.remove_sut()
         print("end")

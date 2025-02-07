@@ -1,5 +1,5 @@
 {
-  build(appName, appLabel, bootstrapServer, topic, modelDepth, replicas, memory="128Mi", cpu="500m"):: {
+  build(appName, locationLabel, bootstrapServer, topic, modelDepth, replicas, memory="128Mi", cpu="500m"):: {
     apiVersion: "apps/v1",
     kind: "StatefulSet",
     metadata: {
@@ -9,14 +9,16 @@
     spec: {
       selector: {
         matchLabels: {
-          app: appLabel
+          app: appName,
+          "ecoscape/node": locationLabel
         }
       },
       replicas: replicas,
       template: {
         metadata: {
           labels: {
-            app: appLabel
+            app: appName,
+            "ecoscape/node": locationLabel
           }
         },
         spec: {

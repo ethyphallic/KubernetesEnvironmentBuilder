@@ -4,7 +4,7 @@
     kind: "NetworkChaos",
     metadata: {
       name: "network-delay-%s-%s" %[appFrom, appTo],
-      namepace: "infra"
+      namespace: "infra"
     },
     spec: {
       action: "delay",

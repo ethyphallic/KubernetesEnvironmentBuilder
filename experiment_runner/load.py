@@ -10,5 +10,5 @@ class Load:
     def start(self):
         subprocess.run(self.start_command, shell=True)
 
-    def end(self):
+    def stop(self):
         subprocess.run(self.stop_command, shell=True)
