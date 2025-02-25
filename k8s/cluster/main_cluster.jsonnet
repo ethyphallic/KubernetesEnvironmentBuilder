@@ -1,7 +1,9 @@
 local namespaceCreator = import 'namespace.jsonnet';
 local rbac = import 'rbac.jsonnet';
 
-local namespaces = ["scalablemine-stu208763-kafka", "scalablemine-stu208763-monitor", "scalablemine-stu208763-load"];
+local identifier = std.extVar('ID');
+
+local namespaces = ["scalablemine-" + identifier + "-kafka", "scalablemine-" + identifier + "-monitor", "scalablemine-" + identifier + "-load"];
 
 local ns = { ["build/cluster/namespace/namespace-%s.json" %[namespace]] : namespaceCreator.createNamespace(namespace) for namespace in namespaces };
 local role = { ["build/cluster/role-%s.json" %[namespace]] : rbac.getRole(namespace) for namespace in namespaces };

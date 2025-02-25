@@ -1,10 +1,10 @@
 {
-  kafkaCluster(clusterName, brokerReplicas, zookeeperReplicas):: {
+  kafkaCluster(clusterName, brokerReplicas, zookeeperReplicas, namespace):: {
     kind: "Kafka",
     apiVersion: "kafka.strimzi.io/v1beta2",
     metadata: {
       name: clusterName,
-      namespace: "kafka"
+      namespace: namespace
     },
     spec: {
       entityOperator: {

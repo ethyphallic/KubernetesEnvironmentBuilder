@@ -6,19 +6,25 @@ local global = import '../../global.jsonnet';
 local kafkaTopic = import '../kafka/kafka-topic.jsonnet';
 
 local inputTopicName = config.load.inputTopic;
-local loadNamespace = "load";
+local identifier = std.extVar('ID');
+local loadNamespace = "scalablemine-" + identifier + "-load";
 
 local inputTopic = kafkaTopic.kafkaTopic(
     topicName=inputTopicName,
 );
 
-local defDeployment = load.loadDefDeployment();
+local defDeployment = load.loadDefDeployment(
+    namespace=loadNamespace
+);
 
 local defBackendDeployment = load.loadBackendDeployment(
+    namespace=loadNamespace,
     topic=inputTopicName
 );
 
-local defBackendService = load.loadBackendService();
+local defBackendService = load.loadBackendService(
+    namespace=loadNamespace
+);
 
 local loadConfigmap = loadConfig.simulation(intensity=config.load.intensity, genTimeframesTilStart=100);
 local sinkConfigmap = loadConfig.sink(serviceDomainName="%s.%s.svc" %["load-backend", loadNamespace], timeframe=1000);
