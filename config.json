@@ -12,6 +12,7 @@
     "brokerReplicas": 1,
     "zookeeperReplicas": 1,
     "uiEnabled": true,
+    "strimziEnabled": true,
     "topics": [
       {
         "name": "input"
