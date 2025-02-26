@@ -1,9 +1,11 @@
 local flink = import 'flink.jsonnet';
 local global = import '../../global.jsonnet';
 local config = import '../../config.json';
+local identifier = std.extVar('ID');
+local defaultNamespace = "scalablemine-" + identifier;
 
 local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
-    namespace = "sut",
+    namespace = defaultNamespace,
     bootstrapServer = global.bootstrapServer,
     inputTopic = config.load.inputTopic,
     modelTopic = config.sut.topics.model,
