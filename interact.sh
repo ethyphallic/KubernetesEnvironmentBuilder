@@ -1,5 +1,6 @@
 ### KUBERNETES ###
 export DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+export ID=$1
 
 alias k=kubectl
 function kn() {
@@ -15,30 +16,38 @@ function kn() {
 
 function build() {
     chmod +x build-k8s.sh
-    ./build-k8s.sh
+    ./build-k8s.sh $ID
     echo "Build Finished"
 }
 
 ### MONITOR ###
 function prometheus() {
-  export PROMETHEUS_NODE_PORT=$(kubectl get -n monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-kube-prometheus-prometheus)
-  export PROMETHEUS_URL="minikube:${PROMETHEUS_NODE_PORT}"
-  echo "Prometheus url: $PROMETHEUS_URL"
+  if [ -z $ID ]; then
+      echo "No argument supplied during source operation"
+  else
+    export PROMETHEUS_NODE_PORT=$(kubectl get -n scalablemine-$ID-monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-kube-prometheus-prometheus)
+    export PROMETHEUS_URL="minikube:${PROMETHEUS_NODE_PORT}"
+    echo "Prometheus url: $PROMETHEUS_URL"
+  fi
 }
 
 function grafana() {
-  $DIR/helm/monitor/build-grafana-dashboards.sh
-  export GRAFANA_NODE_PORT=$(kubectl get --namespace monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
-  export GRAFANA_URL=minikube:$GRAFANA_NODE_PORT
-  GRAFANA_PORT=$1
-  if [ -z $1 ]; then
-    GRAFANA_PORT=9091
+  if [ -z $ID ]; then
+      echo "No argument supplied during source operation"
+  else
+    $DIR/helm/monitor/build-grafana-dashboards.sh
+    export GRAFANA_NODE_PORT=$(kubectl get --namespace scalablemine-$ID-monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
+    export GRAFANA_URL=minikube:$GRAFANA_NODE_PORT
+    GRAFANA_PORT=$1
+    if [ -z $1 ]; then
+      GRAFANA_PORT=9091
+    fi
+    export GRAFANA_USERNAME=admin
+    export GRAFANA_PASSWORD=prom-operator
+    echo "Grafana url: ${GRAFANA_URL}"
+    echo "Username: ${GRAFANA_USERNAME}"
+    echo "Password: ${GRAFANA_PASSWORD}"
   fi
-  export GRAFANA_USERNAME=admin
-  export GRAFANA_PASSWORD=prom-operator
-  echo "Grafana url: ${GRAFANA_URL}"
-  echo "Username: ${GRAFANA_USERNAME}"
-  echo "Password: ${GRAFANA_PASSWORD}"
 }
 
 function run() {
@@ -46,17 +55,25 @@ function run() {
 }
 
 function stop_load() {
-  kubectl delete cm def-datasource
-  kubectl delete cm def-load
-  kubectl delete cm def-sink
-  kubectl delete -f $DIR/build/load
+    if [ -z $ID ]; then
+      echo "No argument supplied during source operation"
+    else
+      kubectl delete cm def-datasource -n scalablemine-$ID-load
+      kubectl delete cm def-load -n scalablemine-$ID-load
+      kubectl delete cm def-sink -n scalablemine-$ID-load
+      kubectl delete -f $DIR/build/load
+    fi
 }
 
 function start_load() {
-    kubectl create cm def-datasource --from-file $DIR/build/load/datasource -n load
-    kubectl create cm def-load --from-file $DIR/build/load/load -n load
-    kubectl create cm def-sink --from-file $DIR/build/load/sink -n load
-    kubectl apply -f $DIR/build/load
+    if [ -z $ID ]; then
+      echo "No argument supplied during source operation"
+    else
+      kubectl create cm def-datasource --from-file $DIR/build/load/datasource -n scalablemine-$ID-load
+      kubectl create cm def-load --from-file $DIR/build/load/load -n scalablemine-$ID-load
+      kubectl create cm def-sink --from-file $DIR/build/load/sink -n scalablemine-$ID-load
+      kubectl apply -f $DIR/build/load
+    fi
 }
 
 function start_chaos() {
@@ -76,7 +93,11 @@ function kafka_destroy() {
 }
 
 function kafka_operator_restart() {
-    kubectl delete pod -l name=strimzi-cluster-operator
+  if [ -z $ID ]; then
+    echo "No argument supplied during source operation"
+  else
+    kubectl delete pod -l name=strimzi-cluster-operator -n scalablemine-$ID-kafka
+  fi
 }
 
 function kafka() {
@@ -85,9 +106,13 @@ function kafka() {
 }
 
 function kafka_ui() {
-    export KAFKA_UI_NODE_PORT=$(kubectl get -n kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
+  if [ -z $ID ]; then
+    echo "No argument supplied during source operation"
+  else
+    export KAFKA_UI_NODE_PORT=$(kubectl get -n scalablemine-$ID-kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
     export KAFKA_UI_URL=minikube:$KAFKA_UI_NODE_PORT
     echo "Kafka-UI url: $KAFKA_UI_URL"
+  fi
 }
 
 function get_clusters() {
