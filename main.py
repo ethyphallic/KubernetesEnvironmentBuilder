@@ -28,10 +28,7 @@ if __name__ == '__main__':
             start_command="kubectl apply -f infra_builder/build/load",
             stop_command="kubectl delete -f infra_builder/build/load"
         ),
-        infra_transitions=[
-            #InfraTransition(name="pod-failure", start=5, end=15, start_action="kubectl apply -f k8s/build/chaos", end_action="kubectl delete -f k8s/build/chaos")
-            #InfraTransition(name="network-delay", start=5, end=15, start_action="kubectl apply -f k8s/build/chaos/network-failure.json", end_action="kubectl delete -f k8s/build/chaos/network-failure.json")
-        ],
+        infra_transitions=[],
         sut_deployment=SutDeployment(
             deploy_command="kubectl apply -f infra_builder/build/sut",
             remove_command="kubectl delete -f infra_builder/build/sut"

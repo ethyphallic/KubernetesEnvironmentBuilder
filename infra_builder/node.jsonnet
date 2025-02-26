@@ -1,7 +1,7 @@
 {
   build(appName, locationLabel, bootstrapServer, topic, modelDepth, replicas, memory="128Mi", cpu="500m"):: {
     apiVersion: "apps/v1",
-    kind: "StatefulSet",
+    kind: "Deployment",
     metadata: {
       name: appName,
       namespace: "sut"
@@ -26,6 +26,7 @@
             {
               name: appName,
               image: "hendrikreiter/object_classifier",
+              imagePullPolicy: "IfNotPresent",
               ports: [
                 {
                   containerPort: 80,
@@ -99,10 +100,18 @@
             {
               name: appName,
               image: "hendrikreiter/image_producer",
+              imagePullPolicy: "IfNotPresent",
               ports: [
                 {
                   containerPort: 80,
                   name: "web"
+                }
+              ],
+              volumeMounts: [
+                {
+                  mountPath: "/image",
+                  name: "image",
+                  readOnly: true
                 }
               ],
               env: [
@@ -128,6 +137,15 @@
                   memory: memory,
                   cpu: cpu
                 }
+              }
+            }
+          ],
+          volumes: [
+            {
+              name: "image",
+              hostPath: {
+                path: "/image",
+                type: "Directory"
               }
             }
           ]

@@ -9,6 +9,9 @@ class SLO:
         self.query = query
         self.threshold = threshold
 
+    def get_value(self) -> float:
+        return self.query.execute()
+
     def is_uphold(self) -> bool:
         query_result = self.query.execute()
         is_uphold = query_result < self.threshold
@@ -27,6 +30,7 @@ class Scenario:
             load_generator_delay=15,
     ):
         self.slo = slo
+        self.slo_timeseries = []
         self.duration = duration
         self.load = load
         self.infra_transitions = infra_transitions
@@ -74,6 +78,7 @@ class Scenario:
                         print(transition)
                         subprocess.run(transition, shell=True)
                 self.slo.is_uphold()
+                self.slo_timeseries.append(self.slo.get_value())
                 sleep(1)
 
     def run(self):
@@ -89,4 +94,5 @@ class Scenario:
             print(e)
         self.stop_load()
         self.remove_sut()
+        print(sum(self.slo_timeseries) / len(self.slo_timeseries))
         print("end")

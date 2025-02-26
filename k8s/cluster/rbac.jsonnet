@@ -14,44 +14,11 @@
           "apps",
           "batch",
           "metrics.k8s.io",
-          "autoscaling"
+          "autoscaling",
+          "monitoring.coreos.com/v1",
         ],
-        resources: [
-          "deployments",
-          "replicasets",
-          "pods",
-          "services",
-          "configmaps",
-          "statefulsets",
-          "endpoints",
-          "jobs",
-          "events",
-          "pods/log",
-          "pods/exec",
-          "deployments/scale",
-          "statefulsets/scale",
-          "pods/attach",
-          "persistentvolumes",
-          "persistentvolumeclaims",
-          "replicationcontrollers",
-          "horizontalpodautoscalers"
-        ],
-        verbs: [
-          "get",
-          "list",
-          "watch",
-          "create",
-          "update",
-          "patch",
-          "delete",
-          "logs",
-          "exec",
-          "cp",
-          "scale",
-          "top",
-          "edit",
-          "describe"
-        ]
+        resources: ["*"],
+        verbs: ["*"]
       }
     ]
   },
