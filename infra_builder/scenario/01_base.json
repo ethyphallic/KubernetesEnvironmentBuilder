@@ -1,16 +1,20 @@
 {
   "topology": {
-    "node0": {
+    "kube1-3": {
       "network": {
-        "node1": {
+        "kube1-4": {
           "latency": "200"
         },
         "node2": {
           "latency": "200"
         }
+      },
+      "stressor": {
+        "cpu": 50,
+        "memory": "500MB"
       }
     },
-    "node1": {
+    "kube1-4": {
       "network": {
         "node2": {
           "latency": "200"
@@ -21,15 +25,15 @@
   "data": {
     "data0": {
       "sendRate": "2",
-      "location": "node1"
+      "location": "kube1-4"
     },
     "data1": {
       "sendRate": "2",
-      "location": "node2"
+      "location": "kube1-5"
     },
     "data2": {
       "sendRate": "2",
-      "location": "node0"
+      "location": "kube1-3"
     }
   },
   "system": {
@@ -37,21 +41,21 @@
       "ram": "1Gi",
       "cpu": "1",
       "replicas": 1,
-      "location": "node1",
+      "location": "kube1-4",
       "modelDepth": "101"
     },
     "worker1": {
       "ram": "1Gi",
       "cpu": "1",
       "replicas": 1,
-      "location": "node2",
+      "location": "kube1-3",
       "modelDepth": "101"
     },
     "worker2": {
       "ram": "1Gi",
       "cpu": "1",
       "replicas": 1,
-      "location": "node2",
+      "location": "kube1-5",
       "modelDepth": "101"
     }
   }

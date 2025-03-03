@@ -4,7 +4,7 @@
     kind: "PodMonitor",
     metadata: {
       name: name,
-      namespace: "sut",
+      namespace: "scalablemine-hkr-sut",
       labels: {
         release: "prometheus"
       }

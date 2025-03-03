@@ -6,7 +6,7 @@ class QueryEnergyConsumption(Query):
         self.prometheus_connection = prometheus_connection
 
     def get_name(self):
-        return "Cpu Energy Consumption"
+        return "cpu_energy_consumption"
 
     def get_query_string(self):
         return "sum by (pod_name, container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~'kafka', pod_name=~'power-kafka-0'}[1m]))"

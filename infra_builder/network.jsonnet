@@ -4,19 +4,19 @@
     kind: "NetworkChaos",
     metadata: {
       name: "network-delay-%s-%s" %[appFrom, appTo],
-      namespace: "infra"
+      namespace: "scalablemine-hkr-infra"
     },
     spec: {
       action: "delay",
       mode: "all",
       selector: {
         namespaces: [
-          "load",
-          "sut",
-          "kafka"
+          "scalablemine-hkr-load",
+          "scalablemine-hkr-sut",
+          "scalablemine-hkr-kafka"
         ],
-        labelSelectors: {
-          "ecoscape/node": appFrom
+        nodeSelectors: {
+          "kubernetes.io/hostname": appFrom
         }
       },
       direction: "both",
@@ -24,12 +24,12 @@
         mode: "all",
         selector: {
           namespaces: [
-            "load",
-            "sut",
-            "kafka"
+            "scalablemine-hkr-load",
+            "scalablemine-hkr-sut",
+            "scalablemine-hkr-kafka"
           ],
-          labelSelectors: {
-            "ecoscape/node": appTo
+          nodeSelectors: {
+            "kubernetes.io/hostname": appTo
           }
         }
       },

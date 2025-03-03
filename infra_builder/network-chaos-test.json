@@ -18,7 +18,7 @@
             "app": "node1"
          },
          "namespaces": [
-            "kafka"
+            "scalablemine-hkr-kafka"
          ]
       },
       "target": {
@@ -28,7 +28,7 @@
                "strimzi.io/pod-name": "power-kafka-0"
             },
             "namespaces": [
-               "kafka"
+               "scalablemine-hkr-kafka"
             ]
          }
       }

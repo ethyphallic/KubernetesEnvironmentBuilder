@@ -9,12 +9,12 @@
     spec: {
       mode: "all",
       selector: {
-        labelSelectors: {
-          "ecoscape/node": target
+        nodeSelectors: {
+          "kubernetes.io/hostname": target
         },
         namespaces: [
-          "sut",
-          "kafka"
+          "scalablemine-hkr-sut",
+          "scalablemine-hkr-kafka"
         ]
       },
       stressors: {
@@ -35,12 +35,12 @@
     spec: {
       mode: "all",
       selector: {
-        labelSelectors: {
-          "ecoscape/node": target
+        nodeSelectors: {
+          "kubernetes.io/hostname": target
         },
         namespaces: [
-          "sut",
-          "kafka"
+          "scalablemine-hkr-sut",
+          "scalablemine-hkr-kafka"
         ]
       },
       stressors: {

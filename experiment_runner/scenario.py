@@ -2,41 +2,29 @@ import subprocess
 from time import sleep
 from typing import Dict, List
 
+from experiment_runner.ecoscape_client import EcoscapeClient
 from experiment_runner.mode.mode import Mode, ModeFullExperimentRun
-
-class SLO:
-    def __init__(self, query, threshold):
-        self.query = query
-        self.threshold = threshold
-
-    def get_value(self) -> float:
-        return self.query.execute()
-
-    def is_uphold(self) -> bool:
-        query_result = self.query.execute()
-        is_uphold = query_result < self.threshold
-        print(f"{query_result} ({is_uphold})" )
-        return is_uphold
+from experiment_runner.sink.slo_sink import SloSink
+from experiment_runner.slo import SLO
 
 class Scenario:
     def __init__(
-            self,
-            duration,
-            slo: SLO,
-            load,
-            infra_transitions,
-            sut_deployment,
-            mode: Mode=ModeFullExperimentRun(),
-            load_generator_delay=15,
+        self,
+        duration,
+        slos: Dict[SLO, List[SloSink]],
+        infra_transitions,
+        load_generator_delay,
+        mode: Mode=ModeFullExperimentRun(),
+        evaluation_delay=30
     ):
-        self.slo = slo
-        self.slo_timeseries = []
+        self.slos: Dict[SLO, List[SloSink]] = slos
+        self.slo_timeseries = dict()
         self.duration = duration
-        self.load = load
         self.infra_transitions = infra_transitions
-        self.load_generator_delay = load_generator_delay
-        self.sut_deployment = sut_deployment
+        self.evaluation_delay = evaluation_delay
+        self.load_generation_delay = load_generator_delay
         self.mode = mode
+        self.ecoscape_client = EcoscapeClient("infra_builder/build")
 
     def _insert(self, dictionary: Dict, key, value):
         if key in dictionary:
@@ -53,23 +41,25 @@ class Scenario:
 
     def deploy_sut(self):
         if self.mode.is_deploy_system():
-            self.sut_deployment.deploy()
+            self.ecoscape_client.deploy_sut()
 
     def remove_sut(self):
         if self.mode.is_deploy_system():
-            self.sut_deployment.remove()
+            self.ecoscape_client.delete_sut()
 
     def start_load(self):
-        print(f"Wait {self.load_generator_delay} seconds until load starts")
-        sleep(self.load_generator_delay)
         if self.mode.is_start_load():
-            self.load.start()
+            print(f"Wait {self.load_generation_delay}s to start the load")
+            sleep(self.load_generation_delay)
+            self.ecoscape_client.start_load()
 
     def stop_load(self):
         if self.mode.is_start_load():
-            self.load.stop()
+            self.ecoscape_client.stop_load()
 
     def apply_transitions(self):
+        print(f"Wait {self.evaluation_delay}s to start the evaluation")
+        sleep(self.evaluation_delay)
         if self.mode.is_apply_transitions():
             transitions = self._build_transition_dictionary()
             for i in range(self.duration):
@@ -77,8 +67,11 @@ class Scenario:
                     for transition in transitions[i]:
                         print(transition)
                         subprocess.run(transition, shell=True)
-                self.slo.is_uphold()
-                self.slo_timeseries.append(self.slo.get_value())
+
+                for slo in self.slos:
+                    value = slo.get_value()
+                    for slo_sink in self.slos[slo]:
+                        slo_sink.evaluate_slo(value, slo.get_threshold(), slo.is_bigger_better)
                 sleep(1)
 
     def run(self):
@@ -94,5 +87,6 @@ class Scenario:
             print(e)
         self.stop_load()
         self.remove_sut()
-        print(sum(self.slo_timeseries) / len(self.slo_timeseries))
+        sleep(45)
+        self.ecoscape_client.delete_sut_phase2()
         print("end")

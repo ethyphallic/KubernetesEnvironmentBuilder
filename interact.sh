@@ -3,9 +3,10 @@ export DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 alias k=kubectl
 function kn() {
+  NS=$CLUSTER_PREFIX$1
   kubectl get ns ; echo
   if [[ "$#" -eq 1 ]]; then
-    kubectl config set-context --current --namespace $1 ; echo
+    kubectl config set-context --current --namespace $NS ; echo
   fi
   echo "Current namespace [ $(kubectl config view --minify | grep namespace | cut -d " " -f6) ]"
 }
@@ -41,7 +42,7 @@ function grafana() {
   echo "Password: ${GRAFANA_PASSWORD}"
 }
 
-function run() {
+function ecoscape() {
     python3 $(pwd)/main.py $1
 }
 
@@ -98,7 +99,12 @@ function sc() {
   k config use-context $1
 }
 
+function cluster_prefix() {
+    export CLUSTER_PREFIX=$1
+}
+
 alias yaml2json="yq e -o=json | sed -E 's/\"(\w+)\":/\1:/'"
 alias clip="xclip -selection clipboard"
 alias pclip="xclip -o -selection clipboard"
 alias y2j="pclip | yaml2json | clip"
+alias cpre=cluster_prefix

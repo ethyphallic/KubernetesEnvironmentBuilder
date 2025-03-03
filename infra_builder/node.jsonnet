@@ -4,7 +4,7 @@
     kind: "Deployment",
     metadata: {
       name: appName,
-      namespace: "sut"
+      namespace: "scalablemine-hkr-sut"
     },
     spec: {
       selector: {
@@ -22,6 +22,9 @@
           }
         },
         spec: {
+          nodeSelector: {
+            "kubernetes.io/hostname": locationLabel
+          },
           containers: [
             {
               name: appName,
@@ -80,7 +83,7 @@
     kind: "StatefulSet",
     metadata: {
       name: appName,
-      namespace: "load"
+      namespace: "scalablemine-hkr-load"
     },
     spec: {
       selector: {
@@ -96,6 +99,26 @@
           }
         },
         spec: {
+          nodeSelector: {
+            "kubernetes.io/hostname": appLabel
+          },
+          initContainers: [
+            {
+              name: "copy",
+              image: "hendrikreiter/dog-test-images",
+              command: [
+                "/bin/sh",
+                "-c",
+                "cp -r /images/ /image"
+              ],
+              volumeMounts: [
+                {
+                  name: "image",
+                  mountPath: "/image"
+                },
+              ]
+            }
+          ],
           containers: [
             {
               name: appName,
@@ -109,7 +132,7 @@
               ],
               volumeMounts: [
                 {
-                  mountPath: "/image",
+                  mountPath: "/Images",
                   name: "image",
                   readOnly: true
                 }
@@ -143,9 +166,8 @@
           volumes: [
             {
               name: "image",
-              hostPath: {
-                path: "/image",
-                type: "Directory"
+              emptyDir: {
+                sizeLimit: "1Gi"
               }
             }
           ]

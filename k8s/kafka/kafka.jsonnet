@@ -45,7 +45,7 @@
                   advertisedHost: "minikube",
                   broker: i
                 }
-                for i in std.range(0,brokerReplicas-1)
+                for i in std.range(0, brokerReplicas-1)
               ]
             }
           }

@@ -1,2 +1,2 @@
 helm repo add chaos-mesh https://charts.chaos-mesh.org
-helm install chaos-mesh chaos-mesh/chaos-mesh --namespace infra --create-namespace
+helm install chaos-mesh chaos-mesh/chaos-mesh --namespace scalablemine-hkr-infra --create-namespace --set chaosDaemon.runtime=containerd --set chaosDaemon.socketPath=/run/containerd/containerd.sock

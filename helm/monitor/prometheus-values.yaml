@@ -1,3 +1,7 @@
+global:
+  rbac:
+    create: false
+
 prometheus:
   prometheusSpec:
     scrapeInterval: 5s

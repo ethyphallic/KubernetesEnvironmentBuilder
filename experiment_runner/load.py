@@ -1,14 +1,20 @@
 import subprocess
+from time import sleep
+
+from experiment_runner.k8s_client import K8sClient
 
 
 class Load:
-
-    def __init__(self, start_command, stop_command):
+    def __init__(self, start_command, stop_command, load_generator_delay):
+        self.k8s_client = K8sClient()
         self.start_command = start_command
-        self.stop_command = stop_command
+        self.stop_command = stop_command,
+        self.load_generator_delay = load_generator_delay
 
     def start(self):
-        subprocess.run(self.start_command, shell=True)
+        print(f"Wait {self.load_generator_delay} seconds until load starts")
+        sleep(self.load_generator_delay)
+        self.k8s_client.apply_directory(self.start_command)
 
     def stop(self):
-        subprocess.run(self.stop_command, shell=True)
+        self.k8s_client.apply_directory(self.stop_command)

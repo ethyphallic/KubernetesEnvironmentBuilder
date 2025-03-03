@@ -1,37 +1,44 @@
 from prometheus_api_client import PrometheusConnect
-from experiment_runner.infra_transition import InfraTransition
-from experiment_runner.load import Load
-from experiment_runner.query.query import Query
+from experiment_runner.aggregator.weighted_slo_aggregator import WeightedSloAggregator
+from experiment_runner.k8s_client import K8sClient
+from experiment_runner.mode.mode import ModeFullExperimentRun
+from experiment_runner.query.query_accuracy import QueryAccuracy
 from experiment_runner.query.query_consumer_group_lag import QueryIncomingMessages
 from experiment_runner.query.query_energy_consumption import QueryEnergyConsumption
 from experiment_runner.query.query_processing_latency import QueryProcessingLatency
 
 from experiment_runner.scenario import Scenario, SLO
-from experiment_runner.sut_deployment import SutDeployment
+from experiment_runner.sink.slo_value_printer_sink import SloValuePrinterSink
+from experiment_runner.sink.slo_violation_score_sink import SloViolationScoreSink
 
 def query_registry():
-    prometheus_connection = PrometheusConnect(url="http://minikube:30090")
+    prometheus_connection = PrometheusConnect(url="http://kube1-1:30920")
     return {
         "energy": QueryEnergyConsumption(prometheus_connection),
         "lag": QueryIncomingMessages(prometheus_connection, "input"),
-        "processing_latency": QueryProcessingLatency(prometheus_connection, "worker-0")
+        "latency": QueryProcessingLatency(prometheus_connection),
+        "accuracy": QueryAccuracy(prometheus_connection)
     }
 
 if __name__ == '__main__':
-    query: Query = query_registry()["processing_latency"]
-    print(query.execute())
+    queries = query_registry()
+
+    slos = dict()
+    latency_score_sink = SloViolationScoreSink()
+    accuracy_score_sink = SloViolationScoreSink()
+    slos[SLO(queries["latency"], 30, False)] = [latency_score_sink, SloValuePrinterSink("Latency")]
+    slos[SLO(queries["accuracy"], 0.75, True)] = [accuracy_score_sink, SloValuePrinterSink("Accuracy")]
 
     Scenario(
-        duration=120,
-        slo=SLO(query, 3000),
-        load=Load(
-            start_command="kubectl apply -f infra_builder/build/load",
-            stop_command="kubectl delete -f infra_builder/build/load"
-        ),
+        slos=slos,
+        duration=60,
+        load_generator_delay=30,
+        evaluation_delay=60,
         infra_transitions=[],
-        sut_deployment=SutDeployment(
-            deploy_command="kubectl apply -f infra_builder/build/sut",
-            remove_command="kubectl delete -f infra_builder/build/sut"
-        ),
-        load_generator_delay=60
+        mode=ModeFullExperimentRun()
     ).run()
+
+    print(latency_score_sink.get_score())
+    print(accuracy_score_sink.get_score())
+    aggregator = WeightedSloAggregator([latency_score_sink, accuracy_score_sink], [0.5, 0.5])
+    print(aggregator.get_aggregated_score())

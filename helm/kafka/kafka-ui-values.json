@@ -1,0 +1,26 @@
+{
+  "namespace": "kafka",
+  "service": {
+    "type": "NodePort"
+  },
+  "yamlApplicationConfig": {
+    "kafka": {
+      "clusters": [
+        {
+          "name": "power",
+          "bootstrapServers": "power-kafka-bootstrap:9092"
+        }
+      ]
+    },
+    "auth": {
+      "type": "disabled"
+    },
+    "management": {
+      "health": {
+        "ldap": {
+          "enabled": false
+        }
+      }
+    }
+  }
+}
