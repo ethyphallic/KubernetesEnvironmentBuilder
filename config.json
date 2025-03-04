@@ -1,13 +1,16 @@
 {
   "infra" : {
+    "namespace": "scalablemine-stu208763-infra",
     "chaosMeshEnabled": true
   },
   "monitor": {
+    "namespace": "scalablemine-stu208763-monitor",
     "prometheusEnabled": true,
     "energyMonitorEnabled": false
   },
   "kafka": {
     "enabled": true,
+    "namespace": "scalablemine-stu208763-kafka",
     "clusterName": "power",
     "brokerReplicas": 1,
     "zookeeperReplicas": 1,
@@ -23,10 +26,12 @@
     ]
   },
   "load": {
+    "namespace" : "scalablemine-stu208763-load",
     "inputTopic": "input",
     "intensity": 1
   },
   "sut": {
+    "namespace" : "scalablemine-stu208763-sut",
     "topics": {
       "model": "model"
     }

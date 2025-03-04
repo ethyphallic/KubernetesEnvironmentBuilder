@@ -1,11 +1,10 @@
 local podChoas = import 'pod-chaos.jsonnet';
 local networkChaos = import 'network-chaos.jsonnet';
-local identifier = std.extVar('ID');
-local infraNamespace = "scalablemine-" + identifier + "-infra";
+local config = import '../../config.json';
 
 local podFailure = podChoas.podFailure(
     duration='5s',
-    namespace=infraNamespace,
+    namespace=config.infra.namespace,
     labelSelector={"strimzi.io/name": "power-kafka"}
 );
 

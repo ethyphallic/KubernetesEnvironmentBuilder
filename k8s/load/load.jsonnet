@@ -1,4 +1,4 @@
-local global = import '../../global.jsonnet';
+local global = import '../global.jsonnet';
 
 {
    loadDefDeployment(namespace):: {

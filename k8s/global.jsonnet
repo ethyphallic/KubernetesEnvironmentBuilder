@@ -1,5 +1,5 @@
-local config = import 'config.json';
+local config = import '../config.json';
 
 {
-    bootstrapServer: config.kafka.clusterName + "-kafka-bootstrap.kafka.svc:9092"
+    bootstrapServer: config.kafka.clusterName + "-kafka-bootstrap." + config.kafka.namespace + ".svc:9092"
 }
