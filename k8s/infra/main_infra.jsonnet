@@ -8,7 +8,7 @@ local podFailure = podChoas.podFailure(
     labelSelector={"strimzi.io/name": "power-kafka"}
 );
 
-local networkDelay = networkChaos.networkDelay(10);
+local networkDelay = networkChaos.networkDelay(10 , [ config.sut.namespace ] );
 
 {
     "build/chaos/pod-failure.json": podFailure,
