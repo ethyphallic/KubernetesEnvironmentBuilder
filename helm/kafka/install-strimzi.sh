@@ -1,6 +1,7 @@
-ID=$1
-if [ -z $ID ]; then
-  echo "No argument supplied"
-else
-  helm install kafka-operator oci://quay.io/strimzi-helm/strimzi-kafka-operator --set createGlobalResources=false --skip-crds -n scalablemine-$ID-kafka
+DIR="$(dirname "$0")"
+NAMESPACE=$(cat $DIR/../../config.json | jq .kafka.namespace)
+if [ -z $NAMESPACE ]; then
+  echo "No namespace set in config.json"
+  exit 1
 fi
+helm install kafka-operator oci://quay.io/strimzi-helm/strimzi-kafka-operator --set createGlobalResources=false --skip-crds -n $NAMESPACE
