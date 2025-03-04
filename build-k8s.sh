@@ -11,6 +11,15 @@ mkdir -p "$DIR/build/load/sink"
 mkdir -p "$DIR/build/chaos"
 mkdir -p "$DIR/build/monitor"
 
-# Note: MSYS_NO_PATHCONV=1 will be ignored by Linux / Mac | Used for Windows (Git Bash)
-MSYS_NO_PATHCONV=1 docker run --rm --name jsonnet -v $DIR:/src \
-    syseleven/jsonnet-builder -m . k8s/main.jsonnet
+JSONNET_PRESENT=$(command -v jsonnet >/dev/null 2>&1)
+if $JSONNET_PRESENT; then
+    # Use locally present jsonnet (Also used in the interactive docker container)
+    echo "Using local jsonnet installation"
+    jsonnet -m $DIR $DIR/k8s/main.jsonnet
+else
+    # Try jsonnet builder in docker
+    echo "Using docker jsonnet installation"
+    # Note: MSYS_NO_PATHCONV=1 will be ignored by Linux / Mac | Used for Windows (Git Bash)
+    MSYS_NO_PATHCONV=1 docker run --rm --name jsonnet -v $DIR:/src \
+        syseleven/jsonnet-builder -m . k8s/main.jsonnet
+fi
