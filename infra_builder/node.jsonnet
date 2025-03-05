@@ -77,7 +77,8 @@
     topic,
     sendInterval="1",
     memory="128Mi",
-    cpu="500m"
+    cpu="500m",
+    keyStart=0
   ):: {
     apiVersion: "apps/v1",
     kind: "StatefulSet",
@@ -149,6 +150,10 @@
                 {
                   name: "SEND_INTERVAL",
                   value: sendInterval
+                },
+                {
+                  name: "KEY",
+                  value: "%s-%s" %[keyStart,keyStart+4]
                 }
               ],
               resources: {

@@ -2,7 +2,8 @@ from experiment_runner.sink.slo_sink import SloSink
 
 class SloViolationScoreSink(SloSink):
 
-    def __init__(self):
+    def __init__(self, is_monitor_sink):
+        super().__init__(is_monitor_sink)
         self.score: float = 0.0
         self.score_count = 0
 
@@ -17,6 +18,9 @@ class SloViolationScoreSink(SloSink):
                 violation_score = 1 - (threshold / value)
                 self.score = self.score + violation_score
         return True
+
+    def is_monitor_sink(self):
+        return False
 
     def get_score(self) -> float:
         return self.score / self.score_count

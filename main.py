@@ -23,18 +23,23 @@ def query_registry():
 if __name__ == '__main__':
     queries = query_registry()
 
-    slos = dict()
-    latency_score_sink = SloViolationScoreSink()
-    accuracy_score_sink = SloViolationScoreSink()
-    slos[SLO(queries["latency"], 30, False)] = [latency_score_sink, SloValuePrinterSink("Latency")]
-    slos[SLO(queries["accuracy"], 0.75, True)] = [accuracy_score_sink, SloValuePrinterSink("Accuracy")]
+    slo_sinks = dict()
+    latency_slo = SLO(queries["latency"], 5, False)
+    accuracy_slo = SLO(queries["accuracy"], 0.75, True)
+
+    latency_score_sink = SloViolationScoreSink(is_monitor_sink=False)
+    accuracy_score_sink = SloViolationScoreSink(is_monitor_sink=False)
+    latency_printer_sink = SloValuePrinterSink("Latency", True)
+    accuracy_printer_sink = SloValuePrinterSink("Accuracy", True)
+
+    slo_sinks[latency_slo] = [latency_score_sink, latency_printer_sink]
+    slo_sinks[accuracy_slo] = [accuracy_score_sink, accuracy_printer_sink]
 
     Scenario(
-        slos=slos,
+        slo_sinks=slo_sinks,
         duration=60,
         load_generator_delay=30,
-        evaluation_delay=60,
-        infra_transitions=[],
+        evaluation_delay=10,
         mode=ModeFullExperimentRun()
     ).run()
 

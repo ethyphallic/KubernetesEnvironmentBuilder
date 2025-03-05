@@ -1,0 +1,63 @@
+apiVersion: astrolabe.github.com/v1
+kind: Astrolabe
+metadata:
+  labels:
+    app.kubernetes.io/name: astrolabe
+    app.kubernetes.io/managed-by: kustomize
+  name: astrolabe-sample
+  namespace: scalablemine-hkr-sut
+spec:
+  jobs:
+    - selector:
+        matchLabels:
+          "app": "worker0"
+      template:
+        metadata:
+          name: system32
+          labels:
+            "app": "worker0"
+        spec:
+          containers:
+            - env:
+              - name: BOOTSTRAP_SERVER
+                value: power-kafka-bootstrap.scalablemine-hkr-kafka.svc:9092
+              - name: TOPICS
+                value: dog-input
+              - name: MODEL_DEPTH
+                value: '101'
+              - name: METRICS_WINDOW_SIZE
+                value: "50"
+              image: hendrikreiter/object_classifier
+              imagePullPolicy: Always
+              name: worker0
+              ports:
+                - containerPort: 80
+                  name: web
+                - containerPort: 5000
+                  name: metrics
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 2Gi
+                requests:
+                  cpu: '1'
+                  memory: 2Gi
+          nodeSelector:
+            "kubernetes.io/hostname": "kube1-4"
+  prometheus:
+    address: http://kube1-1
+    port: 30920
+  actions:
+    - type: replica
+      min: 5
+      max: 10
+  metrics:
+    - name: latency
+      type: prometheus
+      aggregation: sum
+      query: avg(latency)
+  slos:
+    - metric: latency
+      evaluation: geq
+      threshold: 10
+      weight: 100

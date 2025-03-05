@@ -9,17 +9,20 @@ local podMonitor = import 'podmonitor.jsonnet';
 local new_config = import 'scenario/01_base.json';
 local data_node_config = new_config.data;
 local kafka_topic = import '../k8s/kafka/kafka-topic.jsonnet';
+local autoscaler = import 'autoscaler.jsonnet';
 
 local data_node_names = std.objectFields(data_node_config);
+local i = 0;
 local data_nodes = [
-    local data_node_def = std.get(data_node_config, data_node_name);
+    local data_node_def = std.get(data_node_config, data_node_names[i]);
     nodeBuilder.buildDataNode(
-        appName=data_node_name,
+        appName=data_node_names[i],
         appLabel=data_node_def.location,
         bootstrapServer=global.bootstrapServer,
         topic=topic_name,
-        sendInterval=data_node_def.sendRate
-    ) for data_node_name in data_node_names
+        sendInterval=data_node_def.sendRate,
+        keyStart=i
+    ) for i in std.length(data_node_names)
 ];
 
 local topology = new_config.topology;
@@ -91,5 +94,6 @@ local memory_stressor_manifests   = { ["build/infra/memory_stressor-%s.json" %[i
 local worker_manifests   = { ["build/sut/worker-%s.json" %[i]] : worker_nodes[i] for i in std.range(0, std.length(worker_nodes) - 1) };
 local worker_pod_monitor_manifests   = { ["build/monitor/podmonitor-%s.json" %[i]] : pod_monitors[i] for i in std.range(0, std.length(pod_monitors) - 1) };
 local kafka_topic_manifest = { ["build/kafka/kafka_topic.json"]: topic };
+local hpa_manifest = { ["build/sut/hpa.json"]: autoscaler.getHpa("worker0") };
 
-data_node_manifests + network_manifests + cpu_stressor_manifests + memory_stressor_manifests + worker_manifests + worker_pod_monitor_manifests + kafka_topic_manifest
+data_node_manifests + network_manifests + cpu_stressor_manifests + memory_stressor_manifests + worker_manifests + worker_pod_monitor_manifests + kafka_topic_manifest + hpa_manifest
