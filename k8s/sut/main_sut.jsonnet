@@ -1,20 +1,25 @@
 local flink = import 'flink.jsonnet';
 local global = import '../../global.jsonnet';
 local config = import '../../config.json';
+local sutConfig = import '../../sut-config.json';
+local worker_node_builder = import 'object_classifier.jsonnet';
+local topic_name = "dog-input";
+local build = import '../util/build-util.jsonnet';
 
-local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
-    namespace = "sut",
-    bootstrapServer = global.bootstrapServer,
-    inputTopic = config.load.inputTopic,
-    modelTopic = config.sut.topics.model,
-    group = "heuristics-miner",
-    parallelism = "1",
-    sampleSize = "200",
-    batchSize = "100",
-    andThreshold = "0.5",
-    dependencyThreshold = "0.5"
+local sut = config.sut;
+
+local flinkDeployment = flink.buildFromConfig(
+    config=std.get(sutConfig, "flink"),
+    inputTopic=config.load.inputTopic,
+    bootstrapServer=global.bootstrapServer
 );
 
-{
-    "build/sut/flink-deployment.json": flinkDeployment
-}
+local worker_nodes = worker_node_builder.buildFromConfig(
+    std.get(sutConfig, "objectClassifier"),
+    global.bootstrapServer,
+    topic_name
+);
+
+if sut == "flink" then build.buildManifest("sut", "flink", flinkDeployment)
+else if sut == "objectClassifier" then build.buildManifests("sut", "object-classifier", worker_nodes)
+else error "System under test not found. Is there a typo?"

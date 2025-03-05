@@ -1,5 +1,6 @@
 local config = import 'infra.json';
 local nodeBuilder = import 'node.jsonnet';
+local worker_node_builder = import 'worker-node.jsonnet';
 local networkBuilder = import 'network.jsonnet';
 local stressorBuilder = import 'stressors.jsonnet';
 local global = import '../global.jsonnet';
@@ -12,7 +13,6 @@ local kafka_topic = import '../k8s/kafka/kafka-topic.jsonnet';
 local autoscaler = import 'autoscaler.jsonnet';
 
 local data_node_names = std.objectFields(data_node_config);
-local i = 0;
 local data_nodes = [
     local data_node_def = std.get(data_node_config, data_node_names[i]);
     nodeBuilder.buildDataNode(
@@ -21,8 +21,8 @@ local data_nodes = [
         bootstrapServer=global.bootstrapServer,
         topic=topic_name,
         sendInterval=data_node_def.sendRate,
-        keyStart=i
-    ) for i in std.length(data_node_names)
+        keyStart=20*i
+    ) for i in std.range(0, std.length(data_node_names) - 1)
 ];
 
 local topology = new_config.topology;
@@ -68,7 +68,7 @@ local memory_stressor_definitions = [
 local worker_node_definition = new_config.system;
 local worker_nodes = [
     local worker_node_def = std.get(worker_node_definition, worker_node);
-    nodeBuilder.build(
+    worker_node_builder.build(
         appName=worker_node,
         locationLabel=worker_node_def.location,
         memory=worker_node_def.ram,

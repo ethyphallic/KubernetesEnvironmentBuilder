@@ -1,6 +1,22 @@
 local appName = "heuristics-miner-flink";
 
 {
+  buildFromConfig(
+    config,
+    inputTopic,
+    bootstrapServer
+  ):: $.heuristicsMinerFlinkDeployment(
+    namespace = "sut",
+    bootstrapServer = bootstrapServer,
+    inputTopic = inputTopic,
+    modelTopic = config.topics.model,
+    group = "heuristics-miner",
+    parallelism = "1",
+    sampleSize = "200",
+    batchSize = "100",
+    andThreshold = "0.5",
+    dependencyThreshold = "0.5"
+  ),
   heuristicsMinerFlinkDeployment(
       namespace,
       bootstrapServer,

@@ -1,5 +1,5 @@
 {
-  "infra" : {
+  "infra": {
     "chaosMeshEnabled": true
   },
   "monitor": {
@@ -25,9 +25,5 @@
     "inputTopic": "input",
     "intensity": 1
   },
-  "sut": {
-    "topics": {
-      "model": "model"
-    }
-  }
+  "sut": "objectClassifier"
 }
