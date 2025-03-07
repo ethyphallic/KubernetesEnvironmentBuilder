@@ -14,12 +14,15 @@ local flinkDeployment = flink.buildFromConfig(
     bootstrapServer=global.bootstrapServer
 );
 
-local worker_nodes = worker_node_builder.buildFromConfig(
-    std.get(sutConfig, "objectClassifier"),
-    global.bootstrapServer,
-    topic_name
+local objectClassifierNodes = build.iterateOver(
+  definition = std.get(sutConfig, "objectClassifier"),
+  externalParameter={
+    bootstrapServer: global.bootstrapServer,
+    topic: topic_name
+  },
+  buildFunction=worker_node_builder.build
 );
 
 if sut == "flink" then build.buildManifest("sut", "flink", flinkDeployment)
-else if sut == "objectClassifier" then build.buildManifests("sut", "object-classifier", worker_nodes)
+else if sut == "objectClassifier" then build.buildManifests("sut", "object-classifier", objectClassifierNodes)
 else error "System under test not found. Is there a typo?"

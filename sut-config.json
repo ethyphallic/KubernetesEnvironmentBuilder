@@ -1,17 +1,17 @@
 {
   "objectClassifier": {
     "worker0": {
-      "ram": "1Gi",
+      "memory": "1Gi",
       "cpu": "1",
       "replicas": 2,
-      "location": "node1",
+      "locationLabel": "node1",
       "modelDepth": "101"
     },
     "worker1": {
-      "ram": "1Gi",
+      "memory": "1Gi",
       "cpu": "1",
       "replicas": 1,
-      "location": "node2",
+      "locationLabel": "node2",
       "modelDepth": "50"
     }
   },

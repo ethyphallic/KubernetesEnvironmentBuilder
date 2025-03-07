@@ -1,6 +1,25 @@
 {
   "infra": {
-    "chaosMeshEnabled": true
+    "chaosMeshEnabled": true,
+    "topology": {
+      "node0": {
+        "network": {
+          "node1": {
+            "latency": "500"
+          },
+          "node2": {
+            "latency": "200"
+          }
+        }
+      },
+      "node1": {
+        "network": {
+          "node2": {
+            "latency": "300"
+          }
+        }
+      }
+    }
   },
   "monitor": {
     "prometheusEnabled": true,
@@ -23,7 +42,21 @@
   },
   "load": {
     "inputTopic": "input",
-    "intensity": 1
+    "intensity": 1,
+    "data": {
+      "data0": {
+        "sendRate": "3",
+        "location": "node1"
+      },
+      "data1": {
+        "sendRate": "1",
+        "location": "node2"
+      },
+      "data2": {
+        "sendRate": "1",
+        "location": "node3"
+      }
+    }
   },
   "sut": "objectClassifier"
 }
