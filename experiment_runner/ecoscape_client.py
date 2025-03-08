@@ -18,6 +18,7 @@ class EcoscapeClient:
 
     def delete_sut(self):
         self.k8s_client.delete_directory(self.base_dir + "/sut")
+        self.k8s_client.delete_directory(self.base_dir + "/kafka")
 
     def apply_infra(self):
         self.k8s_client.create_directory(self.base_dir + "/infra")

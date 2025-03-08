@@ -11,7 +11,7 @@ class QueryProcessingLatency(Query):
         return f"processing_latency"
 
     def execute(self):
-        result = self.prometheus_connection.custom_query(f"avg(latency)")
+        result = self.prometheus_connection.custom_query(f"avg(latency!=0)")
         if result:
             return float(value_from_prometheus_result(result))
         else:

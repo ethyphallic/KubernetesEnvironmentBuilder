@@ -20,7 +20,7 @@ class SloViolationScoreSink(SloSink):
         return True
 
     def is_monitor_sink(self):
-        return False
+        return super().is_monitor_sink()
 
     def get_score(self) -> float:
         return self.score / self.score_count

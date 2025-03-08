@@ -10,6 +10,8 @@ from argparse import ArgumentParser
 from experiment_runner.scenario import Scenario, SLO
 from experiment_runner.sink.slo_value_printer_sink import SloValuePrinterSink
 from experiment_runner.sink.slo_violation_score_sink import SloViolationScoreSink
+from experiment_runner.sink.slo_visualizer_sink import SloVisualizerSink
+
 
 def query_registry():
     prometheus_connection = PrometheusConnect(url="http://kube1-1:30920")
@@ -36,9 +38,11 @@ if __name__ == '__main__':
     accuracy_score_sink = SloViolationScoreSink(is_monitor_sink=False)
     latency_printer_sink = SloValuePrinterSink("Latency", True)
     accuracy_printer_sink = SloValuePrinterSink("Accuracy", True)
+    latency_visualizer_sink = SloVisualizerSink("Latency", False)
+    accuracy_visualizer_sink = SloVisualizerSink("Accuracy", False)
 
-    slo_sinks[latency_slo] = [latency_score_sink, latency_printer_sink]
-    slo_sinks[accuracy_slo] = [accuracy_score_sink, accuracy_printer_sink]
+    slo_sinks[latency_slo] = [latency_score_sink, latency_printer_sink, latency_visualizer_sink]
+    slo_sinks[accuracy_slo] = [accuracy_score_sink, accuracy_printer_sink, accuracy_visualizer_sink]
 
     argument_parser = ArgumentParser(description="Ecoscape")
     argument_parser.add_argument("--duration", type=int, help="experiment duration")
@@ -53,8 +57,9 @@ if __name__ == '__main__':
         Scenario(
             slo_sinks=slo_sinks,
             duration=arg_or_default(args.duration, 30),
-            load_generator_delay=arg_or_default(args.load_delay, 30),
-            evaluation_delay=arg_or_default(args.eval_delay, 15),
+            load_generator_delay=arg_or_default(args.load_delay, 20),
+            evaluation_delay=arg_or_default(args.eval_delay, 10),
+            infra_split=0.5,
             mode=ModeFullExperimentRun()
         ).run()
 
@@ -62,4 +67,6 @@ if __name__ == '__main__':
     print(accuracy_score_sink.get_score())
     aggregator = WeightedSloAggregator([latency_score_sink, accuracy_score_sink], [0.5, 0.5])
     print(aggregator.get_aggregated_score())
+    latency_visualizer_sink.save()
+    accuracy_visualizer_sink.save()
 

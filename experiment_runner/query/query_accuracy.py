@@ -10,7 +10,7 @@ class QueryAccuracy(Query):
         return f"accuracy"
 
     def execute(self):
-        result = self.prometheus_connection.custom_query(f"avg(accuracy)")
+        result = self.prometheus_connection.custom_query(f"avg(accuracy!=0)")
         if result:
             return float(value_from_prometheus_result(result))
         else:

@@ -35,6 +35,7 @@ class Scenario:
         print("Evaluation starts")
         for i in range(self.chaos_delay):
             self._evaluate_slos(is_evaluation_phase=True)
+
         self.ecoscape_client.apply_chaos()
         for i in range(self.duration - self.chaos_delay):
             self._evaluate_slos(is_evaluation_phase=True)
@@ -44,7 +45,7 @@ class Scenario:
         for slo in self.slo_sinks:
             value = slo.get_value()
             for slo_sink in self.slo_sinks[slo]:
-                if is_evaluation_phase or slo_sink.is_monitor_sink():
+                if is_evaluation_phase or slo_sink.is_monitor_sink:
                     slo_sink.evaluate_slo(value, slo.get_threshold(), slo.is_bigger_better)
         sleep(1)
 
@@ -57,10 +58,7 @@ class Scenario:
             self.run_experiment()
         except KeyboardInterrupt:
             print("program has been ended by user")
-        except Exception as e:
-            print("program failed")
-            print(e)
         self.ecoscape_client.stop_load()
-        self.ecoscape_client.apply_infrastructure_constraints()
+        self.ecoscape_client.delete_infrastructure_constraints()
         self.ecoscape_client.remove_sut()
         print("end")

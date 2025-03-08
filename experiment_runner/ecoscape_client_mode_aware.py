@@ -44,7 +44,7 @@ class EcoscapeClientModeAware:
     def delete_infrastructure_constraints(self):
         if self.mode.is_apply_infrastructure_constraints():
             print("Deleting infrastructure constraints")
-            self.ecoscape_client.apply_infra()
+            self.ecoscape_client.delete_infra()
 
     def apply_chaos(self):
         if self.mode.is_apply_chaos():

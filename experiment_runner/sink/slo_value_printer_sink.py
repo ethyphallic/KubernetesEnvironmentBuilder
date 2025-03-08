@@ -8,3 +8,7 @@ class SloValuePrinterSink(SloSink):
 
     def evaluate_slo(self, value, threshold, is_bigger_better):
         print(f"{self.name}: {value}")
+
+    def is_monitor_sink(self):
+        return super().is_monitor_sink()
+

@@ -20,6 +20,7 @@
           }
         },
         config: {
+          "auto.create.topics.enable": false,
           "default.replication.factor": std.min(brokerReplicas, 3),
           "inter.broker.protocol.version": "3.8",
           "min.insync.replicas": std.min(brokerReplicas, 2),
