@@ -1,4 +1,7 @@
 {
+  "context" : {
+    "cluster" : "kube1-1"
+  },
   "infra" : {
     "namespace": "scalablemine-stu208763-infra",
     "chaosMeshEnabled": true

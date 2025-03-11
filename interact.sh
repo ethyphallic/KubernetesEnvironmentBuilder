@@ -1,6 +1,16 @@
 ### KUBERNETES ###
 export DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+# Helper function to load and check variables from the config.json file
+check_config() {
+  VAR=$(cat $DIR/config.json | jq -r "$1")
+  if [ -z "$VAR" ] || [ "$VAR" == null ]; then
+    echo "$1 not set in configuration file" >&2
+    return 1
+  fi
+  echo $VAR
+}
+
 alias k=kubectl
 function kn() {
   kubectl get ns ; echo
@@ -21,25 +31,21 @@ function build() {
 
 ### MONITOR ###
 function prometheus() {
-  NAMESPACE=$(cat $DIR/config.json | jq .monitor.namespace)
-  if [ -z $NAMESPACE ]; then
-    echo "No namespace set in config.json"
-    exit 1
-  fi
+  CONTEXT=$(check_config .context.cluster) || return 1
+  NAMESPACE=$(check_config .monitor.namespace) || return 1
+
   export PROMETHEUS_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-kube-prometheus-prometheus)
-  export PROMETHEUS_URL="kube1-1:${PROMETHEUS_NODE_PORT}"
+  export PROMETHEUS_URL="$CONTEXT:${PROMETHEUS_NODE_PORT}"
   echo "Prometheus url: $PROMETHEUS_URL"
 }
 
 function grafana() {
-  NAMESPACE=$(cat $DIR/config.json | jq .monitor.namespace)
-  if [ -z $NAMESPACE ]; then
-    echo "No namespace set in config.json"
-    exit 1
-  fi
+  CONTEXT=$(check_config .context.cluster) || return 1
+  NAMESPACE=$(check_config .monitor.namespace) || return 1
+
   $DIR/helm/monitor/build-grafana-dashboards.sh
   export GRAFANA_NODE_PORT=$(kubectl get --namespace $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
-  export GRAFANA_URL=kube1-1:$GRAFANA_NODE_PORT
+  export GRAFANA_URL=$CONTEXT:$GRAFANA_NODE_PORT
   GRAFANA_PORT=$1
   if [ -z $1 ]; then
     GRAFANA_PORT=9091
@@ -56,11 +62,8 @@ function run() {
 }
 
 function stop_load() {
-    NAMESPACE=$(cat $DIR/config.json | jq .load.namespace)
-    if [ -z $NAMESPACE ]; then
-      echo "No namespace set in config.json"
-      exit 1
-    fi
+    NAMESPACE=$(check_config .load.namespace) || return 1
+
     kubectl delete cm def-datasource -n $NAMESPACE
     kubectl delete cm def-load -n $NAMESPACE
     kubectl delete cm def-sink -n $NAMESPACE
@@ -68,11 +71,8 @@ function stop_load() {
 }
 
 function start_load() {
-    NAMESPACE=$(cat $DIR/config.json | jq .load.namespace)
-    if [ -z $NAMESPACE ]; then
-      echo "No namespace set in config.json"
-      exit 1
-    fi
+    NAMESPACE=$(check_config .load.namespace) || return 1
+
     kubectl create cm def-datasource --from-file $DIR/build/load/datasource -n $NAMESPACE
     kubectl create cm def-load --from-file $DIR/build/load/load -n $NAMESPACE
     kubectl create cm def-sink --from-file $DIR/build/load/sink -n $NAMESPACE
@@ -96,32 +96,22 @@ function kafka_destroy() {
 }
 
 function kafka_operator_restart() {
-  NAMESPACE=$(cat $DIR/config.json | jq .kafka.namespace)
-  if [ -z $NAMESPACE ]; then
-    echo "No namespace set in config.json"
-    exit 1
-  fi
+  NAMESPACE=$(check_config .kafka.namespace) || return 1
   kubectl delete pod -l name=strimzi-cluster-operator -n $NAMESPACE
 }
 
 function kafka() {
-  NAMESPACE=$(cat $DIR/config.json | jq .kafka.namespace)
-  if [ -z $NAMESPACE ]; then
-    echo "No namespace set in config.json"
-    exit 1
-  fi
+  CONTEXT=$(check_config .context.cluster) || return 1
+  NAMESPACE=$(check_config .kafka.namespace) || return 1
   export BOOTSTRAP_URL=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services power-kafka-external-bootstrap)
-  echo "Kafka bootstrap server url: kube1-1:$BOOTSTRAP_URL"
+  echo "Kafka bootstrap server url: $CONTEXT:$BOOTSTRAP_URL"
 }
 
 function kafka_ui() {
-  NAMESPACE=$(cat $DIR/config.json | jq .kafka.namespace)
-  if [ -z $NAMESPACE ]; then
-    echo "No namespace set in config.json"
-    exit 1
-  fi
+  CONTEXT=$(check_config .context.cluster) || return 1
+  NAMESPACE=$(check_config .kafka.namespace) || return 1
   export KAFKA_UI_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
-  export KAFKA_UI_URL=kube1-1:$KAFKA_UI_NODE_PORT
+  export KAFKA_UI_URL=$CONTEXT:$KAFKA_UI_NODE_PORT
   echo "Kafka-UI url: $KAFKA_UI_URL"
 }
 
