@@ -23,9 +23,11 @@ RUN apt-get update && apt-get install -y \
     # Install jsonnet
     && go install github.com/google/go-jsonnet/cmd/jsonnet@latest \
     # Cleanup
+    && apt-get purge -y golang-go \
+    && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /root/.cache /tmp/* /var/tmp/* \
-    && rm -rf /root/go/pkg /root/go/bin/*jsonnet /root/go/src/* \
+    && rm -rf /root/go/pkg /root/go/src/* \
     && rm -rf /root/.kube
 
 ENV PATH="/root/go/bin:${PATH}"
