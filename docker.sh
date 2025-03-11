@@ -19,7 +19,7 @@ else
     echo Found image with name $IMAGE_NAME
   else
     echo Image $IMAGE_NAME not found, building ...
-    docker build -t $IMAGE_NAME .
+    docker build -t $IMAGE_NAME $DIR
   fi
 
   # > Build container
