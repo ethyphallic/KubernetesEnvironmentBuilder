@@ -29,4 +29,6 @@ WORKDIR /app
 
 COPY . /app
 
+RUN echo "source /app/interact.sh" >> ~/.bashrc
+
 ENTRYPOINT [ "/bin/bash" ]
