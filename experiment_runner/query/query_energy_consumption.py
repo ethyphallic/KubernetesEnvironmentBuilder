@@ -1,4 +1,7 @@
+from prometheus_api_client import PrometheusConnect
+
 from experiment_runner.query.query import Query
+from experiment_runner.query.query_util import value_from_prometheus_result
 
 
 class QueryEnergyConsumption(Query):
@@ -6,10 +9,18 @@ class QueryEnergyConsumption(Query):
         self.prometheus_connection = prometheus_connection
 
     def get_name(self):
-        return "cpu_energy_consumption"
+        return "energy_consumption"
 
     def get_query_string(self):
-        return "sum by (pod_name, container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~'kafka', pod_name=~'power-kafka-0'}[1m]))"
+        return ("sum(irate(kepler_container_dram_joules_total{pod_name=~'object-recognition.*'}[1m])) + sum(irate(kepler_container_package_joules_total{ pod_name=~'object-recognition.*'}[1m]))  + sum(irate(kepler_container_other_joules_total{ pod_name=~'object-recognition.*'}[1m]))")
 
     def execute(self):
-        return float(self.prometheus_connection.custom_query("sum by (pod_name, container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~'kafka', pod_name=~'power-kafka-0'}[1m]))")[0]["value"][1])
+        result = self.prometheus_connection.custom_query(self.get_query_string())
+        if result:
+            return (float(value_from_prometheus_result(result)))
+        else:
+            return -1
+
+if __name__ == '__main__':
+    q = QueryEnergyConsumption(PrometheusConnect(url="http://kube1-1:30920"))
+    print(q.execute())

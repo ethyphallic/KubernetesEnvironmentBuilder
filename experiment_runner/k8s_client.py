@@ -1,5 +1,7 @@
 import os
 import pathlib
+import traceback
+
 import kubernetes
 import yaml
 from kubernetes.config import load_config
@@ -48,9 +50,11 @@ class K8sClient:
             filenames = os.listdir(directory)
             for filename in filenames:
                 full_path = os.path.join(directory, filename)  # get the full path.
-                if os.path.isfile(full_path):  # check if it is a file.
-                    self.apply_yaml(full_path, is_delete=is_delete)  # pass the full path to the process_file function.
-
+                if os.path.isfile(full_path): # check if it is a file.
+                    try:
+                        self.apply_yaml(full_path, is_delete=is_delete)  # pass the full path to the process_file function.
+                    except Exception as e:
+                        traceback.print_exc()
         except FileNotFoundError:
             print(f"Directory not found: {directory}")
 

@@ -11,10 +11,10 @@ class MockSlo(SLO):
 class SloViolationScoreSinkTest:
     def __init__(self):
         super().__init__()
-        self.testee = SloViolationScoreSink()
+        self.testee = SloViolationScoreSink(False)
 
     def test(self):
-        self.testee.evaluate_slo(MockSlo(None, 3, False))
+        self.testee.evaluate_slo(100000000, 3, False)
         print(self.testee.get_score())
 
 if __name__ == '__main__':

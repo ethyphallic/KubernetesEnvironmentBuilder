@@ -3,17 +3,17 @@ from time import sleep
 from experiment_runner.ecoscape_client import EcoscapeClient
 from experiment_runner.mode.mode import Mode
 
-class EcoscapeClientModeAware:
+class EcoscapeClientModeAware():
 
     def __init__(
         self,
         mode: Mode,
-        base_dir: str,
         load_generation_delay: int,
-        infra_delay: int
+        infra_delay: int,
+        ecoscape_client: EcoscapeClient
     ):
         self.mode = mode
-        self.ecoscape_client = EcoscapeClient(base_dir)
+        self.ecoscape_client = ecoscape_client
         self.load_generation_delay = load_generation_delay
         self.infra_delay = infra_delay
 

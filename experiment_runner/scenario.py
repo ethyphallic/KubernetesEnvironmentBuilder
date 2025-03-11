@@ -1,7 +1,8 @@
 from time import sleep
 from typing import Dict, List
+
+from experiment_runner.ecoscape_client import EcoscapeClient
 from experiment_runner.ecoscape_client_mode_aware import EcoscapeClientModeAware
-from experiment_runner.mode.mode import Mode, ModeFullExperimentRun
 from experiment_runner.sink.slo_sink import SloSink
 from experiment_runner.slo import SLO
 
@@ -10,30 +11,22 @@ class Scenario:
         self,
         duration,
         slo_sinks: Dict[SLO, List[SloSink]],
-        load_generator_delay,
-        mode: Mode=ModeFullExperimentRun(),
-        infra_split = 0,
-        chaos_split = 0,
+        ecoscape_client: EcoscapeClientModeAware,
+        chaos_split = 0.25,
         evaluation_delay=30
     ):
         self.slo_sinks: Dict[SLO, List[SloSink]] = slo_sinks
         self.evaluation_delay = evaluation_delay
         self.duration = duration
-        self.chaos_delay = chaos_split * duration
-
-        self.ecoscape_client = EcoscapeClientModeAware(
-            mode,
-            "infra_builder/build",
-            load_generation_delay=load_generator_delay,
-            infra_delay=infra_split * load_generator_delay
-        )
+        self.chaos_delay = int(chaos_split * duration)
+        self.ecoscape_client = ecoscape_client
 
     def run_experiment(self):
         print(f"Wait {self.evaluation_delay} seconds until evaluation starts")
         for i in range(self.evaluation_delay):
             self._evaluate_slos(is_evaluation_phase=False)
         print("Evaluation starts")
-        for i in range(self.chaos_delay):
+        for i in range(int(self.chaos_delay)):
             self._evaluate_slos(is_evaluation_phase=True)
 
         self.ecoscape_client.apply_chaos()
