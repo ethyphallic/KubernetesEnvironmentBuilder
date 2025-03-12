@@ -1,34 +1,57 @@
 # Installation Guide
-
-First install the following programs: 
-- [minikube](https://kubernetes.io/de/docs/tasks/tools/install-minikube/)
+This project provides a local and an interactive docker container experience.
+## Local
+Please install the following programs:
 - [helm](https://helm.sh/docs/intro/install/) 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
+Additionally, for setting up a local Kubernetes cluster, we recommend using [minikube](https://kubernetes.io/de/docs/tasks/tools/install-minikube/).
 
-# Build steps 
+## Interactive Docker Container
+All necessary tools are pre-installed in the Docker container
 
-1. Start minikube
+Execute the following script to build the image and start the interactive Docker container:
+```bash
+./docker.sh
+```
+If a container already exists, the script will either start or attach to it.
+
+This will mount the project as well as the `~/.kube/config` file into the docker container and therefore the installation of [kubectl](https://kubernetes.io/docs/tasks/tools/) is recommended to have a valid `~/.kube/config` file.
+
+Edits outside of the docker container are reflected through the mount and vice versa. Additionally, the docker container has access to any cluster, that your system has access to.
+
+# Build steps
+## Minikube
+1. **Start minikube**
 ```bash
 minikube start --memory 8192 --cpus 2
 ```
 
-Then create a dns name for minikube.
+2. **DNS**  
+Then create a DNS entry for minikube.
 ```shell
 sudo -- sh -c -e "echo '$(minikube ip) minikube' >> /etc/hosts"
 ```
 
-2. Install the Kubernetes operators using helm
+## General
+The following steps build the necessary files for the cluster and apply them.
+
+0. **Config**  
+Please ensure all values in the `config.json` file are up to date and match your needs, as these will be used in the following steps
+
+1. **Kubernetes Operators**  
+Install the necessary Kubernetes operators using Helm:
 ```bash
 helm/build-helm.sh
 ```
 
-3. Build Kubernetes resource files
+2. **Resource Files**  
+Generate the Kubernetes resource files:
 ```bash
 ./build-k8s.sh
 ```
 
-4. Build kafka resources. 
+3. **Build kafka resources.**  
 ```bash
 kubectl apply -f build/kafka
 ```
@@ -38,18 +61,41 @@ You can monitor them by running:
 kubectl get pods -n kafka -w
 ```
 
-To interact with the cluster you can source the `interact.sh` script in your shell. 
-Then you have access to additional interaction commands.
+# Helpful tools
+To interact efficiently you can source the `interact.sh` script in your shell.
 ```bash
 source interact.sh
 ```
+This grants you access to additional interaction commands.  
+In case you are using the interactive docker container, this step is automatically executed for you.
 
-In that shell you can now use some fancy commands:
-
-`kafka_ui`: Gives you the url to the Kafka-UI
-
-`grafana`: Gives you the url to your Grafana Dashboards
-
-`start_load`: Starts the load generator
-
-`stop_load`: Stops the load generator
+Provided Commands are :
+#### Alias
+- `k` - Alias for `kubectl`
+- `clip` - Alias for `xclip -selection clipboard`
+- `pclip`- Alias for `xclip -o -selection clipboard`
+- `yaml2json`- Alias for `yq e -o=json | sed -E 's/\"(\w+)\":/\1:/'`
+- `y2j` - Alias for `pclip | yaml2json | clip`
+#### Kubernetes
+- `kn` - Allows for a quick contexts switch between namespaces.
+  - If a prefix is set in `config.json` the resulting namespace is `$PREFIX-$ARGUMENT`. 
+  - If no argument was given the prefix is used as a namespace.
+- `build` - Shortcut for `./build-k8s.sh`
+- `get_clusters` - List all the contexts in your kubeconfig file
+- `sc` - Set the current-context in a kubeconfig file
+#### Monitoring
+- `prometheus` - Displays prometheus' url
+- `grafana` - Displays grafanas url as well as the login data
+#### Load Generator
+- `start_load` - Starts the load generator depicted in `build/load`
+- `stop_load` - Stops the load generator
+#### Chaos Mesh
+- `start_chaos` - Start the chaos mesh depicted in `build/chaos`
+- `stop_chaos` - Stops the chaos mesh
+- `delete_chaos` - Removes the chaos mesh from the cluster
+#### Kafka
+- `kafka_deploy` - Applies all kafka files in `build/kafka`
+- `kafka_destroy` - Removes all kafka applications depicted in `build/kafka`
+- `kafka_operator_restart` - Restarts the strimzi cluster operator
+- `kafka` - Displays the kafka bootstrap server url
+- `kafka_ui` - Displays kafka_ui's url
