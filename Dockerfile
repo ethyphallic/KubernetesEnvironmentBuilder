@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     golang-go \
+    # Helm specific:
+    && curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list \
     # Kubectl specific:
     && curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg \
     && chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg \
@@ -16,6 +19,8 @@ RUN apt-get update && apt-get install -y \
     # Install jq & nano
     jq \
     nano \
+    # Install helm
+    helm \
     # Install kubectl
     kubectl \
     # Install k9s
