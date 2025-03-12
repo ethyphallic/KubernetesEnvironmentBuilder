@@ -13,9 +13,28 @@ check_config() {
 
 alias k=kubectl
 function kn() {
+  PREFIX=$(check_config .context.prefix) || echo ""
+  if [ -z $1 ]; then
+    # No argument given
+    if [ ! -z "$PREFIX" ]; then
+      echo "No namespace given, loading default prefix"
+      NAMEPSACE=$PREFIX
+    else
+      echo "No namespace given" 
+      return 1
+    fi
+  else
+    # Argument given
+    if [ ! -z "$PREFIX" ]; then
+      NAMEPSACE="$PREFIX-$1"
+    else
+      NAMEPSACE="$1"
+    fi
+  fi
+  echo "Loaded namespace name: $NAMEPSACE"
   kubectl get ns ; echo
   if [[ "$#" -eq 1 ]]; then
-    kubectl config set-context --current --namespace $1 ; echo
+    kubectl config set-context --current --namespace $NAMEPSACE ; echo
   fi
   echo "Current namespace [ $(kubectl config view --minify | grep namespace | cut -d " " -f6) ]"
 }

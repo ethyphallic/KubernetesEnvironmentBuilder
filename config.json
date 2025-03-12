@@ -1,5 +1,6 @@
 {
   "context" : {
+    "prefix" : "scalablemine-stu208763",
     "cluster" : "kube1-1"
   },
   "infra" : {
