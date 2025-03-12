@@ -38,5 +38,7 @@ WORKDIR /app
 COPY . /app
 
 RUN echo "source /app/interact.sh" >> ~/.bashrc
+# Fix permission if not fixed already 
+RUN echo 'if [ ! -f "/tmp/.permissions-fixed" ]; then chmod -R a+w /app && touch /tmp/.permissions-fixed; fi' >> ~/.bashrc
 
 ENTRYPOINT [ "/bin/bash" ]
