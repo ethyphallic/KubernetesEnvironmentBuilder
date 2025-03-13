@@ -1,5 +1,5 @@
 {
-  kafkaCluster(clusterName, brokerReplicas, zookeeperReplicas, namespace):: {
+  kafkaCluster(clusterName, brokerReplicas, zookeeperReplicas, namespace, host):: {
     kind: "Kafka",
     apiVersion: "kafka.strimzi.io/v1beta2",
     metadata: {
@@ -43,7 +43,7 @@
             configuration: {
               brokers: [
                 {
-                  advertisedHost: "minikube",
+                  advertisedHost: host,
                   broker: i
                 }
                 for i in std.range(0, brokerReplicas-1)

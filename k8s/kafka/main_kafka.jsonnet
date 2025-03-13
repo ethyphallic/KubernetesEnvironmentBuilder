@@ -9,24 +9,25 @@ local kafkaCluster = kafka.kafkaCluster(
     clusterName=kafkaClusterName,
     brokerReplicas=config.kafka.brokerReplicas,
     zookeeperReplicas=config.kafka.zookeeperReplicas,
-    namespace=config.kafka.namespace
+    namespace=global.kafkaNamespace,
+    host=config.context.cluster
 );
 
 local kafkaExporterPodMonitor = kafka.kafkaExporterPodMonitor(
     clusterName=kafkaClusterName,
-    namespace=config.kafka.namespace
+    namespace=global.kafkaNamespace
 );
 
 local kafkaPodMonitor = kafka.kafkaPodMonitor(
     clusterName=kafkaClusterName,
-    namespace=config.kafka.namespace
+    namespace=global.kafkaNamespace
 );
 
-local kafkaMetricsConfigMap = kafka.kafkaMetricsConfigmap(config.kafka.namespace);
+local kafkaMetricsConfigMap = kafka.kafkaMetricsConfigmap(global.kafkaNamespace);
 
 {
     "build/kafka/kafka.json": kafkaCluster,
     "build/kafka/kafka-metrics-configmap.json": kafkaMetricsConfigMap,
     "build/kafka/kafka-exporter-podmonitor.json": kafkaExporterPodMonitor,
     "build/kafka/kafka-podmonitor.json": kafkaPodMonitor,
-} + { ["build/kafka/%s-topic.json" %[topic.name]] : kafkaTopic.kafkaTopic(namespace=config.kafka.namespace, topicName=topic.name) for topic in config.kafka.topics}
+} + { ["build/kafka/%s-topic.json" %[topic.name]] : kafkaTopic.kafkaTopic(namespace=global.kafkaNamespace, topicName=topic.name) for topic in config.kafka.topics}

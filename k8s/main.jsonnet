@@ -6,4 +6,9 @@ local infraMain = import 'infra/main_infra.jsonnet';
 local sutMain = import 'sut/main_sut.jsonnet';
 local monitorMain = import 'monitor/main_monitor.jsonnet';
 
-clusterMain + kafkaMain + loadMain + infraMain + sutMain + monitorMain
+clusterMain
++ kafkaMain
+#+ loadMain
++ infraMain
++ sutMain
++ monitorMain

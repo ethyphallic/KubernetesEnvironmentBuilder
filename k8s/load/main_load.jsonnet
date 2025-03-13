@@ -8,26 +8,28 @@ local imageProducer = import 'image-producer.jsonnet';
 local build = import '../util/build-util.jsonnet';
 
 local inputTopicName = config.load.inputTopic;
+local sutNamespace = "sut";
+local namespace = "%s:%s" %[config.context.prefix, sutNamespace];
 
 local inputTopic = kafkaTopic.kafkaTopic(
     topicName=inputTopicName,
 );
 
 local defDeployment = load.loadDefDeployment(
-    namespace=config.load.namespace
+    namespace=namespace
 );
 
 local defBackendDeployment = load.loadBackendDeployment(
-    namespace=config.load.namespace,
+    namespace=namespace,
     topic=inputTopicName
 );
 
 local defBackendService = load.loadBackendService(
-    namespace=config.load.namespace
+    namespace=namespace
 );
 
 local loadConfigmap = loadConfig.simulation(intensity=config.load.intensity, genTimeframesTilStart=100);
-local sinkConfigmap = loadConfig.sink(serviceDomainName="%s.%s.svc" %["load-backend", config.load.namespace], timeframe=1000);
+local sinkConfigmap = loadConfig.sink(serviceDomainName="%s.%s.svc" %["load-backend", namespace], timeframe=1000);
 
 local image_producer = imageProducer.buildFromConfig(config.load.data, global.bootstrapServer, kafkaTopic);
 

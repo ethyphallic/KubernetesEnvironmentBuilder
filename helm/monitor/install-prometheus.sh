@@ -6,4 +6,4 @@ if [ -z $NAMESPACE ]; then
 fi
 
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm install prometheus prometheus-community/kube-prometheus-stack --values prometheus-values.yaml --set createGlobalResources=false --skip-crds -n $NAMESPACE
+helm install prometheus prometheus-community/kube-prometheus-stack --values prometheus-values-instance.yaml --set createGlobalResources=false --skip-crds -n $NAMESPACE

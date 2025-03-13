@@ -1,0 +1,11 @@
+prometheus:
+  enabled: false
+
+grafana:
+  enabled: false
+
+alertmanager:
+  enabled: false
+
+thanosRuler:
+  enabled: false
