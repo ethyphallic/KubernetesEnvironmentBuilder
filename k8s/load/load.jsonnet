@@ -1,12 +1,12 @@
-local global = import '../../global.jsonnet';
+local global = import '../global.jsonnet';
 
 {
-   loadDefDeployment():: {
+   loadDefDeployment(namespace):: {
      apiVersion: "apps/v1",
      kind: "Deployment",
      metadata: {
        name: "distributed-event-factory",
-       namespace: "load",
+       namespace: namespace,
        labels: {
          app: "distributed-event-factory"
        }
@@ -103,12 +103,12 @@ local global = import '../../global.jsonnet';
        }
      }
    },
-   loadBackendDeployment(topic):: {
+   loadBackendDeployment(namespace, topic):: {
      apiVersion: "apps/v1",
      kind: "Deployment",
      metadata: {
        name: "load-backend",
-       namespace: "load",
+       namespace: namespace,
        labels: {
          app: "load-backend"
        }
@@ -159,12 +159,12 @@ local global = import '../../global.jsonnet';
        }
      }
    },
-   loadBackendService():: {
+   loadBackendService(namespace):: {
      apiVersion: "v1",
      kind: "Service",
      metadata: {
         name: "load-backend",
-        namespace: "load"
+        namespace: namespace
      },
      spec: {
         selector: {

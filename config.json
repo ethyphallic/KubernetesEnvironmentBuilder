@@ -1,6 +1,11 @@
 {
+  "context": {
+    "prefix": "scalablemine-stu208763",
+    "cluster": "kube1-1"
+  },
   "infra": {
     "chaosMeshEnabled": true,
+    "namespace": "scalablemine-stu208763-infra",
     "topology": {
       "node0": {
         "network": {
@@ -22,15 +27,18 @@
     }
   },
   "monitor": {
+    "namespace": "scalablemine-stu208763-monitor",
     "prometheusEnabled": true,
     "energyMonitorEnabled": false
   },
   "kafka": {
     "enabled": true,
+    "namespace": "scalablemine-stu208763-kafka",
     "clusterName": "power",
     "brokerReplicas": 1,
     "zookeeperReplicas": 1,
     "uiEnabled": true,
+    "strimziEnabled": true,
     "topics": [
       {
         "name": "input"

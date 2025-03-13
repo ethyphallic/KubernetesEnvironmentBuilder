@@ -1,5 +1,5 @@
 local flink = import 'flink.jsonnet';
-local global = import '../../global.jsonnet';
+local global = import '../global.jsonnet';
 local config = import '../../config.json';
 local sutConfig = import '../../sut-config.json';
 local worker_node_builder = import 'object_classifier.jsonnet';

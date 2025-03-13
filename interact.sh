@@ -1,12 +1,40 @@
 ### KUBERNETES ###
 export DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+# Helper function to load and check variables from the config.json file
+check_config() {
+  VAR=$(cat $DIR/config.json | jq -r "$1")
+  if [ -z "$VAR" ] || [ "$VAR" == null ]; then
+    echo "$1 not set in configuration file" >&2
+    return 1
+  fi
+  echo $VAR
+}
+
 alias k=kubectl
 function kn() {
-  NS=$CLUSTER_PREFIX$1
+  PREFIX=$(check_config .context.prefix) || echo ""
+  if [ -z $1 ]; then
+    # No argument given
+    if [ ! -z "$PREFIX" ]; then
+      echo "No namespace given, loading default prefix"
+      NAMEPSACE=$PREFIX
+    else
+      echo "No namespace given"
+      return 1
+    fi
+  else
+    # Argument given
+    if [ ! -z "$PREFIX" ]; then
+      NAMEPSACE="$PREFIX-$1"
+    else
+      NAMEPSACE="$1"
+    fi
+  fi
+  echo "Loaded namespace name: $NAMEPSACE"
   kubectl get ns ; echo
   if [[ "$#" -eq 1 ]]; then
-    kubectl config set-context --current --namespace $NS ; echo
+    kubectl config set-context --current --namespace $NAMEPSACE ; echo
   fi
   echo "Current namespace [ $(kubectl config view --minify | grep namespace | cut -d " " -f6) ]"
 }
@@ -22,15 +50,21 @@ function build() {
 
 ### MONITOR ###
 function prometheus() {
-  export PROMETHEUS_NODE_PORT=$(kubectl get -n monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-kube-prometheus-prometheus)
-  export PROMETHEUS_URL="minikube:${PROMETHEUS_NODE_PORT}"
+  CONTEXT=$(check_config .context.cluster) || return 1
+  NAMESPACE=$(check_config .monitor.namespace) || return 1
+
+  export PROMETHEUS_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-kube-prometheus-prometheus)
+  export PROMETHEUS_URL="$CONTEXT:${PROMETHEUS_NODE_PORT}"
   echo "Prometheus url: $PROMETHEUS_URL"
 }
 
 function grafana() {
+  CONTEXT=$(check_config .context.cluster) || return 1
+  NAMESPACE=$(check_config .monitor.namespace) || return 1
+
   $DIR/helm/monitor/build-grafana-dashboards.sh
-  export GRAFANA_NODE_PORT=$(kubectl get --namespace monitor -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
-  export GRAFANA_URL=minikube:$GRAFANA_NODE_PORT
+  export GRAFANA_NODE_PORT=$(kubectl get --namespace $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
+  export GRAFANA_URL=$CONTEXT:$GRAFANA_NODE_PORT
   GRAFANA_PORT=$1
   if [ -z $1 ]; then
     GRAFANA_PORT=9091
@@ -43,20 +77,24 @@ function grafana() {
 }
 
 function ecoscape() {
-    python3 $(pwd)/main.py $1
+    python3 $DIR/main.py $1
 }
 
 function stop_load() {
-  kubectl delete cm def-datasource
-  kubectl delete cm def-load
-  kubectl delete cm def-sink
-  kubectl delete -f $DIR/build/load
+    NAMESPACE=$(check_config .load.namespace) || return 1
+
+    kubectl delete cm def-datasource -n $NAMESPACE
+    kubectl delete cm def-load -n $NAMESPACE
+    kubectl delete cm def-sink -n $NAMESPACE
+    kubectl delete -f $DIR/build/load
 }
 
 function start_load() {
-    kubectl create cm def-datasource --from-file $DIR/build/load/datasource -n load
-    kubectl create cm def-load --from-file $DIR/build/load/load -n load
-    kubectl create cm def-sink --from-file $DIR/build/load/sink -n load
+    NAMESPACE=$(check_config .load.namespace) || return 1
+
+    kubectl create cm def-datasource --from-file $DIR/build/load/datasource -n $NAMESPACE
+    kubectl create cm def-load --from-file $DIR/build/load/load -n $NAMESPACE
+    kubectl create cm def-sink --from-file $DIR/build/load/sink -n $NAMESPACE
     kubectl apply -f $DIR/build/load
 }
 
@@ -77,18 +115,23 @@ function kafka_destroy() {
 }
 
 function kafka_operator_restart() {
-    kubectl delete pod -l name=strimzi-cluster-operator
+  NAMESPACE=$(check_config .kafka.namespace) || return 1
+  kubectl delete pod -l name=strimzi-cluster-operator -n $NAMESPACE
 }
 
 function kafka() {
-    export BOOTSTRAP_URL=$(kubectl get -n kafka -o jsonpath="{.spec.ports[0].nodePort}" services power-kafka-external-bootstrap)
-    echo "Kafka bootstrap server url: minikube:$BOOTSTRAP_URL"
+  CONTEXT=$(check_config .context.cluster) || return 1
+  NAMESPACE=$(check_config .kafka.namespace) || return 1
+  export BOOTSTRAP_URL=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services power-kafka-external-bootstrap)
+  echo "Kafka bootstrap server url: $CONTEXT:$BOOTSTRAP_URL"
 }
 
 function kafka_ui() {
-    export KAFKA_UI_NODE_PORT=$(kubectl get -n kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
-    export KAFKA_UI_URL=minikube:$KAFKA_UI_NODE_PORT
-    echo "Kafka-UI url: $KAFKA_UI_URL"
+  CONTEXT=$(check_config .context.cluster) || return 1
+  NAMESPACE=$(check_config .kafka.namespace) || return 1
+  export KAFKA_UI_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
+  export KAFKA_UI_URL=$CONTEXT:$KAFKA_UI_NODE_PORT
+  echo "Kafka-UI url: $KAFKA_UI_URL"
 }
 
 function get_clusters() {
