@@ -36,14 +36,14 @@
     "zookeeperReplicas": 1,
     "uiEnabled": true,
     "strimziEnabled": true,
-    "topics": [
-      {
-        "name": "input"
-      },
-      {
-        "name": "model"
+    "topics": {
+      "input": {},
+      "model": {},
+      "reporter": {},
+      "dog-input":  {
+        "partitions": 60
       }
-    ]
+    }
   },
   "load": {
     "inputTopic": "input",

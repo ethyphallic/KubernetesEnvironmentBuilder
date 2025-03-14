@@ -1,14 +1,15 @@
-local config = import '../config.json';
 local clusterMain = import "cluster/main_cluster.jsonnet";
-local kafkaMain = import 'kafka/main_kafka.jsonnet';
-local loadMain = import 'load/main_load.jsonnet';
+local kafka = import 'kafka/main_kafka.jsonnet';
+local load = import 'load/main_load.jsonnet';
 local infraMain = import 'infra/main_infra.jsonnet';
 local sutMain = import 'sut/main_sut.jsonnet';
 local monitorMain = import 'monitor/main_monitor.jsonnet';
+local global = import 'global.jsonnet';
+local config = import 'config.jsonnet';
 
-clusterMain
-+ kafkaMain
-#+ loadMain
-+ infraMain
+//clusterMain
+kafka(global, config)
++ load(global, config)
++ infraMain(global, config)
 + sutMain
-+ monitorMain
+//+ monitorMain

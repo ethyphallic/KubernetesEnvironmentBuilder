@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "clusterName": "power",
+  "brokerReplicas": 1,
+  "zookeeperReplicas": 1,
+  "uiEnabled": true,
+  "strimziEnabled": true,
+  "topics": {
+    "input": {},
+    "model": {},
+    "reporter": {},
+    "dog-input":  {
+      "partitions": 60
+    }
+  }
+}

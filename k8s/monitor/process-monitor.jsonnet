@@ -1,9 +1,9 @@
-{
+function(namespace, bootstrapServer){
   apiVersion: "apps/v1",
   kind: "Deployment",
   metadata: {
     name: "process-monitor",
-    namespace: "scalablemine-hkr-sut"
+    namespace: namespace
   },
   spec: {
     selector: {
@@ -33,7 +33,7 @@
             env: [
               {
                 name: "BOOTSTRAP_SERVER",
-                value: power-kafka-bootstrap.scalablemine-hkr-kafka.svc:9092
+                value: bootstrapServer
               }
             ],
             resources: {

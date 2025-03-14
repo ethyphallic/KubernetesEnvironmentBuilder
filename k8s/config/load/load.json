@@ -1,0 +1,18 @@
+{
+  "inputTopic": "input",
+  "intensity": 1,
+  "data": {
+    "data0": {
+      "sendRate": "3",
+      "location": "node1"
+    },
+    "data1": {
+      "sendRate": "1",
+      "location": "node2"
+    },
+    "data2": {
+      "sendRate": "1",
+      "location": "node3"
+    }
+  }
+}
