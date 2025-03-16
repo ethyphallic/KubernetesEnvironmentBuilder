@@ -2,9 +2,9 @@ local buildManifests = import '../util/build/buildManifests.jsonnet';
 {
   build(
     definition,
-    externalParameter
+    global
   )::
-    buildManifests("load", "data", $.buildFromConfig(definition, externalParameter.bootstrapServer, externalParameter.topic)),
+    buildManifests("load", "data", $.buildFromConfig(definition.data, global.bootstrapServer, definition.inputTopic)),
   buildFromConfig(config, bootstrapServer, topic_name)::
     local data_node_names = std.objectFields(config);
       [

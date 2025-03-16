@@ -1,0 +1,5 @@
+{
+  "loadType": "eventFactory",
+  "inputTopic": "input",
+  "intensity": 100
+}

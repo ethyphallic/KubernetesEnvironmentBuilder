@@ -8,8 +8,8 @@ local global = import 'global.jsonnet';
 local config = import 'config.jsonnet';
 
 //clusterMain
-kafka(global, config)
-+ load(global, config)
+kafka(global.global, config)
++ load(global.global, config.load)
 + infraMain(global, config)
 + sutMain
 //+ monitorMain

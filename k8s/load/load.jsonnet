@@ -1,7 +1,5 @@
-local global = import '../global.jsonnet';
-
 {
-   loadDefDeployment(namespace):: {
+   loadDefDeployment(namespace, bootstrapServer):: {
      apiVersion: "apps/v1",
      kind: "Deployment",
      metadata: {
@@ -103,7 +101,7 @@ local global = import '../global.jsonnet';
        }
      }
    },
-   loadBackendDeployment(namespace, topic):: {
+   loadBackendDeployment(namespace, topic, bootstrapServer):: {
      apiVersion: "apps/v1",
      kind: "Deployment",
      metadata: {
@@ -139,7 +137,7 @@ local global = import '../global.jsonnet';
                  },
                  {
                     name: "BOOTSTRAP_SERVER",
-                    value: global.bootstrapServer
+                    value: bootstrapServer
                  }
                ],
                resources: {

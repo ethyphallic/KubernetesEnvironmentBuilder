@@ -1,4 +1,5 @@
 {
+  "loadType": "imageProducer",
   "inputTopic": "input",
   "intensity": 1,
   "data": {

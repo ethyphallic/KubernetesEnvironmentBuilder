@@ -9,17 +9,18 @@ local buildManifest = import '../util/build/buildManifest.jsonnet';
 local buildManifests = import '../util/build/buildManifests.jsonnet';
 
 local sut = config.sut;
+local bootstrapServer = global.global.bootstrapServer;
 
 local flinkDeployment = flink.buildFromConfig(
     config=std.get(sutConfig, "flink"),
     inputTopic=config.load.inputTopic,
-    bootstrapServer=global.bootstrapServer
+    bootstrapServer=bootstrapServer
 );
 
 local objectClassifierNodes = build.iterateOver(
   definition = std.get(sutConfig, "objectClassifier"),
   externalParameter={
-    bootstrapServer: global.bootstrapServer,
+    bootstrapServer: bootstrapServer,
     topic: topic_name
   },
   buildFunction=worker_node_builder.build
