@@ -1,11 +1,12 @@
 local appName = "heuristics-miner-flink";
+local buildManifest = import '../util/build/buildManifest.jsonnet';
 
 {
   buildFromConfig(
     config,
     inputTopic,
     bootstrapServer
-  ):: $.heuristicsMinerFlinkDeployment(
+  ):: buildManifest("sut", "flink", $.heuristicsMinerFlinkDeployment(
     namespace = "sut",
     bootstrapServer = bootstrapServer,
     inputTopic = inputTopic,
@@ -16,7 +17,7 @@ local appName = "heuristics-miner-flink";
     batchSize = "100",
     andThreshold = "0.5",
     dependencyThreshold = "0.5"
-  ),
+  )),
   heuristicsMinerFlinkDeployment(
       namespace,
       bootstrapServer,

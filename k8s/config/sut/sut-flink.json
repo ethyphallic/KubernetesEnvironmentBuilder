@@ -1,0 +1,8 @@
+{
+  "sutType": "flink",
+  "system": {
+    "topics": {
+      "model": "model"
+    }
+  }
+}

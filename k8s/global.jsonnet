@@ -9,5 +9,6 @@ local config = import 'config.jsonnet';
         infraNamespace: "%s-%s" %[config.context.prefix, "infra"],
         sutNamespace: "%s-%s" %[config.context.prefix, "sut"],
         monitorNamespace: "%s-%s" %[config.context.prefix, "monitor"],
+        inputTopic: "input"
     }
 }

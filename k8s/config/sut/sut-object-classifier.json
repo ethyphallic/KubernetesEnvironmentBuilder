@@ -1,5 +1,6 @@
 {
-  "objectClassifier": {
+  "sutType": "objectClassifier",
+  "system": {
     "worker0": {
       "memory": "1Gi",
       "cpu": "1",
@@ -13,11 +14,6 @@
       "replicas": 1,
       "locationLabel": "node2",
       "modelDepth": "50"
-    }
-  },
-  "flink": {
-    "topics": {
-      "model": "model"
     }
   }
 }
