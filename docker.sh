@@ -100,14 +100,12 @@ else
   # Detect minikube
   if minikube status | grep -q "host: Running"; then
       echo "Minikube detected, Switching context to minikube..."
-      NETWORK="minikube"
       DOCKER_CMD="$DOCKER_CMD -e MINIKUBE=1 -v $HOME/.minikube:/root/.minikube"
   else
       echo "No minikube detected, keeping host context..."
-      NETWORK="host"
   fi
   # Finish command
-  DOCKER_CMD="$DOCKER_CMD -v $DIR:/app --network=$NETWORK --name=$DOCKERCONTAINER_NAME $DOCKERIMAGE_TAG"
+  DOCKER_CMD="$DOCKER_CMD -v $DIR:/app --network=host --name=$DOCKERCONTAINER_NAME $DOCKERIMAGE_TAG"
   eval $DOCKER_CMD
 fi
 eval $DOCKER_CMD
