@@ -15,6 +15,7 @@ Execute the following script to build the image and start the interactive Docker
 ./docker.sh
 ```
 If a container already exists, the script will either start or attach to it.
+For further information about the script use `./docker.sh --help`.
 
 This will mount the project as well as the `~/.kube/config` file into the docker container and therefore the installation of [kubectl](https://kubernetes.io/docs/tasks/tools/) is recommended to have a valid `~/.kube/config` file.
 
