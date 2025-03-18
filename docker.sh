@@ -92,11 +92,23 @@ else
     fi
   fi
   echo Creating new container $DOCKERCONTAINER_NAME ...
+
+  # Base command
   DOCKER_CMD="MSYS_NO_PATHCONV=1 docker run -it \
-      -v $HOME/.kube/config:/root/.kube/config \
-      -v $DOCKERFILE_LOCATION:/app \
-      --network=host --name=$DOCKERCONTAINER_NAME \
-      $DOCKERIMAGE_TAG"
+      -v $HOME/.kube/config:/root/.kube/config"
+
+  # Detect minikube
+  if minikube status | grep -q "host: Running"; then
+      echo "Minikube detected, Switching context to minikube..."
+      NETWORK="minikube"
+      DOCKER_CMD="$DOCKER_CMD -e MINIKUBE=1 -v $HOME/.minikube:/root/.minikube"
+  else
+      echo "No minikube detected, keeping host context..."
+      NETWORK="host"
+  fi
+  # Finish command
+  DOCKER_CMD="$DOCKER_CMD -v $DIR:/app --network=$NETWORK --name=$DOCKERCONTAINER_NAME $DOCKERIMAGE_TAG"
+  eval $DOCKER_CMD
 fi
 eval $DOCKER_CMD
 
