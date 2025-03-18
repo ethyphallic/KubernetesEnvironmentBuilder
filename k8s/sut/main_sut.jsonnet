@@ -7,12 +7,12 @@ local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
     bootstrapServer = global.bootstrapServer,
     inputTopic = config.load.inputTopic,
     modelTopic = config.sut.topics.model,
-    group = "heuristics-miner",
-    parallelism = "1",
-    sampleSize = "200",
-    batchSize = "100",
-    andThreshold = "0.5",
-    dependencyThreshold = "0.5"
+    group = config.sut.deployments.flinkHeuristicMiner.group,
+    parallelism = config.sut.deployments.flinkHeuristicMiner.parallelism,
+    sampleSize = config.sut.deployments.flinkHeuristicMiner.sampleSize,
+    batchSize = config.sut.deployments.flinkHeuristicMiner.batchSize,
+    andThreshold = config.sut.deployments.flinkHeuristicMiner.andThreshold,
+    dependencyThreshold = config.sut.deployments.flinkHeuristicMiner.dependencyThreshold
 );
 
 {

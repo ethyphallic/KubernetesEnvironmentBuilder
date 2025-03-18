@@ -36,6 +36,16 @@
   },
   "sut": {
     "namespace" : "scalablemine-stu208763-sut",
+    "deployments" : {
+      "flinkHeuristicMiner" : {
+        "group" : "heuristics-miner",
+        "parallelism" : 1,
+        "sampleSize" : 200,
+        "batchSize" : 100,
+        "andThreshold" : 0.5,
+        "dependencyThreshold" : 0.5
+      }
+    },
     "topics": {
       "model": "model"
     }
