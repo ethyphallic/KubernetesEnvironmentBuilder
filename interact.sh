@@ -25,6 +25,17 @@ check_context() {
   fi
 }
 
+# Helper function to load specific namespaces from config
+check_namespace() {
+  PREFIX=$(check_config .context.prefix) || echo ""
+  NAMESPACE=$(check_config $1) || return 1
+  if [ -z "$PREFIX" ]; then
+    echo "$NAMESPACE"
+  else
+    echo "$PREFIX-$NAMESPACE"
+  fi
+}
+
 alias k=kubectl
 function kn() {
   PREFIX=$(check_config .context.prefix) || echo ""
@@ -65,7 +76,7 @@ function build() {
 ### MONITOR ###
 function prometheus() {
   CONTEXT_URL=$(check_context) || return 1
-  NAMESPACE=$(check_config .monitor.namespace) || return 1
+  NAMESPACE=$(check_namespace .monitor.namespace) || return 1
 
   export PROMETHEUS_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-kube-prometheus-prometheus)
   export PROMETHEUS_URL="$CONTEXT_URL:${PROMETHEUS_NODE_PORT}"
@@ -74,7 +85,7 @@ function prometheus() {
 
 function grafana() {
   CONTEXT_URL=$(check_context) || return 1
-  NAMESPACE=$(check_config .monitor.namespace) || return 1
+  NAMESPACE=$(check_namespace .monitor.namespace) || return 1
 
   $DIR/helm/monitor/build-grafana-dashboards.sh
   export GRAFANA_NODE_PORT=$(kubectl get --namespace $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
@@ -95,7 +106,7 @@ function run() {
 }
 
 function stop_load() {
-    NAMESPACE=$(check_config .load.namespace) || return 1
+    NAMESPACE=$(check_namespace .load.namespace) || return 1
 
     kubectl delete cm def-datasource -n $NAMESPACE
     kubectl delete cm def-load -n $NAMESPACE
@@ -104,7 +115,7 @@ function stop_load() {
 }
 
 function start_load() {
-    NAMESPACE=$(check_config .load.namespace) || return 1
+    NAMESPACE=$(check_namespace .load.namespace) || return 1
 
     kubectl create cm def-datasource --from-file $DIR/build/load/datasource -n $NAMESPACE
     kubectl create cm def-load --from-file $DIR/build/load/load -n $NAMESPACE
@@ -129,20 +140,20 @@ function kafka_destroy() {
 }
 
 function kafka_operator_restart() {
-  NAMESPACE=$(check_config .kafka.namespace) || return 1
+  NAMESPACE=$(check_namespace .kafka.namespace) || return 1
   kubectl delete pod -l name=strimzi-cluster-operator -n $NAMESPACE
 }
 
 function kafka() {
   CONTEXT_URL=$(check_context) || return 1
-  NAMESPACE=$(check_config .kafka.namespace) || return 1
+  NAMESPACE=$(check_namespace .kafka.namespace) || return 1
   export BOOTSTRAP_URL=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services power-kafka-external-bootstrap)
   echo "Kafka bootstrap server url: $CONTEXT_URL:$BOOTSTRAP_URL"
 }
 
 function kafka_ui() {
   CONTEXT_URL=$(check_context) || return 1
-  NAMESPACE=$(check_config .kafka.namespace) || return 1
+  NAMESPACE=$(check_namespace .kafka.namespace) || return 1
   export KAFKA_UI_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
   export KAFKA_UI_URL=$CONTEXT_URL:$KAFKA_UI_NODE_PORT
   echo "Kafka-UI url: $KAFKA_UI_URL"

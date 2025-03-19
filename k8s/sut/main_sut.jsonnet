@@ -3,9 +3,13 @@ local heur = import 'heuristics-miner-flink-deployment.jsonnet';
 local global = import '../global.jsonnet';
 local config = import '../../config.json';
 
+local prefix = config.context.prefix;
+local defaultNamespace = config.sut.namespace;
+local namespace = if prefix != null && prefix != "" then prefix + "-" + defaultNamespace else defaultNamespace;
+
 local flinkHeuristicMiner = config.sut.deployments.flinkHeuristicMiner;
 local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
-    namespace = config.sut.namespace,
+    namespace = namespace,
     bootstrapServer = global.bootstrapServer,
     inputTopic = config.load.inputTopic,
     modelTopic = config.sut.topics.model,
@@ -19,7 +23,7 @@ local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
 
 local heuristicsMinerFlinkDeployment = config.sut.deployments.heuristicsMinerFlinkDeployment;
 local flinkDeployment2 = heur.heuristicsMinerFlinkDeployment(
-    namespace = config.sut.namespace,
+    namespace = namespace,
     bootstrapServer = global.bootstrapServer,
     inputTopic = config.load.inputTopic,
     modelTopic = config.sut.topics.model,

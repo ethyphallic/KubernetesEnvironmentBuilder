@@ -6,26 +6,30 @@ local global = import '../global.jsonnet';
 local kafkaTopic = import '../kafka/kafka-topic.jsonnet';
 
 local inputTopicName = config.load.inputTopic;
+local prefix = config.context.prefix;
+local defaultNamespace = config.load.namespace;
+local namespace = if prefix != null && prefix != "" then prefix + "-" + defaultNamespace else defaultNamespace;
 
 local inputTopic = kafkaTopic.kafkaTopic(
     topicName=inputTopicName,
+    namespace=namespace
 );
 
 local defDeployment = load.loadDefDeployment(
-    namespace=config.load.namespace
+    namespace=namespace
 );
 
 local defBackendDeployment = load.loadBackendDeployment(
-    namespace=config.load.namespace,
+    namespace=namespace,
     topic=inputTopicName
 );
 
 local defBackendService = load.loadBackendService(
-    namespace=config.load.namespace
+    namespace=namespace
 );
 
 local loadConfigmap = loadConfig.simulation(intensity=config.load.intensity, genTimeframesTilStart=100);
-local sinkConfigmap = loadConfig.sink(serviceDomainName="%s.%s.svc" %["load-backend", config.load.namespace], timeframe=1000);
+local sinkConfigmap = loadConfig.sink(serviceDomainName="%s.%s.svc" %["load-backend", namespace], timeframe=1000);
 
 local output = {
     "build/load/def-deployment.json": defDeployment,

@@ -1,20 +1,19 @@
 {
   "context" : {
-    "prefix" : "scalablemine-stu208763",
-    "cluster" : "kube1-1"
+    "prefix" : "scalablemine-stu208763"
   },
   "infra" : {
-    "namespace": "scalablemine-stu208763-infra",
+    "namespace": "infra",
     "chaosMeshEnabled": true
   },
   "monitor": {
-    "namespace": "scalablemine-stu208763-monitor",
-    "prometheusEnabled": true,
+    "namespace": "monitor",
+    "prometheusEnabled": false,
     "energyMonitorEnabled": false
   },
   "kafka": {
     "enabled": true,
-    "namespace": "scalablemine-stu208763-kafka",
+    "namespace": "kafka",
     "clusterName": "power",
     "brokerReplicas": 1,
     "zookeeperReplicas": 1,
@@ -30,12 +29,12 @@
     ]
   },
   "load": {
-    "namespace" : "scalablemine-stu208763-load",
+    "namespace" : "load",
     "inputTopic": "input",
     "intensity": 1
   },
   "sut": {
-    "namespace" : "scalablemine-stu208763-sut",
+    "namespace" : "sut",
     "deployments" : {
       "flinkHeuristicMiner" : {
         "group" : "heuristics-miner",
