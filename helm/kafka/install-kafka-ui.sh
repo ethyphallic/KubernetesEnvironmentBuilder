@@ -1,9 +1,22 @@
 DIR=$(dirname "$(realpath "$0")")
+
+PREFIX=$(cat $DIR/../../config.json | jq -r .context.prefix)
 NAMESPACE=$(cat $DIR/../../config.json | jq -r .kafka.namespace)
 if [ -z $NAMESPACE ]; then
-  echo "No namespace set in config.json"
-  exit 1
+  echo "No explicit namespace set, trying prefix as namespace ..."
+  if [ -z $PREFIX ]; then
+    echo "Prefix also not set. Abort."
+    exit 1
+  else
+    NAMESPACE=$PREFIX
+  fi
+else
+  if [ -z $PREFIX ]; then
+    NAMESPACE="$PREFIX-$NAMESPACE"
+  fi
 fi
+echo "Selected namespace : $NAMESPACE"
+
 helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts
 
 JSONNET_PRESENT=$(command -v jsonnet >/dev/null 2>&1)
