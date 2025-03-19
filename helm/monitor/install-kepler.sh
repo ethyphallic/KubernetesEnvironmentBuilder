@@ -11,11 +11,17 @@ if [ -z $NAMESPACE ]; then
     NAMESPACE=$PREFIX
   fi
 else
-  if [ -z $PREFIX ]; then
+  if [ ! -z $PREFIX ]; then
     NAMESPACE="$PREFIX-$NAMESPACE"
   fi
 fi
 echo "Selected namespace : $NAMESPACE"
 
+HELM_CMD=""
+CONTEXT=$(kubectl config current-context)
+if [ "$CONTEXT" != "minikube" ]; then
+  HELM_CMD="--set createGlobalResources=false --skip-crds" # External cluster
+fi
+
 helm repo add kepler https://sustainable-computing-io.github.io/kepler-helm-chart
-helm install kepler kepler/kepler --set serviceMonitor.enabled=true --set serviceMonitor.labels.release=prometheus --set createGlobalResources=false --skip-crds -n $NAMESPACE
+helm install kepler kepler/kepler --set serviceMonitor.enabled=true --set serviceMonitor.labels.release=prometheus $HELM_CMD -n $NAMESPACE

@@ -11,11 +11,18 @@ if [ -z $NAMESPACE ]; then
     NAMESPACE=$PREFIX
   fi
 else
-  if [ -z $PREFIX ]; then
+  if [ ! -z $PREFIX ]; then
     NAMESPACE="$PREFIX-$NAMESPACE"
   fi
 fi
 echo "Selected namespace : $NAMESPACE"
 
 helm repo add chaos-mesh https://charts.chaos-mesh.org
-helm install chaos-mesh chaos-mesh/chaos-mesh --set createGlobalResources=false --skip-crds -n $NAMESPACE
+
+HELM_CMD=""
+CONTEXT=$(kubectl config current-context)
+if [ "$CONTEXT" != "minikube" ]; then
+  HELM_CMD="--set createGlobalResources=false --skip-crds" # External cluster
+fi
+
+helm install chaos-mesh chaos-mesh/chaos-mesh $HELM_CMD -n $NAMESPACE

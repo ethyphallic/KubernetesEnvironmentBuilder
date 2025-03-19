@@ -11,7 +11,7 @@ if [ -z $NAMESPACE ]; then
     NAMESPACE=$PREFIX
   fi
 else
-  if [ -z $PREFIX ]; then
+  if [ ! -z $PREFIX ]; then
     NAMESPACE="$PREFIX-$NAMESPACE"
   fi
 fi

@@ -11,7 +11,7 @@ if [ -z $NAMESPACE ]; then
     NAMESPACE=$PREFIX
   fi
 else
-  if [ -z $PREFIX ]; then
+  if [ ! -z $PREFIX ]; then
     NAMESPACE="$PREFIX-$NAMESPACE"
   fi
 fi
@@ -38,5 +38,11 @@ else
       syseleven/jsonnet-builder -m /src /src/kafka-ui-values.jsonnet
 fi
 
-helm install kafka-ui kafka-ui/kafka-ui -f kafka-ui-values.json --set createGlobalResources=false --skip-crds -n $NAMESPACE
+HELM_CMD=""
+CONTEXT=$(kubectl config current-context)
+if [ "$CONTEXT" != "minikube" ]; then
+  HELM_CMD="--set createGlobalResources=false --skip-crds" # External cluster
+fi
+
+helm install kafka-ui kafka-ui/kafka-ui -f kafka-ui-values.json $HELM_CMD -n $NAMESPACE
 sh -c -e "rm $DIR/kafka-ui-values.json $DIR/config.json $DIR/global.jsonnet"
