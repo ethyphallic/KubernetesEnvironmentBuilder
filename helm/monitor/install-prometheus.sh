@@ -1,5 +1,5 @@
 DIR="$(dirname "$0")"
-NAMESPACE=$(cat $DIR/../../config.json | jq .monitor.namespace)
+NAMESPACE=$(cat $DIR/../../config.json | jq -r .monitor.namespace)
 if [ -z $NAMESPACE ]; then
   echo "No namespace set in config.json"
   exit 1

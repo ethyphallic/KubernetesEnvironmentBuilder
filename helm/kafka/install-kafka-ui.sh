@@ -1,5 +1,5 @@
 DIR=$(dirname "$(realpath "$0")")
-NAMESPACE=$(cat $DIR/../../config.json | jq .kafka.namespace)
+NAMESPACE=$(cat $DIR/../../config.json | jq -r .kafka.namespace)
 if [ -z $NAMESPACE ]; then
   echo "No namespace set in config.json"
   exit 1
