@@ -11,6 +11,20 @@ check_config() {
   echo $VAR
 }
 
+# Helper function to check current context and get the respected host address
+check_context() {
+  CONTEXT=$(kubectl config current-context)
+  if [ -z "$CONTEXT" ]; then
+    echo "Current context is empty. Please set a valid context."
+    return 1
+  fi
+  if [ "$CONTEXT" = "minikube" ]; then
+    echo $CONTEXT
+  else
+    echo $(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}' | sed -E 's|https?://([^:/]+).*|\1|')
+  fi
+}
+
 alias k=kubectl
 function kn() {
   PREFIX=$(check_config .context.prefix) || echo ""
@@ -50,21 +64,21 @@ function build() {
 
 ### MONITOR ###
 function prometheus() {
-  CONTEXT=$(check_config .context.cluster) || return 1
+  CONTEXT_URL=$(check_context) || return 1
   NAMESPACE=$(check_config .monitor.namespace) || return 1
 
   export PROMETHEUS_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-kube-prometheus-prometheus)
-  export PROMETHEUS_URL="$CONTEXT:${PROMETHEUS_NODE_PORT}"
+  export PROMETHEUS_URL="$CONTEXT_URL:${PROMETHEUS_NODE_PORT}"
   echo "Prometheus url: $PROMETHEUS_URL"
 }
 
 function grafana() {
-  CONTEXT=$(check_config .context.cluster) || return 1
+  CONTEXT_URL=$(check_context) || return 1
   NAMESPACE=$(check_config .monitor.namespace) || return 1
 
   $DIR/helm/monitor/build-grafana-dashboards.sh
   export GRAFANA_NODE_PORT=$(kubectl get --namespace $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
-  export GRAFANA_URL=$CONTEXT:$GRAFANA_NODE_PORT
+  export GRAFANA_URL=$CONTEXT_URL:$GRAFANA_NODE_PORT
   GRAFANA_PORT=$1
   if [ -z $1 ]; then
     GRAFANA_PORT=9091
@@ -120,17 +134,17 @@ function kafka_operator_restart() {
 }
 
 function kafka() {
-  CONTEXT=$(check_config .context.cluster) || return 1
+  CONTEXT_URL=$(check_context) || return 1
   NAMESPACE=$(check_config .kafka.namespace) || return 1
   export BOOTSTRAP_URL=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services power-kafka-external-bootstrap)
-  echo "Kafka bootstrap server url: $CONTEXT:$BOOTSTRAP_URL"
+  echo "Kafka bootstrap server url: $CONTEXT_URL:$BOOTSTRAP_URL"
 }
 
 function kafka_ui() {
-  CONTEXT=$(check_config .context.cluster) || return 1
+  CONTEXT_URL=$(check_context) || return 1
   NAMESPACE=$(check_config .kafka.namespace) || return 1
   export KAFKA_UI_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
-  export KAFKA_UI_URL=$CONTEXT:$KAFKA_UI_NODE_PORT
+  export KAFKA_UI_URL=$CONTEXT_URL:$KAFKA_UI_NODE_PORT
   echo "Kafka-UI url: $KAFKA_UI_URL"
 }
 

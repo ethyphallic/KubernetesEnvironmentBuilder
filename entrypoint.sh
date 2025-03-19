@@ -16,7 +16,7 @@ if grep -q "minikube" /tmp/.kube/config; then
   # Replace Windows paths with Linux paths in the temporary kubeconfig
   # Handle different possible formats
   sed -i "s|https://127.0.0.1|https://host.docker.internal|g" /tmp/.kube/config
-  sed -i '/^\s*server: https:\/\/host\.docker\.internal/,/^\s*[^[:space:]]/ s/^\s*server:/    insecure-skip-tls-verify: true\n    server:/' /tmp/.kube/config
+  sed -i '/^\s*server:/ s/^\(\s*server:.*\)/    insecure-skip-tls-verify: true\n\1/' /tmp/.kube/config
   sed -i '/^\s*certificate-authority/d' /tmp/.kube/config
   sed -i 's|C:\\Users\\[^\\]*\\.minikube|/root/.minikube|g' /tmp/.kube/config
   sed -i 's|C:/Users/[^/]*/.minikube|/root/.minikube|g' /tmp/.kube/config
