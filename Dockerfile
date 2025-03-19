@@ -45,6 +45,6 @@ COPY . /app
 RUN echo "source /app/interact.sh" >> ~/.bashrc
 # Fix permission if not fixed already 
 RUN echo 'if [ ! -f "/tmp/.permissions-fixed" ]; then chmod -R a+w /app && touch /tmp/.permissions-fixed; fi' >> ~/.bashrc
-RUN echo "source /app/docker-adjust-kubeconfig.sh" >> ~/.bashrc
+RUN echo "source /app/entrypoint.sh" >> ~/.bashrc
 
 ENTRYPOINT [ "/bin/bash" ]
