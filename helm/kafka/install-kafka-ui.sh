@@ -19,8 +19,7 @@ echo "Selected namespace : $NAMESPACE"
 
 helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts
 
-JSONNET_PRESENT=$(command -v jsonnet >/dev/null 2>&1)
-if $JSONNET_PRESENT; then
+if command -v jsonnet >/dev/null 2>&1; then
   # Use locally present jsonnet (Also used in the interactive docker container)
   echo "Using local jsonnet installation"
   cp $DIR/../../config.json $DIR/config.json
