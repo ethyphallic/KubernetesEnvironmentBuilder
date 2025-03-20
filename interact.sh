@@ -1,6 +1,9 @@
 ### KUBERNETES ###
 export DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+alias k=kubectl
+complete -o default -F __start_kubectl k
+
 # Helper function to load and check variables from the config.json file
 check_config() {
   VAR=$(cat $DIR/config.json | jq -r "$1")
@@ -36,7 +39,6 @@ check_namespace() {
   fi
 }
 
-alias k=kubectl
 function kn() {
   PREFIX=$(check_config .context.prefix) || echo ""
   if [ -z $1 ]; then
