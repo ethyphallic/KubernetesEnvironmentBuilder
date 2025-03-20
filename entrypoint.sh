@@ -30,9 +30,12 @@ fi
 # Test connection
 echo "Testing kubectl connection..."
 if kubectl get pods > /dev/null 2>&1; then
-  echo "✅ Kubernetes connection successful"
+  echo "✅  Kubernetes connection successful"
   echo "You can now use kubectl, helm, and other Kubernetes tools"
 else
-  echo "⚠️ Could not connect to Kubernetes cluster"
+  echo "⚠️  Could not connect to Kubernetes cluster"
   echo "You may need to check your configuration or permissions on the cluster"
+  echo "If you used minikube before, it could be that the current context is invalid."
+  echo "Switch context via: sc CONTEXT_NAME"
+  echo "You can get the available context names via: k config get-contexts"
 fi
