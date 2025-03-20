@@ -1,14 +1,14 @@
 {
   "context" : {
-    "prefix" : "scalablemine-stu208763"
+    "prefix" : ""
   },
   "infra" : {
     "namespace": "infra",
-    "chaosMeshEnabled": true
+    "chaosMeshEnabled": false
   },
   "monitor": {
     "namespace": "monitor",
-    "prometheusEnabled": false,
+    "prometheusEnabled": true,
     "energyMonitorEnabled": false
   },
   "kafka": {
@@ -35,32 +35,36 @@
   },
   "sut": {
     "namespace" : "sut",
+    "session" : {
+      "jobManager" : {
+        "memory" : "2048Mi",
+        "cpu" : 1
+      },
+      "taskManager" : {
+        "memory" : "2048Mi",
+        "cpu" : 1,
+        "replicas" : 1
+      }
+    },
+    "jobs" : {
+      "heuristicsMinerFlink" : {
+        "group" : "flink",
+        "variant" : "parallelized",
+        "parallelism" : 1,
+        "bucketSize" : 50,
+        "andThreshold" : 0.5,
+        "dependencyThreshold" : 0.5
+        }
+    },
     "deployments" : {
-      "flinkHeuristicMiner" : {
+      "heuristicsMinerFlink" : {
         "group" : "heuristics-miner",
         "parallelism" : 1,
         "sampleSize" : 200,
         "batchSize" : 100,
         "andThreshold" : 0.5,
         "dependencyThreshold" : 0.5
-      },
-      "heuristicsMinerFlinkDeployment" : {
-        "group" : "flink",
-        "variant" : "parallelized",
-        "parallelism" : 1,
-        "bucketSize" : 50,
-        "andThreshold" : 0.5,
-        "dependencyThreshold" : 0.5,
-        "jobManager" : {
-          "memory" : "2048m",
-          "cpu" : 1
-        },
-        "taskManager" : {
-          "memory" : "2048m",
-          "cpu" : 1,
-          "taskSlots" : 1
         }
-      }
     },
     "topics": {
       "model": "model"

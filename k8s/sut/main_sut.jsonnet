@@ -1,46 +1,60 @@
-local flink = import 'flink.jsonnet';
-local heur = import 'heuristics-miner-flink-deployment.jsonnet';
 local global = import '../global.jsonnet';
 local config = import '../../config.json';
+
+local flinkSession = import 'flink-session.jsonnet';
+local flinkDeployment = import 'flink.jsonnet';
+local flinkJob = import 'heuristics-miner-flink-job.jsonnet';
 
 local prefix = config.context.prefix;
 local defaultNamespace = config.sut.namespace;
 local namespace = if prefix != null && prefix != "" then prefix + "-" + defaultNamespace else defaultNamespace;
 
-local flinkHeuristicMiner = config.sut.deployments.flinkHeuristicMiner;
-local flinkDeployment = flink.heuristicsMinerFlinkDeployment(
-    namespace = namespace,
-    bootstrapServer = global.bootstrapServer,
-    inputTopic = config.load.inputTopic,
-    modelTopic = config.sut.topics.model,
-    group = flinkHeuristicMiner.group,
-    parallelism = flinkHeuristicMiner.parallelism,
-    sampleSize = flinkHeuristicMiner.sampleSize,
-    batchSize = flinkHeuristicMiner.batchSize,
-    andThreshold = flinkHeuristicMiner.andThreshold,
-    dependencyThreshold = flinkHeuristicMiner.dependencyThreshold
+// Session
+local jobManagerConfig = config.sut.session.jobManager;
+local taskManagerConfig = config.sut.session.taskManager;
+local session = flinkSession.flinkSessionCluster(
+    namespace=namespace, 
+    jobManagerCPU=jobManagerConfig.cpu,
+    jobManagerMemory=jobManagerConfig.memory, 
+    taskManagerCPU=taskManagerConfig.cpu, 
+    taskManagerMemory=taskManagerConfig.memory, 
+    taskManagerReplicas=taskManagerConfig.replicas
 );
 
-local heuristicsMinerFlinkDeployment = config.sut.deployments.heuristicsMinerFlinkDeployment;
-local flinkDeployment2 = heur.heuristicsMinerFlinkDeployment(
+// Jobs
+local jobConfig = config.sut.jobs.heuristicsMinerFlink;
+local job = flinkJob.heuristicsMinerFlinkJob(
     namespace = namespace,
     bootstrapServer = global.bootstrapServer,
     inputTopic = config.load.inputTopic,
     modelTopic = config.sut.topics.model,
-    group = heuristicsMinerFlinkDeployment.group,
-    parallelism = heuristicsMinerFlinkDeployment.parallelism,
-    bucketSize = heuristicsMinerFlinkDeployment.bucketSize,
-    andThreshold = heuristicsMinerFlinkDeployment.andThreshold,
-    dependencyThreshold = heuristicsMinerFlinkDeployment.dependencyThreshold,
-    variant = heuristicsMinerFlinkDeployment.variant,
-    jobManagerMemory = heuristicsMinerFlinkDeployment.jobManager.memory,
-    jobManagerCPU = heuristicsMinerFlinkDeployment.jobManager.cpu,
-    taskManagerMemory = heuristicsMinerFlinkDeployment.taskManager.memory,
-    taskManagerCPU = heuristicsMinerFlinkDeployment.taskManager.cpu,
-    taskManagerTaskSlots = heuristicsMinerFlinkDeployment.taskManager.taskSlots
+    group = jobConfig.group,
+    parallelism = jobConfig.parallelism,
+    bucketSize = jobConfig.bucketSize,
+    andThreshold = jobConfig.andThreshold,
+    dependencyThreshold = jobConfig.dependencyThreshold,
+    variant = jobConfig.variant
+);
+
+// Deployments
+local deploymentConfig = config.sut.deployments.heuristicsMinerFlink;
+local deployment = flinkDeployment.heuristicsMinerFlinkDeployment(
+    namespace = namespace,
+    bootstrapServer = global.bootstrapServer,
+    inputTopic = config.load.inputTopic,
+    modelTopic = config.sut.topics.model,
+    group = deploymentConfig.group,
+    parallelism = deploymentConfig.parallelism,
+    sampleSize = deploymentConfig.sampleSize,
+    batchSize = deploymentConfig.batchSize,
+    andThreshold = deploymentConfig.andThreshold,
+    dependencyThreshold = deploymentConfig.dependencyThreshold
 );
 
 {
-    "build/sut/flink-deployment.json": flinkDeployment,
-    "build/sut/heuristics-miner-flink-deployment.json": flinkDeployment2
+    "build/sut/flink-session/flink-session-jobmanager-deployment.json": session.jobManagerDeployment,
+    "build/sut/flink-session/flink-session-jobmanager-service.json": session.jobManagerService,
+    "build/sut/flink-session/flink-session-taskmanager-deployment.json": session.taskManagerDeployment,
+    "build/sut/heuristics-miner-flink-job.json": job,
+    "build/sut/flink-deployment.json": deployment
 }
