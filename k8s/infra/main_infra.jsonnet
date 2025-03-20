@@ -4,7 +4,16 @@ local config = import '../../config.json';
 
 local prefix = config.context.prefix;
 local defaultNamespace = config.infra.namespace;
-local namespace = if prefix != null && prefix != "" then prefix + "-" + defaultNamespace else defaultNamespace;
+// Determine correct namespace
+local namespace =
+    if prefix != null && prefix != "" && defaultNamespace != null && defaultNamespace != "" then
+        prefix + "-" + defaultNamespace
+    else if defaultNamespace != null && defaultNamespace != "" then
+        defaultNamespace
+    else if prefix != null && prefix != "" then
+        prefix   
+    else
+        "default";
 
 local podFailure = podChoas.podFailure(
     duration='5s',

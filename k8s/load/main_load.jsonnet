@@ -8,7 +8,16 @@ local kafkaTopic = import '../kafka/kafka-topic.jsonnet';
 local inputTopicName = config.load.inputTopic;
 local prefix = config.context.prefix;
 local defaultNamespace = config.load.namespace;
-local namespace = if prefix != null && prefix != "" then prefix + "-" + defaultNamespace else defaultNamespace;
+// Determine correct namespace
+local namespace =
+    if prefix != null && prefix != "" && defaultNamespace != null && defaultNamespace != "" then
+        prefix + "-" + defaultNamespace
+    else if defaultNamespace != null && defaultNamespace != "" then
+        defaultNamespace
+    else if prefix != null && prefix != "" then
+        prefix   
+    else
+        "default";
 
 local inputTopic = kafkaTopic.kafkaTopic(
     topicName=inputTopicName,

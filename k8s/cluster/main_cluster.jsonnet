@@ -11,9 +11,17 @@ local defaultNamespaces = [
   config.sut.namespace
 ];
 
-local namespaces = if prefix != null && prefix != ""
-                      then [prefix + "-" + n for n in defaultNamespaces]
-                      else defaultNamespaces;
+// Determine correct namespace
+local getNamespace(defaultNamespace) =
+    if prefix != null && prefix != "" && defaultNamespace != null && defaultNamespace != "" then
+        prefix + "-" + defaultNamespace
+    else if defaultNamespace != null && defaultNamespace != "" then
+        defaultNamespace
+    else if prefix != null && prefix != "" then
+        prefix   
+    else
+        "default";
+local namespaces = std.map(getNamespace, defaultNamespaces);
 
 local ns = { ["build/cluster/namespace/namespace-%s.json" %[namespace]] : namespaceCreator.createNamespace(namespace) for namespace in namespaces };
 local role = { ["build/cluster/role-%s.json" %[namespace]] : rbac.getRole(namespace) for namespace in namespaces };
