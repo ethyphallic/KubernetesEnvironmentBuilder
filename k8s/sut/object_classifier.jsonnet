@@ -11,7 +11,8 @@ function(
     },
     externalParameter={
       bootstrapServer: "minikube:1234",
-      topicName:"input"
+      topicName: "input",
+      namespace: "sut"
     }
 )
 {
@@ -19,7 +20,7 @@ function(
   kind: "Deployment",
   metadata: {
     name: name,
-    namespace: "scalablemine-hkr-sut"
+    namespace: externalParameter.namespace
   },
   spec: {
     selector: {

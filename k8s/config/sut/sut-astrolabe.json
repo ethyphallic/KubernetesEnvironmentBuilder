@@ -1,0 +1,35 @@
+{
+  "sutType": "astrolabe",
+  "system": {
+    "appLabel": "app1",
+    "modelDepth": "101",
+    "cpu": "1",
+    "memory": "1Gi",
+    "nodeLabel": "kube1-1",
+    "actions": [
+      {
+        "type": "replica",
+        "min": 5,
+        "max": 10
+      }
+    ],
+    "metrics": [
+      {
+        "name": "latency",
+        "type": "prometheus",
+        "aggregation": "sum",
+        "query": "avg(latency)"
+      }
+    ],
+    "slos": [
+      {
+        "metric": "latency",
+        "evaluation": "geq",
+        "threshold": 10,
+        "weight": 100
+      }
+    ],
+    "namespace": "sut",
+    "name": "astrolabe"
+  }
+}

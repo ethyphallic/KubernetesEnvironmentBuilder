@@ -1,43 +1,32 @@
 local kafka = import 'kafka.jsonnet';
+local kafkaMetricsConfigmap = import 'resources/kafka-metrics-configmap.jsonnet';
 local kafkaTopic = import 'kafka-topic.jsonnet';
 local buildManifest = import '../util/build/buildManifest.jsonnet';
-local buildManifests = import '../util/build/buildManifests.jsonnet';
-local build = import '../util/build-util.jsonnet';
+local buildManifestsFromMap = import '../util/build/build-manifests-from-map.jsonnet';
 
 function(global, config, path="kafka") (
-    local kafkaClusterName = config.kafka.clusterName;
-    local kafkaCluster = kafka.kafkaCluster(
-        clusterName=kafkaClusterName,
-        brokerReplicas=config.kafka.brokerReplicas,
-        zookeeperReplicas=config.kafka.zookeeperReplicas,
-        namespace=global.kafkaNamespace,
-        host=config.context.cluster
-    );
+    local kafkaClusterName = config.clusterName;
+    local kafkaMetricsConfigMap = kafkaMetricsConfigmap(global.global.kafkaNamespace);
 
-    local kafkaExporterPodMonitor = kafka.kafkaExporterPodMonitor(
-        clusterName=kafkaClusterName,
-        namespace=global.kafkaNamespace
-    );
-
-    local kafkaPodMonitor = kafka.kafkaPodMonitor(
-        clusterName=kafkaClusterName,
-        namespace=global.kafkaNamespace
-    );
-
-    local kafkaMetricsConfigMap = kafka.kafkaMetricsConfigmap(global.kafkaNamespace);
-
-    local topicManifests = build.iterateOver(
-      definition = config.kafka.topics,
+    buildManifest(path, "kafka-metrics-configmap", kafkaMetricsConfigMap)
+    + buildManifestsFromMap(
+      path,
+      "kafka-cluster",
+      definition=config.cluster,
+      externalParameter={
+        namespace: global.global.kafkaNamespace,
+        host: global.config.context.cluster
+      },
+      buildFunction=kafka
+    )
+    + buildManifestsFromMap(
+      path,
+      "topic",
+      config.topics,
       buildFunction=kafkaTopic,
       externalParameter={
-        clusterName: config.kafka.clusterName,
-        namespace: global.kafkaNamespace
-      },
-    );
-
-    buildManifest(path, "kafka-cluster", kafkaCluster)
-    + buildManifest(path, "kafka-metrics-configmap", kafkaMetricsConfigMap)
-    + buildManifest(path, "kafka-exporter-podmonitor", kafkaExporterPodMonitor)
-    + buildManifest(path, "kafka-podmonitor", kafkaPodMonitor)
-    + buildManifests(path, "topic", topicManifests)
+        clusterName: config.clusterName,
+        namespace: global.global.kafkaNamespace
+      }
+    )
 )

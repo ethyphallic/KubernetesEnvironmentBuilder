@@ -1,5 +1,15 @@
 {
   "enabled": true,
+  "cluster": {
+    "zone1": {
+      "brokerReplicas": 1,
+      "zookeeperReplicas": 1
+    },
+    "zone2": {
+      "brokerReplicas": 1,
+      "zookeeperReplicas": 1
+    }
+  },
   "clusterName": "power",
   "brokerReplicas": 1,
   "zookeeperReplicas": 1,
