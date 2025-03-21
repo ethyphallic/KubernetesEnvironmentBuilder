@@ -1,8 +1,12 @@
 {
   "sutType": "flink",
   "system": {
-    "topics": {
-      "model": "model"
-    }
+    "modelTopic": "model",
+    "group": "heuristics-miner",
+    "parallelism": "1",
+    "sampleSize": "200",
+    "batchSize": "100",
+    "andThreshold": "0.8",
+    "dependencyThreshold": "0.5"
   }
 }
