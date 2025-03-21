@@ -1,7 +1,7 @@
 local buildManifests = import 'buildManifests.jsonnet';
 
 function(
-  path="infra",
+  path="",
   manifestName="nmae",
   definition={},
   externalParameters={},

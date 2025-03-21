@@ -9,7 +9,7 @@ local config = global.config;
 
 clusterMain
 + kafka(global, config.kafka)
-+ load(global.global, config.load)
++ load(global, config.load)
 + infraMain(global, config)
 + sutMain(global, config.sut)
 #+ monitorMain

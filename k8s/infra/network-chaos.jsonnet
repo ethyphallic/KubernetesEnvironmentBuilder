@@ -2,7 +2,7 @@ function(
   name1="app1",
   name2="app2",
   definition={
-   delayMs: 200
+   latency: 200
   },
   externalParameters={
     namespace: "infra",
