@@ -1,18 +1,16 @@
 {
   "chaosMeshEnabled": true,
   "topology": {
-    "node0": {
-      "network": {
+    "network": {
+      "node0": {
         "node1": {
           "latency": "500"
         },
         "node2": {
           "latency": "200"
         }
-      }
-    },
-    "node1": {
-      "network": {
+      },
+      "node1": {
         "node2": {
           "latency": "300"
         }

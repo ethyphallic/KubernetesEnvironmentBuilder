@@ -1,8 +1,20 @@
 local podChoas = import 'pod-chaos.jsonnet';
+local buildManifestsFromMapOfMaps = import '../util/build/build-manifests-from-map-of-maps.jsonnet';
 local networkChaos = import 'network-chaos.jsonnet';
-local buildManifests = import '../util/build/buildManifests.jsonnet';
-local networkBuilder = import 'network-builder.jsonnet';
 
 function(global, config, path="infra")(
-    buildManifests(path, "network", networkBuilder.buildFromConfig(config.infra.topology))
+  buildManifestsFromMapOfMaps(
+    path=path,
+    manifestName="network",
+    definition=config.infra.topology.network,
+    buildFunction=networkChaos,
+    externalParameters={
+      namespace: global.global.infraNamespace,
+      affectedNamespaces: [
+        global.global.kafkaNamespace,
+        global.global.loadNamespace,
+        global.global.sutNamespace,
+      ]
+    }
+  )
 )
