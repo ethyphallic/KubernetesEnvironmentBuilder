@@ -4,7 +4,13 @@ local buildManifestsFromMapWithIndex = import '../util/build/build-manifests-fro
 
 function(config)
 {
-  eventFactory(definition): eventFactory(definition, config),
+  eventFactory(definition): eventFactory(
+    definition,
+    externalParameters={
+      namespace: config.global.loadNamespace,
+      bootstrapServer: config.global.bootstrapServer
+    }
+  ),
   imageProducer(definition):
     buildManifestsFromMapWithIndex(
       path="load",

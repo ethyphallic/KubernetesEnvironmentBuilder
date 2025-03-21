@@ -1,23 +1,42 @@
 local build = import '../util/build-util.jsonnet';
+local defDeployment = import 'def-deployment.jsonnet';
+local simulation = import 'def-simulation.jsonnet';
+local sink = import 'def-sink.jsonnet';
+local backend = import 'def-backend.jsonnet';
 local buildManifest = import '../../util/build/buildManifest.jsonnet';
 local buildManifests = import '../../util/build/buildManifests.jsonnet';
+local buildManifestsFromMap = import '../../util/build/build-manifests-from-map.jsonnet';
 local load = import '../load.jsonnet';
 local loadConfig = import '../load-cm.jsonnet';
-local loadConfigDataSource = import '../datasource/assembly-line.jsonnet';
 
-function (definition, global)(
-    local namespace = global.loadNamespace;
-    local bootstrapServer = global.bootstrapServer;
-    local defDeployment = load.loadDefDeployment(namespace=namespace, bootstrapServer=bootstrapServer);
-    local defBackendDeployment = load.loadBackendDeployment(namespace=namespace, topic=definition.inputTopic, bootstrapServer=bootstrapServer);
-    local defBackendService = load.loadBackendService(namespace=namespace);
-    local loadConfigmap = loadConfig.simulation(intensity=definition.intensity, genTimeframesTilStart=100);
-    local sinkConfigmap = loadConfig.sink(serviceDomainName="%s.%s.svc" %["load-backend", namespace], timeframe=1000);
-
-    buildManifest("load", "def-deployment", defDeployment)
-    + buildManifest("load", "def-backend-deployment", defBackendDeployment)
-    + buildManifest("load", "def-backend-service", defBackendService)
-    + buildManifest("load", "load/load-config", loadConfigmap)
-    + buildManifest("load", "sink/sink-config", sinkConfigmap)
-    + { ["build/load/datasource/%s.json" %[std.stripChars(datasource.name, "<>")]] : datasource for datasource in loadConfigDataSource.all()}
+function (
+    definition={
+        location: "",
+        sendInterval: "1",
+        memory: "128Mi",
+        cpu: "500m",
+    },
+    externalParameters={
+        namespace: "load",
+        bootstrapServer: "",
+        inputTopic: ""
+    }
 )
+    local namespace = externalParameters.namespace;
+    local bootstrapServer = externalParameters.bootstrapServer;
+    local def = defDeployment(namespace=namespace, bootstrapServer=bootstrapServer);
+    local defBackend = backend(namespace=namespace, topic=definition.inputTopic, bootstrapServer=bootstrapServer);
+    local defSimulation = simulation(intensity=definition.intensity, genTimeframesTilStart=100);
+    local defSink = sink(serviceDomainName="%s.%s.svc" %["load-backend", namespace], timeframe=1000);
+
+    buildManifest("load", "def", def)
+    + buildManifests("load", "backend", defBackend)
+    + buildManifest("load/load", "simulation", defSimulation)
+    + buildManifest("load/sink", "sink", defSink)
+    + buildManifestsFromMap(
+      path="load/datasource",
+      manifestName="datasource",
+      definition=definition.datasource,
+      externalParameter={},
+      buildFunction=function(a,b,c)b
+    )

@@ -4,6 +4,6 @@
   monitor: import 'config/monitor/monitor.json',
   kafka: import 'config/kafka/kafka.json',
   sut: import 'config/sut/sut-flink.json',
-  load: import 'config/load/load-image-producer.json',
+  load: import 'config/load/load-def.json',
   chaos: import 'config/infra/chaos.json',
 }
