@@ -1,4 +1,4 @@
-function(namespace, bootstrapServer) {
+function(namespace) {
   apiVersion: "apps/v1",
   kind: "Deployment",
   metadata: {

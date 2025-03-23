@@ -23,8 +23,8 @@ function (
     }
 )
     local namespace = externalParameters.namespace;
-    local bootstrapServer = externalParameters.bootstrapServer;
-    local def = defDeployment(namespace=namespace, bootstrapServer=bootstrapServer);
+    local bootstrapServer = externalParameters.bootstrapServer(definition.kafkaCluster);
+    local def = defDeployment(namespace=namespace);
     local defBackend = backend(namespace=namespace, topic=definition.inputTopic, bootstrapServer=bootstrapServer);
     local defSimulation = simulation(intensity=definition.intensity, genTimeframesTilStart=100);
     local defSink = sink(serviceDomainName="%s.%s.svc" %["load-backend", namespace], timeframe=1000);

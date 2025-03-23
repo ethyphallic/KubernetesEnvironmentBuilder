@@ -2,6 +2,7 @@
   "loadType": "eventFactory",
   "inputTopic": "input",
   "intensity": 100,
+  "kafkaCluster": "zone1",
   "datasource": {
     "startSensor": {
       "kind": "datasource",

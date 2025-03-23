@@ -4,17 +4,20 @@
     "data0": {
       "sendRate": "3",
       "location": "node1",
-      "intensity": 1
+      "intensity": 1,
+      "kafkaCluster": "zone1"
     },
     "data1": {
       "sendRate": "1",
       "location": "node2",
-      "intensity": 1
+      "intensity": 1,
+      "kafkaCluster": "zone2"
     },
     "data2": {
       "sendRate": "1",
       "location": "node3",
-      "intensity": 1
+      "intensity": 1,
+      "kafkaCluster": "zone2"
     }
   }
 }

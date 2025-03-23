@@ -3,7 +3,11 @@ local config = import 'config.jsonnet';
 {
     config: config,
     global: {
-        bootstrapServer: "%s-kafka-bootstrap.%s.svc:9092" %[config.kafka.clusterName, $.global.kafkaNamespace],
+        bootstrapServer(clusterName)::
+        //if std.contains(config.clusterName, clusterName) then
+        // TODO add proper error handling
+        "%s-kafka-bootstrap.%s.svc:9092" %[clusterName, $.global.kafkaNamespace],
+        //else error "Invalid cluster name specified",
         kafkaNamespace: "%s-%s" %[config.context.prefix, "kafka"],
         loadNamespace: "%s-%s" %[config.context.prefix, "load"],
         infraNamespace: "%s-%s" %[config.context.prefix, "infra"],

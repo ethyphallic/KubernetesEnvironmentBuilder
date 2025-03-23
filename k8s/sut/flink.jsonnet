@@ -50,7 +50,7 @@ function(
             env: [
               {
                  name: "BOOTSTRAP_SERVER",
-                 value: externalParameter.bootstrapServer
+                 value: externalParameter.bootstrapServer(definition.kafkaCluster)
               },
               {
                  name: "INPUT_TOPIC",

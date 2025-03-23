@@ -73,7 +73,7 @@ function(
             env: [
               {
                 name: "BOOTSTRAP_SERVER",
-                value: externalParameters.bootstrapServer
+                value: externalParameters.bootstrapServer(definition.kafkaCluster)
               },
               {
                 name: "TOPIC",
