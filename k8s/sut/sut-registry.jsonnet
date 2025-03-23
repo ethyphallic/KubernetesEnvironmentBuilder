@@ -5,7 +5,7 @@ local build = import '../util/build-util.jsonnet';
 local buildManifestsFromMap = import '../util/build/build-manifests-from-map.jsonnet';
 local buildManifest = import '../util/build/buildManifest.jsonnet';
 
-function(config)
+function(context)
 {
   flink(definition): buildManifest(
     path="sut",
@@ -14,9 +14,9 @@ function(config)
       name="flink",
       definition=definition,
       externalParameter={
-        namespace: config.global.sutNamespace,
-        inputTopic: config.global.inputTopic,
-        bootstrapServer: config.global.bootstrapServer
+        namespace: context.functions.sutNamespace,
+        inputTopic: context.functions.inputTopic,
+        bootstrapServer: context.functions.bootstrapServer
       }
     )
   ),
@@ -25,8 +25,8 @@ function(config)
     manifestName="object-classifier",
     definition = definition,
     externalParameter={
-      bootstrapServer: config.global.bootstrapServer,
-      topic: config.global.inputTopic
+      bootstrapServer: context.functions.bootstrapServer,
+      topic: context.functions.inputTopic
     },
     buildFunction=objectClassifier
   ),
@@ -37,10 +37,10 @@ function(config)
       manifest=astrolabe(
         definition=definition,
         externalParameter={
-          bootstrapServer: config.global.bootstrapServer,
-          inputTopic: config.global.inputTopic,
-          namespace: config.global.sutNamespace,
-          prometheusHostName: config.config.context.cluster
+          bootstrapServer: context.functions.bootstrapServer,
+          inputTopic: context.functions.inputTopic,
+          namespace: context.functions.sutNamespace,
+          prometheusHostName: context.functions.context.cluster
        }
     )
   )

@@ -38,5 +38,5 @@ function (
       manifestName="datasource",
       definition=definition.datasource,
       externalParameter={},
-      buildFunction=function(a,b,c)b
+      buildFunction=function(name,definition,externalParameters) definition
     )

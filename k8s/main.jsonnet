@@ -5,11 +5,11 @@ local infraMain = import 'infra/main-infra.jsonnet';
 local sutMain = import 'sut/main-sut.jsonnet';
 local monitorMain = import 'monitor/main-monitor.jsonnet';
 local global = import 'global.jsonnet';
-local config = global.config;
+local context = import 'context.jsonnet';
 
 clusterMain
-+ kafka(global, config.kafka)
-+ load(global, config.load)
-+ infraMain(global, config)
-+ sutMain(global, config.sut)
++ kafka(context)
++ load(context)
++ infraMain(context)
++ sutMain(context)
 #+ monitorMain

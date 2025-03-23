@@ -4,29 +4,29 @@ local kafkaTopic = import 'kafka-topic.jsonnet';
 local buildManifest = import '../util/build/buildManifest.jsonnet';
 local buildManifestsFromMap = import '../util/build/build-manifests-from-map.jsonnet';
 
-function(global, config, path="kafka") (
-    local kafkaClusterName = config.clusterName;
-    local kafkaMetricsConfigMap = kafkaMetricsConfigmap(global.global.kafkaNamespace);
+function(context, path="kafka") (
+    local kafkaClusterName = context.config.clusterName;
+    local kafkaMetricsConfigMap = kafkaMetricsConfigmap(context.functions.kafkaNamespace);
 
     buildManifest(path, "kafka-metrics-configmap", kafkaMetricsConfigMap)
     + buildManifestsFromMap(
       path,
       "kafka-cluster",
-      definition=config.cluster,
+      definition=context.config.kafka.cluster,
       externalParameter={
-        namespace: global.global.kafkaNamespace,
-        host: global.config.context.cluster
+        namespace: context.functions.kafkaNamespace,
+        host: context.config.context.cluster
       },
       buildFunction=kafka
     )
     + buildManifestsFromMap(
       path,
       "topic",
-      config.topics,
+      context.config.kafka.topics,
       buildFunction=kafkaTopic,
       externalParameter={
-        clusterName: config.clusterName,
-        namespace: global.global.kafkaNamespace
+        clusterName: context.config.kafka.clusterName,
+        namespace: context.functions.kafkaNamespace
       }
     )
 )

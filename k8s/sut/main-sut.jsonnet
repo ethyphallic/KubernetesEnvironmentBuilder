@@ -1,5 +1,5 @@
 local sutRegistry = import 'sut-registry.jsonnet';
 
-function(global, config) (
-    std.get(sutRegistry(global), config.sutType)(config.system)
+function(context) (
+    std.get(sutRegistry(context), context.config.sut.sutType)(context.config.sut.system)
 )
