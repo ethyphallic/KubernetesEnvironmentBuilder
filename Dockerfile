@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y \
     && echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list \
     && chmod 644 /etc/apt/sources.list.d/kubernetes.list \
     && apt-get update && apt-get install -y \
+    # Install bash-completion
+    bash-completion \
     # Install jq & nano
     jq \
     nano \
@@ -42,8 +44,13 @@ WORKDIR /app
 
 COPY . /app
 
+# Source interact script
 RUN echo "source /app/interact.sh" >> ~/.bashrc
+# Setup Bash-completion for kubectl
+RUN echo "source <(kubectl completion bash)" >> ~/.bashrc
+RUN echo "source /etc/bash_completion" >> ~/.bashrc
 # Fix permission if not fixed already 
 RUN echo 'if [ ! -f "/tmp/.permissions-fixed" ]; then chmod -R a+w /app && touch /tmp/.permissions-fixed; fi' >> ~/.bashrc
+RUN echo "source /app/entrypoint.sh" >> ~/.bashrc
 
 ENTRYPOINT [ "/bin/bash" ]

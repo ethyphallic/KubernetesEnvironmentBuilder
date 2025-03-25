@@ -1,13 +1,25 @@
 DIR=$(dirname "$(realpath "$0")")
-NAMESPACE=$(cat $DIR/../../config.json | jq .kafka.namespace)
+
+PREFIX=$(cat $DIR/../../config.json | jq -r .context.prefix)
+NAMESPACE=$(cat $DIR/../../config.json | jq -r .kafka.namespace)
 if [ -z $NAMESPACE ]; then
-  echo "No namespace set in config.json"
-  exit 1
+  echo "No explicit namespace set, trying prefix as namespace ..."
+  if [ -z $PREFIX ]; then
+    echo "Prefix also not set. Abort."
+    exit 1
+  else
+    NAMESPACE=$PREFIX
+  fi
+else
+  if [ ! -z $PREFIX ]; then
+    NAMESPACE="$PREFIX-$NAMESPACE"
+  fi
 fi
+echo "Selected namespace : $NAMESPACE"
+
 helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts
 
-JSONNET_PRESENT=$(command -v jsonnet >/dev/null 2>&1)
-if $JSONNET_PRESENT; then
+if command -v jsonnet >/dev/null 2>&1; then
   # Use locally present jsonnet (Also used in the interactive docker container)
   echo "Using local jsonnet installation"
   cp $DIR/../../config.json $DIR/config.json
@@ -25,5 +37,11 @@ else
       syseleven/jsonnet-builder -m /src /src/kafka-ui-values.jsonnet
 fi
 
-helm install kafka-ui kafka-ui/kafka-ui -f kafka-ui-values.json --set createGlobalResources=false --skip-crds -n $NAMESPACE
+HELM_CMD=""
+CONTEXT=$(kubectl config current-context)
+if [ "$CONTEXT" != "minikube" ]; then
+  HELM_CMD="--set createGlobalResources=false --skip-crds" # External cluster
+fi
+
+helm install kafka-ui kafka-ui/kafka-ui -f kafka-ui-values.json $HELM_CMD -n $NAMESPACE
 sh -c -e "rm $DIR/kafka-ui-values.json $DIR/config.json $DIR/global.jsonnet"

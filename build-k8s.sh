@@ -3,6 +3,7 @@ DIR=$(dirname "$(realpath "$0")")
 mkdir -p "$DIR/build/cluster"
 mkdir -p "$DIR/build/cluster/namespace"
 mkdir -p "$DIR/build/sut"
+mkdir -p "$DIR/build/sut/flink-session"
 mkdir -p "$DIR/build/kafka"
 mkdir -p "$DIR/build/load"
 mkdir -p "$DIR/build/load/datasource"
