@@ -81,7 +81,7 @@ function(
               },
               {
                 name: "SEND_INTERVAL",
-                value: definition.intensity
+                value: std.toString(definition.intensity)
               },
               {
                 name: "KEY",

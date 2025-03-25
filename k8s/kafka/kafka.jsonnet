@@ -12,14 +12,15 @@ function(
     namespace: "kafka",
     host: "minikube"
   }
-) [
+)
+#[
   kafkaCluster(
     clusterName=name,
     brokerReplicas=definition.brokerReplicas,
     zookeeperReplicas=definition.zookeeperReplicas,
     namespace=externalParameter.namespace,
     host=externalParameter.host
-  ),
-  kafkaPodMonitor(name, externalParameter.namespace),
-  kafkaExporterPodMonitor(name, externalParameter.namespace)
-]
+  )
+#  kafkaPodMonitor(name, externalParameter.namespace),
+#  kafkaExporterPodMonitor(name, externalParameter.namespace)
+#]

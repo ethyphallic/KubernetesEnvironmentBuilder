@@ -44,8 +44,8 @@ function(
         containers: [
           {
             name: name,
-            image: "hendrikreiter/object_classifier",
-            imagePullPolicy: "IfNotPresent",
+            image: "hendrikreiter/object_classifier:0.1.0",
+            imagePullPolicy: "Always",
             ports: [
               {
                 containerPort: 80,
@@ -59,7 +59,7 @@ function(
             env: [
               {
                 name: "BOOTSTRAP_SERVER",
-                value: externalParameter.bootstrapServer
+                value: externalParameter.bootstrapServer(definition.kafkaCluster)
               },
               {
                 name: "TOPICS",

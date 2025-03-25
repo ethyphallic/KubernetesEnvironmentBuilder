@@ -1,1 +1,8 @@
-{}
+{
+  "monitor-zone1": {
+    "kafkaCluster": "zone1"
+  },
+  "monitor-zone2": {
+    "kafkaCluster": "zone2"
+  }
+}

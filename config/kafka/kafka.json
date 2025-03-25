@@ -10,17 +10,26 @@
       "zookeeperReplicas": 1
     }
   },
-  "clusterName": "power",
-  "brokerReplicas": 1,
-  "zookeeperReplicas": 1,
   "uiEnabled": true,
   "strimziEnabled": true,
   "topics": {
-    "input": {},
-    "model": {},
-    "reporter": {},
-    "dog-input":  {
-      "partitions": 60
+    "z1-input": {
+      "partitions": 60,
+      "name": "input",
+      "cluster": "zone1"
+    },
+    "z2-input": {
+      "partitions": 60,
+      "name": "input",
+      "cluster": "zone2"
+    },
+    "z1-reporter": {
+      "name": "reporter",
+      "cluster": "zone1"
+    },
+    "z2-reporter": {
+      "name": "reporter",
+      "cluster": "zone2"
     }
   }
 }

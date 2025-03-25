@@ -20,12 +20,11 @@ function(context, path="kafka") (
       buildFunction=kafka
     )
     + buildManifestsFromMap(
-      path,
+      path + "/topic",
       "topic",
       context.config.kafka.topics,
       buildFunction=kafkaTopic,
       externalParameter={
-        clusterName: context.config.kafka.clusterName,
         namespace: context.functions.kafkaNamespace
       }
     )

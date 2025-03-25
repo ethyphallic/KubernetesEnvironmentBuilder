@@ -1,9 +1,19 @@
-function(namespace, bootstrapServer){
+function(
+    name,
+    definition={
+        kafkaCluster: "zone1"
+    },
+    externalParameter={
+        namespace: "",
+        bootstrapServer: function(a)a
+    }
+    )
+{
   apiVersion: "apps/v1",
   kind: "Deployment",
   metadata: {
-    name: "process-monitor",
-    namespace: namespace
+    name: name,
+    namespace: externalParameter.namespace
   },
   spec: {
     selector: {
@@ -21,7 +31,7 @@ function(namespace, bootstrapServer){
       spec: {
         containers: [
           {
-            name: "process-monitor",
+            name: name,
             image: "hendrikreiter/process-monitor:0.1.0",
             imagePullPolicy: "IfNotPresent",
             ports: [
@@ -33,7 +43,7 @@ function(namespace, bootstrapServer){
             env: [
               {
                 name: "BOOTSTRAP_SERVER",
-                value: bootstrapServer
+                value: externalParameter.bootstrapServer(definition.kafkaCluster)
               }
             ],
             resources: {

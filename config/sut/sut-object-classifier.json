@@ -5,15 +5,17 @@
       "memory": "1Gi",
       "cpu": "1",
       "replicas": 2,
-      "locationLabel": "node1",
-      "modelDepth": "101"
+      "locationLabel": "kube1-3",
+      "modelDepth": "101",
+      "kafkaCluster": "zone1"
     },
     "worker1": {
       "memory": "1Gi",
       "cpu": "1",
       "replicas": 1,
-      "locationLabel": "node2",
-      "modelDepth": "50"
+      "locationLabel": "kube1-4",
+      "modelDepth": "50",
+      "kafkaCluster": "zone2"
     }
   }
 }

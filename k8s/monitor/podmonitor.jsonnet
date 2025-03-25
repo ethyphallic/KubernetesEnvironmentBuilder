@@ -1,17 +1,26 @@
-{
-  createPodMonitor(name, matchLabel):: {
+function(
+  name,
+  definition={
+    matchLabel: "label"
+  },
+  externalParameter={
+    namespace: "monitor"
+  }
+  ) {
     apiVersion: "monitoring.coreos.com/v1",
     kind: "PodMonitor",
     metadata: {
       name: name,
-      namespace: "scalablemine-hkr-sut",
+      namespace: externalParameter.namespace,
       labels: {
         release: "prometheus"
       }
     },
     spec: {
       selector: {
-        matchLabels: matchLabel
+        matchLabels: {
+          app: definition.matchLabel
+        }
       },
       podMetricsEndpoints: [
         {
@@ -21,4 +30,3 @@
       ]
     }
   }
-}

@@ -7,8 +7,12 @@
     "kafka": {
       "clusters": [
         {
-          "name": "power",
-          "bootstrapServers": "power-kafka-bootstrap:9092"
+          "name": "zone1",
+          "bootstrapServers": "zone1-kafka-bootstrap:9092"
+        },
+        {
+          "name": "zone2",
+          "bootstrapServers": "zone2-kafka-bootstrap:9092"
         }
       ]
     },

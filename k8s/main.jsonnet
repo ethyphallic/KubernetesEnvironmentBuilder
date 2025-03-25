@@ -12,4 +12,4 @@ clusterMain
 + load(context)
 + infraMain(context)
 + sutMain(context)
-#+ monitorMain
++ monitorMain(context)

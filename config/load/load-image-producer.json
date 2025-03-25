@@ -3,19 +3,19 @@
   "load": {
     "data0": {
       "sendRate": "3",
-      "location": "node1",
+      "location": "kube1-3",
       "intensity": 1,
       "kafkaCluster": "zone1"
     },
     "data1": {
       "sendRate": "1",
-      "location": "node2",
+      "location": "kube1-4",
       "intensity": 1,
       "kafkaCluster": "zone2"
     },
     "data2": {
       "sendRate": "1",
-      "location": "node3",
+      "location": "kube1-4",
       "intensity": 1,
       "kafkaCluster": "zone2"
     }

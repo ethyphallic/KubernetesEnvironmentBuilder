@@ -1,5 +1,5 @@
 local flink = import 'heuristics-miner-flink.jsonnet';
-local objectClassifier = import 'object_classifier.jsonnet';
+local objectClassifier = import 'object-classifier.jsonnet';
 local astrolabe = import 'astrolabe.jsonnet';
 local build = import '../util/build-util.jsonnet';
 local buildManifestsFromMap = import '../util/build/build-manifests-from-map.jsonnet';
@@ -26,7 +26,8 @@ function(context)
     definition = definition,
     externalParameter={
       bootstrapServer: context.functions.bootstrapServer,
-      topic: context.functions.inputTopic
+      topic: context.functions.inputTopic,
+      namespace: context.functions.sutNamespace
     },
     buildFunction=objectClassifier
   ),

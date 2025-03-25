@@ -67,7 +67,7 @@ if __name__ == '__main__':
     load_delay = arg_or_default(args.load_delay, 30)
     repetitions = arg_or_default(args.repetitions, 1)
 
-    client1 = EcoscapeClient("infra_builder/build")
+    client1 = EcoscapeClient("build")
     client2 = EcoscapeClient("infra_builder/build", operator_dir="operator2")
     client3 = EcoscapeClient("infra_builder/build", chaos_dir="chaos2")
     client4 = EcoscapeClient("infra_builder/build", operator_dir="operator2", chaos_dir="chaos2")
@@ -80,7 +80,7 @@ if __name__ == '__main__':
                 mode=ModeFullExperimentRun(),
                 load_generation_delay=load_delay,
                 infra_delay=0.5 * load_delay,
-                ecoscape_client=client2
+                ecoscape_client=client1
             ),
             evaluation_delay=arg_or_default(args.eval_delay, 20),
         ).run()

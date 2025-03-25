@@ -2,11 +2,11 @@ function(
     name,
     definition={
       replicas: 1,
-      partitions: 1
+      partitions: 1,
+      cluster: "zone1"
     },
     externalParameter={
-      namespace: "kafka",
-      clusterName: "cluster"
+      namespace: "kafka"
     }
 ){
     apiVersion: "kafka.strimzi.io/v1beta2",
@@ -15,10 +15,11 @@ function(
         name: name,
         namespace: externalParameter.namespace,
         labels: {
-            "strimzi.io/cluster": externalParameter.clusterName
+            "strimzi.io/cluster": definition.cluster
         }
     },
     spec: {
+        topicName: definition.name,
         partitions: std.get(definition, "partitions", 1),
         replicas: std.get(definition, "replicas", 1)
     }
