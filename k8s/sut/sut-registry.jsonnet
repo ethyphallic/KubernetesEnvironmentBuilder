@@ -1,4 +1,4 @@
-local flink = import 'flink.jsonnet';
+local flink = import 'heuristics-miner-flink.jsonnet';
 local objectClassifier = import 'object_classifier.jsonnet';
 local astrolabe = import 'astrolabe.jsonnet';
 local build = import '../util/build-util.jsonnet';
