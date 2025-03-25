@@ -1,0 +1,3 @@
+{
+  flink: import 'flink-patcher'
+}
