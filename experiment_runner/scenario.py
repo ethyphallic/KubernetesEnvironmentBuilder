@@ -29,6 +29,12 @@ class Scenario:
         for i in range(int(self.chaos_delay)):
             self._evaluate_slos(is_evaluation_phase=True)
 
+        print("Patch the system")
+        self.ecoscape_client.deploy_patched_sut()
+        sleep(30)
+        print("Initial System deleted")
+        self.ecoscape_client.remove_sut()
+
         self.ecoscape_client.apply_chaos()
         for i in range(self.duration - self.chaos_delay):
             self._evaluate_slos(is_evaluation_phase=True)
@@ -42,16 +48,24 @@ class Scenario:
                     slo_sink.evaluate_slo(value, slo.get_threshold(), slo.is_bigger_better)
         sleep(1)
 
+    def _end_slos(self):
+        for slo in self.slo_sinks:
+            for slo_sink in self.slo_sinks[slo]:
+                slo_sink.end_hook()
+
     def run(self):
         print("start")
         try:
             self.ecoscape_client.deploy_sut()
             self.ecoscape_client.apply_infrastructure_constraints()
+            self.ecoscape_client.start_warmup_load()
+            self.ecoscape_client.stop_warmup_load()
             self.ecoscape_client.start_load()
             self.run_experiment()
         except KeyboardInterrupt:
             print("program has been ended by user")
+        self._end_slos()
         self.ecoscape_client.stop_load()
         self.ecoscape_client.delete_infrastructure_constraints()
-        self.ecoscape_client.remove_sut()
+        self.ecoscape_client.remove_patched_sut()
         print("end")

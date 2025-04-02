@@ -1,4 +1,6 @@
+import string
 import time
+import random
 
 from prometheus_api_client import PrometheusConnect
 from experiment_runner.aggregator.weighted_slo_aggregator import WeightedSloAggregator
@@ -12,6 +14,7 @@ from experiment_runner.query.query_processing_latency import QueryProcessingLate
 from argparse import ArgumentParser
 
 from experiment_runner.scenario import Scenario, SLO
+from experiment_runner.sink.sli_storage_sink import SliStorageSink
 from experiment_runner.sink.slo_value_printer_sink import SloValuePrinterSink
 from experiment_runner.sink.slo_violation_score_sink import SloViolationScoreSink
 from experiment_runner.sink.slo_visualizer_sink import SloVisualizerSink
@@ -26,12 +29,15 @@ def query_registry():
         "accuracy": QueryAccuracy(prometheus_connection)
     }
 
-
 def arg_or_default(arg, default):
     if arg:
         return arg
     return default
 
+def generate_id(length=5):
+    characters = string.ascii_lowercase
+    random_id = ''.join(random.choice(characters) for _ in range(length))
+    return random_id
 
 if __name__ == '__main__':
     queries = query_registry()
@@ -52,9 +58,13 @@ if __name__ == '__main__':
     accuracy_visualizer_sink = SloVisualizerSink("Accuracy", False)
     energy_visualizer_sink = SloVisualizerSink("Energy", False)
 
-    slo_sinks[latency_slo] = [latency_score_sink, latency_printer_sink, latency_visualizer_sink]
-    slo_sinks[accuracy_slo] = [accuracy_score_sink, accuracy_printer_sink, accuracy_visualizer_sink]
-    slo_sinks[energy_consumption] = [energy_score_sink, energy_printer_sink, energy_visualizer_sink]
+    latency_storage = SliStorageSink(generate_id(), "latency", False, )
+    accuracy_storage = SliStorageSink(generate_id(), "accuracy", False)
+    energy_storage = SliStorageSink(generate_id(), "energy", False)
+
+    slo_sinks[latency_slo] = [latency_score_sink, latency_printer_sink, latency_visualizer_sink, latency_storage]
+    slo_sinks[accuracy_slo] = [accuracy_score_sink, accuracy_printer_sink, accuracy_visualizer_sink, accuracy_storage]
+    slo_sinks[energy_consumption] = [energy_score_sink, energy_printer_sink, energy_visualizer_sink, energy_storage]
 
     argument_parser = ArgumentParser(description="Ecoscape")
     argument_parser.add_argument("--duration", type=int, help="experiment duration")
@@ -68,22 +78,20 @@ if __name__ == '__main__':
     repetitions = arg_or_default(args.repetitions, 1)
 
     client1 = EcoscapeClient("build")
-    client2 = EcoscapeClient("infra_builder/build", operator_dir="operator2")
-    client3 = EcoscapeClient("infra_builder/build", chaos_dir="chaos2")
-    client4 = EcoscapeClient("infra_builder/build", operator_dir="operator2", chaos_dir="chaos2")
 
     for i in range(repetitions):
         Scenario(
             slo_sinks=slo_sinks,
-            duration=arg_or_default(args.duration, 300),
+            duration=arg_or_default(args.duration, 180),
             ecoscape_client=EcoscapeClientModeAware(
                 mode=ModeFullExperimentRun(),
                 load_generation_delay=load_delay,
                 infra_delay=0.5 * load_delay,
                 ecoscape_client=client1
             ),
-            evaluation_delay=arg_or_default(args.eval_delay, 20),
+            evaluation_delay=arg_or_default(args.eval_delay, 45),
         ).run()
+
         latency_visualizer_sink.start_new_experiment()
         accuracy_visualizer_sink.start_new_experiment()
         energy_visualizer_sink.start_new_experiment()
@@ -96,6 +104,3 @@ if __name__ == '__main__':
     print(energy_score_sink.get_score())
     aggregator = WeightedSloAggregator([latency_score_sink, accuracy_score_sink, energy_score_sink], [0.3333, 0.3333, 0.3333])
     print(aggregator.get_aggregated_score())
-    latency_visualizer_sink.save()
-    accuracy_visualizer_sink.save()
-    energy_visualizer_sink.save()

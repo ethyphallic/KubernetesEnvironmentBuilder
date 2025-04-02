@@ -1,5 +1,6 @@
 local sutRegistry = import 'sut-registry.jsonnet';
 
-function(context, path="sut") (
-    std.get(sutRegistry(context), context.config.sut.sutType)(context.config.sut.system)
+function(context, path="sut", key="system") (
+    local sutConfig = std.get(context.config, key);
+    std.get(sutRegistry(context), std.get(sutConfig, "sutType"))(path, std.get(sutConfig, "system"))
 )

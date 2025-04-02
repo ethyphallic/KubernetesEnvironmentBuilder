@@ -5,21 +5,32 @@ class EcoscapeClient:
     def __init__(
         self,
         base_dir,
+        load_warmup_dir="warmup",
         load_dir="load",
-        sut_dir="sut",
+        sut_dir="sut0",
+        sut_patch_dir="sut1",
         infra_dir="infra",
+        monitor_dir="monitor",
         chaos_dir="chaos",
-        kafka_dir="kafka",
-        operator_dir="operator"
+        kafka_dir="kafka/topic"
     ):
         self.k8s_client:K8sClient = K8sClient()
         self.base_dir = base_dir
         self.load_dir = load_dir
+        self.load_warmup_dir = load_warmup_dir
         self.sut_dir = sut_dir
+        self.sut_patch_dir = sut_patch_dir
         self.infra_dir = infra_dir
+        self.monitor_dir = monitor_dir
         self.chaos_dir = chaos_dir
         self.kafka_dir = kafka_dir
-        self.operator_dir = operator_dir
+
+    def apply_warmup_load(self):
+        self.k8s_client.create_directory(self.base_dir + "/" + self.load_warmup_dir)
+
+    def stop_warmup_load(self):
+        self.k8s_client.delete_directory(self.base_dir + "/" + self.load_warmup_dir)
+
 
     def apply_load(self):
         self.k8s_client.create_directory(self.base_dir + "/" + self.load_dir)
@@ -28,20 +39,27 @@ class EcoscapeClient:
         self.k8s_client.delete_directory(self.base_dir + "/" + self.load_dir)
 
     def apply_sut(self):
-        #self.k8s_client.create_directory(self.base_dir + "/" + self.sut_dir)
-        self.k8s_client.create_directory(self.base_dir + "/" + self.operator_dir)
+        self.k8s_client.create_directory(self.base_dir + "/" + self.sut_dir)
         self.k8s_client.create_directory(self.base_dir + "/" + self.kafka_dir)
 
+    def apply_patched_sut(self):
+        self.k8s_client.create_directory(self.base_dir + "/" + self.sut_patch_dir)
+
     def delete_sut(self):
-        #self.k8s_client.delete_directory(self.base_dir + "/" + self.sut_dir)
-        self.k8s_client.delete_directory(self.base_dir + "/" + self.operator_dir)
+        self.k8s_client.delete_directory(self.base_dir + "/" + self.sut_dir)
+
+    def delete_patched_sut(self):
+        self.k8s_client.delete_directory(self.base_dir + "/" + self.sut_patch_dir)
         self.k8s_client.delete_directory(self.base_dir + "/" + self.kafka_dir)
 
     def apply_infra(self):
         self.k8s_client.create_directory(self.base_dir + "/" + self.infra_dir)
+        self.k8s_client.create_directory(self.base_dir + "/" + self.monitor_dir)
+        self.k8s_client.create_directory(self.base_dir + "/" + self.monitor_dir + "/podmonitor")
 
     def delete_infra(self):
         self.k8s_client.delete_directory(self.base_dir + "/" + self.infra_dir)
+        self.k8s_client.delete_directory(self.base_dir + "/" + self.monitor_dir)
 
     def apply_chaos(self):
         self.k8s_client.create_directory(self.base_dir + "/" + self.chaos_dir)

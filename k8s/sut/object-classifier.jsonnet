@@ -68,6 +68,10 @@ function(
               {
                 name: "MODEL_DEPTH",
                 value: definition.modelDepth
+              },
+              {
+                name: "MAX_POLL_RECORDS",
+                value: std.toString(definition.maxPollRecords)
               }
             ],
             resources: {

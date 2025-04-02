@@ -1,0 +1,10 @@
+{
+  "prefix": "",
+  "cluster": "minikube",
+  "operator": {
+    "strimzi": true,
+    "chaosMesh": true,
+    "kepler": false,
+    "prometheus": true
+  }
+}

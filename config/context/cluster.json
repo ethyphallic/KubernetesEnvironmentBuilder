@@ -1,0 +1,11 @@
+{
+  "prefix": "scalablemine-hkr-",
+  "cluster": "kube1-1",
+  "operator": {
+    "strimzi": true,
+    "chaosMesh": false,
+    "kepler": false,
+    "flinkOperator": false,
+    "prometheus": false
+  }
+}

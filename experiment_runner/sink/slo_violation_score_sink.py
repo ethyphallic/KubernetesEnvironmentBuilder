@@ -24,3 +24,7 @@ class SloViolationScoreSink(SloSink):
 
     def get_score(self) -> float:
         return self.score / self.score_count
+
+    def end_hook(self):
+        print(self.get_score())
+

@@ -20,8 +20,8 @@ function(context)
       }
     )
   ),
-  objectClassifier(definition): buildManifestsFromMap(
-    path="sut",
+  objectClassifier(path, definition): buildManifestsFromMap(
+    path=path,
     manifestName="object-classifier",
     definition = definition,
     externalParameter={

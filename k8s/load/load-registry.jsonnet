@@ -11,9 +11,9 @@ function(context)
       bootstrapServer: context.functions.bootstrapServer
     }
   ),
-  imageProducer(definition):
+  imageProducer(path="load", definition):
     buildManifestsFromMapWithIndex(
-      path="load",
+      path=path,
       manifestName="image-producer",
       buildFunction=imageProducer,
       definition=definition.load,

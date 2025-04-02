@@ -33,7 +33,7 @@ function(
           {
             name: name,
             image: "hendrikreiter/process-monitor:0.1.0",
-            imagePullPolicy: "IfNotPresent",
+            imagePullPolicy: "Always",
             ports: [
               {
                 containerPort: 5000,
@@ -44,6 +44,10 @@ function(
               {
                 name: "BOOTSTRAP_SERVER",
                 value: externalParameter.bootstrapServer(definition.kafkaCluster)
+              },
+              {
+                name: "REPORTER_WINDOW_SIZE",
+                value: "1000"
               }
             ],
             resources: {

@@ -79,7 +79,7 @@ Provided Commands are :
 - `y2j` - Alias for `pclip | yaml2json | clip`
 #### Kubernetes
 - `kn` - Allows for a quick contexts switch between namespaces.
-  - If a prefix is set in `config.json` the resulting namespace is `$PREFIX-$ARGUMENT`. 
+  - If a prefix is set in `config.json` the resulting namespace is `$PREFIX$ARGUMENT`. 
   - If no argument was given the prefix is used as a namespace.
 - `build` - Shortcut for `./build-k8s.sh`
 - `get_clusters` - List all the contexts in your kubeconfig file

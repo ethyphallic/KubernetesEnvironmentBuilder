@@ -2,7 +2,9 @@ local kafka = import 'kafka.jsonnet';
 local kafkaMetricsConfigmap = import 'resources/kafka-metrics-configmap.jsonnet';
 local kafkaTopic = import 'kafka-topic.jsonnet';
 local buildManifest = import '../util/build/buildManifest.jsonnet';
+local buildManifests = import '../util/build/buildManifests.jsonnet';
 local buildManifestsFromMap = import '../util/build/build-manifests-from-map.jsonnet';
+local kafkaUi = import 'resources/kafka-ui/kafka-ui.jsonnet';
 
 function(context, path="kafka") (
     local kafkaClusterName = context.config.clusterName;
@@ -27,5 +29,10 @@ function(context, path="kafka") (
       externalParameter={
         namespace: context.functions.kafkaNamespace
       }
+    )
+    + buildManifests(
+      path + "/ui",
+      "kafka-ui",
+      kafkaUi()
     )
 )

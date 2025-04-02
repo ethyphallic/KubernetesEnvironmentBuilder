@@ -6,7 +6,7 @@ complete -o default -F __start_kubectl k
 
 # Helper function to load and check variables from the config.json file
 check_config() {
-  VAR=$(cat $DIR/config.json | jq -r "$1")
+  VAR=$(cat $DIR/build/cluster/cluster-config.json | jq -r "$1")
   if [ -z "$VAR" ] || [ "$VAR" == null ]; then
     echo "$1 not set in configuration file" >&2
     return 1
@@ -35,12 +35,12 @@ check_namespace() {
   if [ -z "$PREFIX" ]; then
     echo "$NAMESPACE"
   else
-    echo "$PREFIX-$NAMESPACE"
+    echo "$PREFIX$NAMESPACE"
   fi
 }
 
 function kn() {
-  PREFIX=$(check_config .context.prefix) || echo ""
+  PREFIX=$(check_config .prefix) || echo ""
   if [ -z $1 ]; then
     # No argument given
     if [ ! -z "$PREFIX" ]; then
@@ -53,7 +53,7 @@ function kn() {
   else
     # Argument given
     if [ ! -z "$PREFIX" ]; then
-      NAMEPSACE="$PREFIX-$1"
+      NAMEPSACE="$PREFIX$1"
     else
       NAMEPSACE="$1"
     fi
@@ -64,6 +64,10 @@ function kn() {
     kubectl config set-context --current --namespace $NAMEPSACE ; echo
   fi
   echo "Current namespace [ $(kubectl config view --minify | grep namespace | cut -d " " -f6) ]"
+}
+
+function ns() {
+  kubectl config set-context --current --namespace $1
 }
 
 ### K9s ###
@@ -139,6 +143,22 @@ function kafka_deploy() {
 
 function kafka_destroy() {
     kubectl delete -f $DIR/build/kafka
+}
+
+function deploy() {
+    kubectl apply -f $DIR/build/$1
+}
+
+function delete() {
+    kubectl delete -f $DIR/build/$1
+}
+
+function get() {
+    kubectl get pods -n "$(check_config .prefix)$1"
+}
+
+function get-svc() {
+    kubectl get svc -n "$(check_config .prefix)$1"
 }
 
 function kafka_operator_restart() {

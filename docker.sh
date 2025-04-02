@@ -110,7 +110,7 @@ else
 fi
 eval $DOCKER_CMD
 
-if [ $DOCKERCONTAINER_REMOVE -ne 0 ]; then
+if [[ $DOCKERCONTAINER_REMOVE -ne 0 ]]; then
   echo "Removing container $DOCKERCONTAINER_NAME ..."
   docker container rm $DOCKERCONTAINER_NAME
 fi

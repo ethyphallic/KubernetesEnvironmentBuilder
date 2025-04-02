@@ -9,5 +9,9 @@ class SloSink(ABC):
     def evaluate_slo(self, value, threshold, is_bigger_better):
         pass
 
+    @abstractmethod
+    def end_hook(self):
+        pass
+
     def is_monitor_sink(self):
         return self.is_monitor_sink

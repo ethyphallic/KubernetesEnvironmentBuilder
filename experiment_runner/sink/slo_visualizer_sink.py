@@ -44,5 +44,5 @@ class SloVisualizerSink(SloSink):
     def is_monitor_sink(self):
         return super().is_monitor_sink()
 
-    def save(self):
+    def end_hook(self):
         self.fig.savefig(f"result/{self.name}-plot.png")

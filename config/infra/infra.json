@@ -1,18 +1,38 @@
 {
   "chaosMeshEnabled": true,
   "topology": {
-    "network": {
+    "nodes": {
       "node0": {
-        "node1": {
-          "latency": "500"
-        },
-        "node2": {
-          "latency": "200"
-        }
+        "memory": "1Gi",
+        "cpu": "1",
+        "kafkaCluster": "zone2",
+        "locationLabel": "kube1-4"
       },
       "node1": {
-        "node2": {
-          "latency": "300"
+        "memory": "1Gi",
+        "cpu": "1",
+        "kafkaCluster": "zone2",
+        "locationLabel": "kube1-4"
+      },
+      "node2": {
+        "memory": "1Gi",
+        "cpu": "1",
+        "kafkaCluster": "zone2",
+        "locationLabel": "kube1-4"
+      }
+    },
+    "network": {
+      "kube1-3": {
+        "kube1-4": {
+          "latency": "0"
+        },
+        "kube1-5": {
+          "latency": "50"
+        }
+      },
+      "kube1-4": {
+        "kube1-5": {
+          "latency": "50"
         }
       }
     }

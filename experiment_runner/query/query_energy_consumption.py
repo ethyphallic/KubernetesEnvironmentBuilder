@@ -12,7 +12,7 @@ class QueryEnergyConsumption(Query):
         return "energy_consumption"
 
     def get_query_string(self):
-        return ("sum(irate(kepler_container_dram_joules_total{pod_name=~'object-recognition.*'}[1m])) + sum(irate(kepler_container_package_joules_total{ pod_name=~'object-recognition.*'}[1m]))  + sum(irate(kepler_container_other_joules_total{ pod_name=~'object-recognition.*'}[1m]))")
+        return "sum by (container_namespace)(irate(kepler_container_dram_joules_total{container_namespace=~'scalablemine-hkr-sut', pod_name=~'.*'}[60s])) + sum by (container_namespace)(irate(kepler_container_package_joules_total{container_namespace=~'scalablemine-hkr-sut', pod_name=~'.*'}[60s]))"
 
     def execute(self):
         result = self.prometheus_connection.custom_query(self.get_query_string())

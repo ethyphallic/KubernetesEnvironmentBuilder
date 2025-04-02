@@ -12,3 +12,8 @@ class SloValuePrinterSink(SloSink):
     def is_monitor_sink(self):
         return super().is_monitor_sink()
 
+    def end_hook(self):
+        pass
+
+
+

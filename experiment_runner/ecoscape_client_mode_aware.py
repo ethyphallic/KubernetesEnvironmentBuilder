@@ -21,20 +21,39 @@ class EcoscapeClientModeAware():
         if self.mode.is_deploy_system():
             self.ecoscape_client.apply_sut()
 
+    def deploy_patched_sut(self):
+        if self.mode.is_deploy_system():
+            self.ecoscape_client.apply_patched_sut()
+
     def remove_sut(self):
         if self.mode.is_deploy_system():
             print("Deleting SUT")
             self.ecoscape_client.delete_sut()
 
+    def remove_patched_sut(self):
+        if self.mode.is_deploy_system():
+            print("Deleting SUT")
+            self.ecoscape_client.delete_patched_sut()
+
     def start_load(self):
         if self.mode.is_start_load():
-            self._sleep_with_message(self.load_generation_delay, "start the load")
+            print("start load")
             self.ecoscape_client.apply_load()
 
     def stop_load(self):
         if self.mode.is_start_load():
             print("Stopping load")
             self.ecoscape_client.stop_load()
+
+    def start_warmup_load(self):
+        if self.mode.is_start_load():
+            self._sleep_with_message(self.load_generation_delay,"start warm up load")
+            self.ecoscape_client.apply_warmup_load()
+
+    def stop_warmup_load(self):
+        if self.mode.is_start_load():
+            print("Stopping load")
+            self.ecoscape_client.stop_warmup_load()
 
     def apply_infrastructure_constraints(self):
         if self.mode.is_apply_infrastructure_constraints():

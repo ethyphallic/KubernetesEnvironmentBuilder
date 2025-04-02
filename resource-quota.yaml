@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: mem-cpu-demo
+  namespace: scalablemine-stu230729
+spec:
+  hard:
+    limits.cpu: "32"
+    limits.memory: 24Gi

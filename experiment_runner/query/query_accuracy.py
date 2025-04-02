@@ -7,7 +7,7 @@ class QueryAccuracy(Query):
         self.prometheus_connection = prometheus_connection
 
     def get_name(self):
-        return f"accuracy"
+        return f"avg(avg_over_time(accuracy[1m]))"
 
     def execute(self):
         result = self.prometheus_connection.custom_query(f"avg(accuracy!=0)")
