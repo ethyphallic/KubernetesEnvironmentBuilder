@@ -1,6 +1,6 @@
 DIR="$(dirname "$0")"
 PREFIX=$(cat $DIR/../../config.json | jq -r .context.prefix)
-NAMESPACE=$PREFIX-$(cat $DIR/../../config.json | jq -r .monitor.namespace)
+NAMESPACE=$PREFIX$(cat $DIR/../../config.json | jq -r .monitor.namespace)
 
 
 if [ -z $NAMESPACE ]; then

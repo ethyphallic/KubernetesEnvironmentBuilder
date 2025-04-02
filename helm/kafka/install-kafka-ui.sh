@@ -12,7 +12,7 @@ if [ -z $NAMESPACE ]; then
   fi
 else
   if [ ! -z $PREFIX ]; then
-    NAMESPACE="$PREFIX-$NAMESPACE"
+    NAMESPACE="$PREFIX$NAMESPACE"
   fi
 fi
 echo "Selected namespace : $NAMESPACE"
