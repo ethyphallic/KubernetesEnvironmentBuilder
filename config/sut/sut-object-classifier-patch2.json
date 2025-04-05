@@ -1,39 +1,39 @@
 {
   "sutType": "objectClassifier",
   "system": {
-    "edge-zone1": {
+    "edge-zone1-p2": {
       "memory": "2Gi",
       "cpu": "2",
-      "replicas": 1,
+      "replicas": 2,
       "maxPollRecords": 1,
       "locationLabel": "kube1-3",
-      "modelDepth": "152",
+      "modelDepth": "50",
       "kafkaCluster": "zone1"
     },
-    "edge-zone2": {
+    "edge-zone2-p2": {
       "memory": "2Gi",
       "cpu": "2",
       "replicas": 1,
       "maxPollRecords": 1,
       "locationLabel": "kube1-4",
-      "modelDepth": "152",
+      "modelDepth": "50",
       "kafkaCluster": "zone2"
     },
-    "cloud-zone1": {
+    "cloud-zone1-p2": {
       "memory": "4Gi",
       "cpu": "4",
       "replicas": 2,
       "maxPollRecords": 1,
-      "locationLabel": "kube1-5",
+      "locationLabel": "kube1-2",
       "modelDepth": "152",
       "kafkaCluster": "zone1"
     },
-    "cloud-zone2": {
+    "cloud-zone2-p2": {
       "memory": "4Gi",
       "cpu": "4",
       "replicas": 2,
       "maxPollRecords": 1,
-      "locationLabel": "kube1-5",
+      "locationLabel": "kube1-2",
       "modelDepth": "152",
       "kafkaCluster": "zone2"
     }

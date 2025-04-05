@@ -12,8 +12,8 @@ class Scenario:
         duration,
         slo_sinks: Dict[SLO, List[SloSink]],
         ecoscape_client: EcoscapeClientModeAware,
-        chaos_split = 0.25,
-        evaluation_delay=30
+        chaos_split = 0.5,
+        evaluation_delay=15
     ):
         self.slo_sinks: Dict[SLO, List[SloSink]] = slo_sinks
         self.evaluation_delay = evaluation_delay
@@ -25,18 +25,23 @@ class Scenario:
         print(f"Wait {self.evaluation_delay} seconds until evaluation starts")
         for i in range(self.evaluation_delay):
             self._evaluate_slos(is_evaluation_phase=False)
+
         print("Evaluation starts")
         for i in range(int(self.chaos_delay)):
             self._evaluate_slos(is_evaluation_phase=True)
 
+        self.ecoscape_client.apply_chaos()
+        for i in range(self.chaos_delay):
+            self._evaluate_slos(is_evaluation_phase=True)
+
         print("Patch the system")
         self.ecoscape_client.deploy_patched_sut()
-        sleep(30)
-        print("Initial System deleted")
+        for i in range(15):
+            self._evaluate_slos(is_evaluation_phase=True)
         self.ecoscape_client.remove_sut()
+        print("Initial System deleted")
 
-        self.ecoscape_client.apply_chaos()
-        for i in range(self.duration - self.chaos_delay):
+        for i in range(self.chaos_delay):
             self._evaluate_slos(is_evaluation_phase=True)
         self.ecoscape_client.delete_chaos()
 

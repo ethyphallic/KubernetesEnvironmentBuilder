@@ -1,0 +1,6 @@
+{
+  "infraType": "cpuStress",
+  "target": "kube1-3",
+  "load": 100,
+  "workers": 10
+}

@@ -1,0 +1,40 @@
+{
+   "apiVersion": "chaos-mesh.org/v1alpha1",
+   "kind": "NetworkChaos",
+   "metadata": {
+      "name": "network-chaos2",
+      "namespace": "scalablemine-hkr-infra"
+   },
+   "spec": {
+      "action": "delay",
+      "delay": {
+         "correlation": "100",
+         "jitter": "0ms",
+         "latency": "500ms"
+      },
+      "direction": "both",
+      "mode": "all",
+      "duration": "5m",
+      "selector": {
+         "namespaces": [
+            "scalablemine-hkr-kafka",
+            "scalablemine-hkr-sut"
+         ],
+         "nodeSelectors": {
+            "kubernetes.io/hostname": "kube1-4"
+         }
+      },
+      "target": {
+         "mode": "all",
+         "selector": {
+            "namespaces": [
+               "scalablemine-hkr-kafka",
+               "scalablemine-hkr-sut"
+            ],
+            "nodeSelectors": {
+               "kubernetes.io/hostname": "kube1-5"
+            }
+         }
+      }
+   }
+}

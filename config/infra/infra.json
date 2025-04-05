@@ -1,5 +1,5 @@
 {
-  "chaosMeshEnabled": true,
+  "infraType": "networkTopology",
   "topology": {
     "nodes": {
       "node0": {

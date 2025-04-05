@@ -43,9 +43,9 @@ if __name__ == '__main__':
     queries = query_registry()
 
     slo_sinks = dict()
-    latency_slo = SLO(queries["latency"], 5, False)
+    latency_slo = SLO(queries["latency"], 1, False)
     accuracy_slo = SLO(queries["accuracy"], 0.75, True)
-    energy_consumption = SLO(queries["energy"], 50, False)
+    energy_consumption = SLO(queries["energy"], 60, False)
 
     latency_score_sink = SloViolationScoreSink(is_monitor_sink=False)
     accuracy_score_sink = SloViolationScoreSink(is_monitor_sink=False)
@@ -58,9 +58,11 @@ if __name__ == '__main__':
     accuracy_visualizer_sink = SloVisualizerSink("Accuracy", False)
     energy_visualizer_sink = SloVisualizerSink("Energy", False)
 
-    latency_storage = SliStorageSink(generate_id(), "latency", False, )
-    accuracy_storage = SliStorageSink(generate_id(), "accuracy", False)
-    energy_storage = SliStorageSink(generate_id(), "energy", False)
+    experiment_id = generate_id()
+    print(f"Running experiment with id {experiment_id}")
+    latency_storage = SliStorageSink(experiment_id, "latency", True)
+    accuracy_storage = SliStorageSink(experiment_id, "accuracy", True)
+    energy_storage = SliStorageSink(experiment_id, "energy", True)
 
     slo_sinks[latency_slo] = [latency_score_sink, latency_printer_sink, latency_visualizer_sink, latency_storage]
     slo_sinks[accuracy_slo] = [accuracy_score_sink, accuracy_printer_sink, accuracy_visualizer_sink, accuracy_storage]
@@ -74,7 +76,7 @@ if __name__ == '__main__':
     argument_parser.add_argument("--repetitions", type=int, nargs='?', help="number of experiment runs")
 
     args = argument_parser.parse_args()
-    load_delay = arg_or_default(args.load_delay, 30)
+    load_delay = arg_or_default(args.load_delay, 15)
     repetitions = arg_or_default(args.repetitions, 1)
 
     client1 = EcoscapeClient("build")
@@ -82,14 +84,14 @@ if __name__ == '__main__':
     for i in range(repetitions):
         Scenario(
             slo_sinks=slo_sinks,
-            duration=arg_or_default(args.duration, 180),
+            duration=arg_or_default(args.duration, 60),
             ecoscape_client=EcoscapeClientModeAware(
                 mode=ModeFullExperimentRun(),
                 load_generation_delay=load_delay,
                 infra_delay=0.5 * load_delay,
                 ecoscape_client=client1
             ),
-            evaluation_delay=arg_or_default(args.eval_delay, 45),
+            evaluation_delay=arg_or_default(args.eval_delay, 30),
         ).run()
 
         latency_visualizer_sink.start_new_experiment()

@@ -4,37 +4,37 @@
     "edge-zone1-p": {
       "memory": "2Gi",
       "cpu": "2",
-      "replicas": 1,
-      "maxPollRecords": 100,
+      "replicas": 0,
+      "maxPollRecords": 1,
       "locationLabel": "kube1-3",
-      "modelDepth": "50",
+      "modelDepth": "152",
       "kafkaCluster": "zone1"
     },
     "edge-zone2-p": {
       "memory": "2Gi",
       "cpu": "2",
       "replicas": 1,
-      "maxPollRecords": 100,
+      "maxPollRecords": 1,
       "locationLabel": "kube1-4",
-      "modelDepth": "50",
+      "modelDepth": "152",
       "kafkaCluster": "zone2"
     },
     "cloud-zone1-p": {
       "memory": "4Gi",
       "cpu": "4",
-      "replicas": 1,
-      "maxPollRecords": 100,
-      "locationLabel": "kube1-5",
-      "modelDepth": "50",
+      "replicas": 3,
+      "maxPollRecords": 1,
+      "locationLabel": "kube1-2",
+      "modelDepth": "152",
       "kafkaCluster": "zone1"
     },
     "cloud-zone2-p": {
       "memory": "4Gi",
       "cpu": "4",
-      "replicas": 1,
-      "maxPollRecords": 100,
-      "locationLabel": "kube1-5",
-      "modelDepth": "50",
+      "replicas": 2,
+      "maxPollRecords": 1,
+      "locationLabel": "kube1-2",
+      "modelDepth": "152",
       "kafkaCluster": "zone2"
     }
   }

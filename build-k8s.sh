@@ -5,6 +5,7 @@ mkdir -p "$DIR/build/cluster/namespace"
 mkdir -p "$DIR/build/sut"
 mkdir -p "$DIR/build/sut0"
 mkdir -p "$DIR/build/sut1"
+mkdir -p "$DIR/build/sut2"
 mkdir -p "$DIR/build/sut/flink-session"
 mkdir -p "$DIR/build/kafka"
 mkdir -p "$DIR/build/kafka/topic"
@@ -28,5 +29,5 @@ if [[ -z $(jsonnet config.jsonnet | jq .context.prefix) ]]; then
 fi
 NAMESPACE=$(jsonnet config.jsonnet | jq .context.prefix)
 
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts > /dev/null
-helm template prometheus prometheus-community/kube-prometheus-stack --namespace $NAMESPACE --values build/helm/prometheus-values.json --skip-tests --output-dir build/monitor/prometheus
+#helm repo add prometheus-community https://prometheus-community.github.io/helm-charts > /dev/null
+#helm template prometheus prometheus-community/kube-prometheus-stack --namespace $NAMESPACE --values build/helm/prometheus-values.json --skip-tests --output-dir build/monitor/prometheus
