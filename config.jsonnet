@@ -15,7 +15,8 @@
     resourceChaos: import 'config/sut/sut-object-classifier-patch2.json'
   },
   load: {
-    warmup: import 'config/load/load-image-producer-warmup.json',
-    load: import 'config/load/load-image-producer.json',
+    #warmup: import 'config/load/load-image-producer-warmup.json',
+    #load: import 'config/load/load-image-producer.json',
+    def: import 'config/load/load-def.json',
   }
 }

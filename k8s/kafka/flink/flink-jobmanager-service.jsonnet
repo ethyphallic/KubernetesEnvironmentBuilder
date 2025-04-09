@@ -8,6 +8,7 @@ function(
     namespace: externalParameters.namespace,
   },
   spec: {
+    type: "NodePort",
     ports: [
       {
         name: "rpc",

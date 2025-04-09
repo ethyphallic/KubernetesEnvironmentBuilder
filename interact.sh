@@ -27,17 +27,6 @@ check_context() {
   fi
 }
 
-# Helper function to load specific namespaces from config
-check_namespace() {
-  PREFIX=$(check_config .prefix) || echo ""
-  NAMESPACE=$(check_config $1) || return 1
-  if [ -z "$PREFIX" ]; then
-    echo "$NAMESPACE"
-  else
-    echo "$PREFIX-$NAMESPACE"
-  fi
-}
-
 function kn() {
   PREFIX=$(check_config .prefix) || echo ""
   if [ -z $1 ]; then
@@ -81,7 +70,7 @@ function build() {
 ### MONITOR ###
 function prometheus() {
   CONTEXT_URL=$(check_context) || return 1
-  NAMESPACE=$(check_namespace .monitor.namespace) || return 1
+  NAMESPACE=$(check_config .monitorNamespace) || return 1
 
   export PROMETHEUS_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-kube-prometheus-prometheus)
   export PROMETHEUS_URL="$CONTEXT_URL:${PROMETHEUS_NODE_PORT}"
@@ -90,7 +79,7 @@ function prometheus() {
 
 function grafana() {
   CONTEXT_URL=$(check_context) || return 1
-  NAMESPACE=$(check_namespace .monitor.namespace) || return 1
+  NAMESPACE=$(check_config .monitorNamespace) || return 1
 
   $DIR/helm/monitor/build-grafana-dashboards.sh
   export GRAFANA_NODE_PORT=$(kubectl get --namespace $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services prometheus-grafana)
@@ -111,7 +100,7 @@ function ecoscape() {
 }
 
 function stop_load() {
-    NAMESPACE=$(check_namespace .load.namespace) || return 1
+    NAMESPACE=$(check_config .loadNamespace) || return 1
 
     kubectl delete cm def-datasource -n $NAMESPACE
     kubectl delete cm def-load -n $NAMESPACE
@@ -120,7 +109,7 @@ function stop_load() {
 }
 
 function start_load() {
-    NAMESPACE=$(check_namespace .load.namespace) || return 1
+    NAMESPACE=$(check_config .loadNamespace) || return 1
 
     kubectl create cm def-datasource --from-file $DIR/build/load/datasource -n $NAMESPACE
     kubectl create cm def-load --from-file $DIR/build/load/load -n $NAMESPACE
@@ -161,7 +150,7 @@ function get-svc() {
 }
 
 function kafka_operator_restart() {
-  NAMESPACE=$(check_namespace .kafka.namespace) || return 1
+  NAMESPACE=$(check_config .kafkaNamespace) || return 1
   kubectl delete pod -l name=strimzi-cluster-operator -n $NAMESPACE
 }
 

@@ -4,7 +4,7 @@ local buildManifestsFromMapWithIndex = import '../util/build/build-manifests-fro
 
 function(context)
 {
-  eventFactory(definition): eventFactory(
+  eventFactory(path="load", definition): eventFactory(
     definition,
     externalParameters={
       namespace: context.functions.loadNamespace,

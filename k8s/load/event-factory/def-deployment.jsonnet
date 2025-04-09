@@ -34,7 +34,7 @@ function(namespace) {
               },
               {
                  name: "SIMULATION",
-                 value: "load-config.json"
+                 value: "simulation.json"
               },
               {
                  name: "DATASOURCE",
@@ -42,7 +42,7 @@ function(namespace) {
               },
               {
                  name: "SINK",
-                 value: "sink-config.json"
+                 value: "sink.json"
               },
               {
                  name: "ROOT",
