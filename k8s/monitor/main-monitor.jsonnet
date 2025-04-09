@@ -27,6 +27,8 @@ function(context) (
     + buildManifest(
         path="helm",
         manifestName="prometheus-values",
-        manifest=prometheusValues()
+        manifest=prometheusValues(
+          namespace=context.functions.monitorNamespace
+        )
     )
 )

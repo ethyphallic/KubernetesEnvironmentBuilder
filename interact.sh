@@ -1,12 +1,11 @@
 ### KUBERNETES ###
 export DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
 alias k=kubectl
 complete -o default -F __start_kubectl k
 
 # Helper function to load and check variables from the config.json file
 check_config() {
-  VAR=$(cat $DIR/build/cluster/cluster-config.json | jq -r "$1")
+  VAR=$(cat $DIR/build/cluster-config.json | jq -r "$1")
   if [ -z "$VAR" ] || [ "$VAR" == null ]; then
     echo "$1 not set in configuration file" >&2
     return 1
@@ -30,12 +29,12 @@ check_context() {
 
 # Helper function to load specific namespaces from config
 check_namespace() {
-  PREFIX=$(check_config .context.prefix) || echo ""
+  PREFIX=$(check_config .prefix) || echo ""
   NAMESPACE=$(check_config $1) || return 1
   if [ -z "$PREFIX" ]; then
     echo "$NAMESPACE"
   else
-    echo "$PREFIX$NAMESPACE"
+    echo "$PREFIX-$NAMESPACE"
   fi
 }
 
@@ -168,17 +167,17 @@ function kafka_operator_restart() {
 
 function kafka() {
   CONTEXT_URL=$(check_context) || return 1
-  NAMESPACE=$(check_namespace .kafka.namespace) || return 1
+  NAMESPACE=$(check_config .kafkaNamespace) || return 1
   export BOOTSTRAP_URL=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services power-kafka-external-bootstrap)
   echo "Kafka bootstrap server url: $CONTEXT_URL:$BOOTSTRAP_URL"
 }
 
 function kafka_ui() {
   CONTEXT_URL=$(check_context) || return 1
-  NAMESPACE=$(check_namespace .kafka.namespace) || return 1
-  export KAFKA_UI_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services kafka-ui)
+  NAMESPACE=$(check_config .kafkaNamespace) || return 1
+  export KAFKA_UI_NODE_PORT=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services kafbat-ui-kafka-ui)
   export KAFKA_UI_URL=$CONTEXT_URL:$KAFKA_UI_NODE_PORT
-  echo "Kafka-UI url: $KAFKA_UI_URL"
+  echo $KAFKA_UI_URL
 }
 
 function get_clusters() {

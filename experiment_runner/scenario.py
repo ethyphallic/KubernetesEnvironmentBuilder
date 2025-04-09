@@ -9,16 +9,18 @@ from experiment_runner.slo import SLO
 class Scenario:
     def __init__(
         self,
-        duration,
         slo_sinks: Dict[SLO, List[SloSink]],
         ecoscape_client: EcoscapeClientModeAware,
-        chaos_split = 0.5,
-        evaluation_delay=15
+        chaos_delay,
+        patch_delay,
+        evaluation_delay=15,
+        remediation_time=30
     ):
         self.slo_sinks: Dict[SLO, List[SloSink]] = slo_sinks
         self.evaluation_delay = evaluation_delay
-        self.duration = duration
-        self.chaos_delay = int(chaos_split * duration)
+        self.chaos_delay = chaos_delay
+        self.remediation_time = remediation_time
+        self.patch_delay = patch_delay
         self.ecoscape_client = ecoscape_client
 
     def run_experiment(self):
@@ -36,12 +38,12 @@ class Scenario:
 
         print("Patch the system")
         self.ecoscape_client.deploy_patched_sut()
-        for i in range(15):
+        for i in range(self.patch_delay):
             self._evaluate_slos(is_evaluation_phase=True)
         self.ecoscape_client.remove_sut()
         print("Initial System deleted")
 
-        for i in range(self.chaos_delay):
+        for i in range(self.remediation_time):
             self._evaluate_slos(is_evaluation_phase=True)
         self.ecoscape_client.delete_chaos()
 

@@ -1,21 +1,44 @@
 local clusterMain = import "cluster/main-cluster.jsonnet";
-local kafka = import 'kafka/main-kafka.jsonnet';
+local kafkaMain = import 'kafka/main-kafka.jsonnet';
+local sutMain = import 'sut/main-sut.jsonnet';
 local loadMain = import 'load/main-load.jsonnet';
 local infraMain = import 'infra/main-infra.jsonnet';
-local sutMain = import 'sut/main-sut.jsonnet';
 local monitorMain = import 'monitor/main-monitor.jsonnet';
 local global = import 'global.jsonnet';
 local context = import 'context.jsonnet';
 local cpuStress = import 'infra/cpu-stressor.jsonnet';
 local buildManifest = import 'util/build/buildManifest.jsonnet';
+local buildManifests = import 'util/build/buildManifests.jsonnet';
+local flinkCluster = import 'kafka/flink/flink-cluster.jsonnet';
+local componentRegistry = import 'component-registry.jsonnet';
 
+local buildComponent = function(component) [
+  std.get(componentRegistry, component)(context, path="%s/%s" %[component, key], key=key)
+  for key in std.objectFields(std.get(context.config, component))
+];
+
+local output =
 clusterMain(context)
-+ kafka(context)
-+ loadMain(context, "warmup", "warmup")
-+ loadMain(context, "load", "load")
-+ infraMain(context)
-+ infraMain(context, "chaos", "chaos")
-+ sutMain(context, "sut0", "sut0")
-+ sutMain(context, "sut1", "sut1")
-+ sutMain(context, "sut2", "sut2")
-+ monitorMain(context)
+#+ loadMain(context, path="warmup", key="warmup")
+#+ loadMain(context, path="load", key="load")
+#+ infraMain(context, path="infra", key="infra")
+#+ infraMain(context, path="chaos", key="chaos")
++ monitorMain(context);
+
+local components =
+  std.foldl(
+    function(a,b) a + buildComponent(b),
+    [
+      "data",
+      "sut",
+      "infra",
+      "load"
+    ],
+    []
+  );
+
+std.foldl(
+  function(a,b) a+b,
+  components,
+  output
+)

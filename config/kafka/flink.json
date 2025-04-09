@@ -1,0 +1,13 @@
+{
+  "dataType": "flink",
+  "taskManager": {
+    "cpu": "1",
+    "memory": "1Gi",
+    "replicas": 1
+  },
+  "jobManager": {
+    "cpu": "1",
+    "memory": "1Gi",
+    "replicas": 1
+  }
+}

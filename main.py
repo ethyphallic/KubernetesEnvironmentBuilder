@@ -43,9 +43,9 @@ if __name__ == '__main__':
     queries = query_registry()
 
     slo_sinks = dict()
-    latency_slo = SLO(queries["latency"], 1, False)
+    latency_slo = SLO(queries["latency"], 2.5, False)
     accuracy_slo = SLO(queries["accuracy"], 0.75, True)
-    energy_consumption = SLO(queries["energy"], 60, False)
+    energy_consumption = SLO(queries["energy"], 120, False)
 
     latency_score_sink = SloViolationScoreSink(is_monitor_sink=False)
     accuracy_score_sink = SloViolationScoreSink(is_monitor_sink=False)
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     for i in range(repetitions):
         Scenario(
             slo_sinks=slo_sinks,
-            duration=arg_or_default(args.duration, 60),
+            remediation_time=60,
             ecoscape_client=EcoscapeClientModeAware(
                 mode=ModeFullExperimentRun(),
                 load_generation_delay=load_delay,
@@ -92,6 +92,8 @@ if __name__ == '__main__':
                 ecoscape_client=client1
             ),
             evaluation_delay=arg_or_default(args.eval_delay, 30),
+            patch_delay=15,
+            chaos_delay=30
         ).run()
 
         latency_visualizer_sink.start_new_experiment()
@@ -104,5 +106,5 @@ if __name__ == '__main__':
     print(latency_score_sink.get_score())
     print(accuracy_score_sink.get_score())
     print(energy_score_sink.get_score())
-    aggregator = WeightedSloAggregator([latency_score_sink, accuracy_score_sink, energy_score_sink], [0.3333, 0.3333, 0.3333])
+    aggregator = WeightedSloAggregator([latency_score_sink, accuracy_score_sink, energy_score_sink], [0.5, 0.25, 0.25])
     print(aggregator.get_aggregated_score())

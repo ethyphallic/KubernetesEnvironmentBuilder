@@ -1,5 +1,6 @@
 {
   "enabled": true,
+  "dataType": "kafka",
   "cluster": {
     "zone1": {
       "brokerReplicas": 1,

@@ -1,18 +1,19 @@
-function(
-    namespace,
-    jobManagerCPU,
-    jobManagerMemory,
-    taskManagerCPU,
-    taskManagerMemory,
-    taskManagerReplicas
-  )
-[
+function(name,
+  definition={
+    replicas: "1",
+    cpu: "1",
+    memory: "1Gi"
+  },
+  externalParameters= {
+    namespace: "data"
+  }
+)
   {
     apiVersion: "apps/v1",
     kind: "Deployment",
     metadata: {
       name: "flink-session-jobmanager",
-      namespace: namespace,
+      namespace: externalParameters.namespace,
     },
     spec: {
       replicas: 1,
@@ -36,12 +37,12 @@ function(
               image: "flink:1.17",
               resources: {
                 requests: {
-                  cpu: jobManagerCPU,
-                  memory: jobManagerMemory,
+                  cpu: definition.cpu,
+                  memory: definition.memory,
                 },
                 limits: {
-                  cpu: jobManagerCPU,
-                  memory: jobManagerMemory,
+                  cpu: definition.cpu,
+                  memory: definition.memory,
                 },
               },
               env: [
@@ -69,29 +70,4 @@ function(
         },
       },
     },
-  },
-  {
-    apiVersion: "v1",
-    kind: "Service",
-    metadata: {
-      name: "flink-session-jobmanager",
-      namespace: namespace,
-    },
-    spec: {
-      ports: [
-        {
-          name: "rpc",
-          port: 6123,
-        },
-        {
-          name: "ui",
-          port: 8081,
-        },
-      ],
-      selector: {
-        app: "flink",
-        component: "jobmanager",
-      },
-    },
   }
-]

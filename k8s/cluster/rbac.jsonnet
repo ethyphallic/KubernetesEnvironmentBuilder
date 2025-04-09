@@ -22,24 +22,25 @@
       }
     ]
   },
-  getRoleBinding(name, username):: {
+  getRoleBinding(namespace, serviceAccountName, serviceAccountNamespace):: {
     apiVersion: "rbac.authorization.k8s.io/v1",
     kind: "RoleBinding",
     metadata: {
-      name: "rolebinding-" + name,
-      namespace: name,
+      name: "rolebinding-" + namespace,
+      namespace: namespace,
     },
     roleRef: {
       apiGroup: "rbac.authorization.k8s.io",
       kind: "Role",
-      name: "role-" + name,
+      name: "role-" + namespace,
     },
     subjects: [
       {
-        apiGroup: "rbac.authorization.k8s.io",
-        kind: "User",
-        name: username
+        apiGroup: "",
+        kind: "ServiceAccount",
+        name: serviceAccountName,
+        namespace: serviceAccountNamespace
       }
     ]
-  }
+  },
 }

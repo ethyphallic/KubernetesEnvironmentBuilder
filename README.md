@@ -71,19 +71,12 @@ This grants you access to additional interaction commands.
 In case you are using the interactive docker container, this step is automatically executed for you.
 
 Provided Commands are :
-#### Alias
-- `k` - Alias for `kubectl`
-- `clip` - Alias for `xclip -selection clipboard`
-- `pclip`- Alias for `xclip -o -selection clipboard`
-- `yaml2json`- Alias for `yq e -o=json | sed -E 's/\"(\w+)\":/\1:/'`
-- `y2j` - Alias for `pclip | yaml2json | clip`
 #### Kubernetes
 - `kn` - Allows for a quick contexts switch between namespaces.
-  - If a prefix is set in `config.json` the resulting namespace is `$PREFIX$ARGUMENT`. 
-  - If no argument was given the prefix is used as a namespace.
 - `build` - Shortcut for `./build-k8s.sh`
 - `get_clusters` - List all the contexts in your kubeconfig file
 - `sc` - Set the current-context in a kubeconfig file
+
 #### Monitoring
 - `prometheus` - Displays prometheus' url
 - `grafana` - Displays grafanas url as well as the login data

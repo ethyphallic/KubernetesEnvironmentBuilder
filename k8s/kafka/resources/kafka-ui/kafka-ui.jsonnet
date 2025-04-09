@@ -1,10 +1,10 @@
-function() [
+function(namespace) [
 {
   apiVersion: "v1",
   kind: "ServiceAccount",
   metadata: {
     name: "kafbat-ui-kafka-ui",
-    namespace: "kafka",
+    namespace: namespace,
     labels: {
       "app.kubernetes.io/name": "kafka-ui",
       "app.kubernetes.io/instance": "kafbat-ui",
@@ -16,7 +16,7 @@ function() [
   kind: "ConfigMap",
   metadata: {
     name: "kafbat-ui-kafka-ui-fromvalues",
-    namespace: "kafka",
+    namespace: namespace,
     labels: {
       "app.kubernetes.io/name": "kafka-ui",
       "app.kubernetes.io/instance": "kafbat-ui",
@@ -54,7 +54,7 @@ function() [
   kind: "Service",
   metadata: {
     name: "kafbat-ui-kafka-ui",
-    namespace: "kafka",
+    namespace: namespace,
     labels: {
       "app.kubernetes.io/name": "kafka-ui",
       "app.kubernetes.io/instance": "kafbat-ui"
@@ -81,7 +81,7 @@ function() [
   kind: "Service",
   metadata: {
     name: "kafbat-ui-kafka-ui",
-    namespace: "kafka",
+    namespace: namespace,
     labels: {
       "helm.sh/chart": "kafka-ui-1.4.12",
       "app.kubernetes.io/name": "kafka-ui",
@@ -111,7 +111,7 @@ function() [
   kind: "Deployment",
   metadata: {
     name: "kafbat-ui-kafka-ui",
-    namespace: "kafka",
+    namespace: namespace,
     labels: {
       "app.kubernetes.io/name": "kafka-ui",
       "app.kubernetes.io/instance": "kafbat-ui",

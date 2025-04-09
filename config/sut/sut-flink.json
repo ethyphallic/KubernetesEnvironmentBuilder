@@ -8,6 +8,6 @@
     "batchSize": "100",
     "andThreshold": "0.8",
     "dependencyThreshold": "0.5",
-    "kafkaCluster": "zone3"
+    "kafkaCluster": "zone1"
   }
 }

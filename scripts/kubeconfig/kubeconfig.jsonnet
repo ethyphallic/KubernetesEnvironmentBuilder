@@ -1,4 +1,4 @@
-function(token, username, caData, server="https://kube1-1:6443")
+local kubeconfig = function(username, token, caData, server="https://kube1-1:6443")
 {
   apiVersion: "v1",
   clusters: [
@@ -14,8 +14,7 @@ function(token, username, caData, server="https://kube1-1:6443")
     {
       context: {
         cluster: "cluster.local",
-        user: username,
-        namespace: "scalablemine-%s" %[username]
+        user: username
       },
       name: "%s@cluster.local" %[username]
     }
@@ -31,4 +30,6 @@ function(token, username, caData, server="https://kube1-1:6443")
       }
     }
   ]
-}
+};
+
+kubeconfig(std.extVar("username"), std.extVar("token"), std.toString(std.extVar("caCert")))

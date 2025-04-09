@@ -8,7 +8,7 @@ function(context)
   networkTopology(path, definition): buildManifestsFromMapOfMaps(
     path=path,
     manifestName="infra",
-    definition=context.config.infra.topology.network,
+    definition=definition.topology.network,
     buildFunction=networkChaos,
     externalParameters={
       namespace: context.functions.infraNamespace,

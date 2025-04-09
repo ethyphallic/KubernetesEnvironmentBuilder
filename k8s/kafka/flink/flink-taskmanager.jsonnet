@@ -1,17 +1,22 @@
 function(
-  namespace,
-  taskManagerReplicas,
-  taskManagerCPU,
-  taskManagerMemory
+  name,
+  definition={
+    replicas: "1",
+    cpu: "1",
+    memory: "1Gi"
+  },
+  externalParameters= {
+    namespace: "data"
+  }
 ) {
   apiVersion: "apps/v1",
   kind: "Deployment",
   metadata: {
     name: "flink-session-taskmanager",
-    namespace: namespace,
+    namespace: externalParameters.namespace,
   },
   spec: {
-    replicas: taskManagerReplicas,
+    replicas: definition.replicas,
     selector: {
       matchLabels: {
         app: "flink",
@@ -32,12 +37,12 @@ function(
             image: "flink:1.17",
             resources: {
               requests: {
-                cpu: taskManagerCPU,
-                memory: taskManagerMemory,
+                cpu: definition.cpu,
+                memory: definition.memory,
               },
               limits: {
-                cpu: taskManagerCPU,
-                memory: taskManagerMemory,
+                cpu: definition.cpu,
+                memory: definition.memory,
               },
             },
             env: [

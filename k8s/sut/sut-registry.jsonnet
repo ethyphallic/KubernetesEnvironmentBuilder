@@ -7,8 +7,8 @@ local buildManifest = import '../util/build/buildManifest.jsonnet';
 
 function(context)
 {
-  flink(definition): buildManifest(
-    path="sut",
+  flink(path, definition): buildManifest(
+    path=path,
     manifestName="flink",
     manifest=flink(
       name="flink",
@@ -31,9 +31,9 @@ function(context)
     },
     buildFunction=objectClassifier
   ),
-  astrolabe(definition):
+  astrolabe(path, definition):
     buildManifest(
-      path="sut",
+      path=path,
       manifestName="astrolabe",
       manifest=astrolabe(
         definition=definition,
