@@ -157,8 +157,8 @@ function kafka_operator_restart() {
 function kafka() {
   CONTEXT_URL=$(check_context) || return 1
   NAMESPACE=$(check_config .kafkaNamespace) || return 1
-  export BOOTSTRAP_URL=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services power-kafka-external-bootstrap)
-  echo "Kafka bootstrap server url: $CONTEXT_URL:$BOOTSTRAP_URL"
+  export BOOTSTRAP_URL=$(kubectl get -n $NAMESPACE -o jsonpath="{.spec.ports[0].nodePort}" services $1-kafka-external-bootstrap)
+  echo $CONTEXT_URL:$BOOTSTRAP_URL
 }
 
 function kafka_ui() {

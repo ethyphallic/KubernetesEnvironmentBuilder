@@ -6,7 +6,7 @@ local serviceAccountSecret = import 'service-account-secret.jsonnet';
 local buildManifest = import '../util/build/buildManifest.jsonnet';
 
 function(context) (
-    local namespaces = ["%s-%s" %[context.config.context.prefix, name] for name in ["default", "kafka", "load", "sut", "infra"]];
+    local namespaces = ["%s%s" %[context.config.context.prefix, name] for name in ["default", "kafka", "load", "sut", "infra"]];
 
     local saName = "sa-%s" %[context.config.context.prefix];
     local saNamespace = context.config.context.prefix + "default";

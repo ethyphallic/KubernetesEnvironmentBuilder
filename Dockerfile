@@ -1,12 +1,15 @@
 FROM ubuntu:24.04
 
 # Install dependencies
+RUN echo "Etc/UTC" > /etc/timezone
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
     curl \
     gnupg \
     golang-go \
+    python3 \
+    pip\
     # Helm specific:
     && curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list \
@@ -53,4 +56,4 @@ RUN echo "source /etc/bash_completion" >> ~/.bashrc
 RUN echo 'if [ ! -f "/tmp/.permissions-fixed" ]; then chmod -R a+w /app && touch /tmp/.permissions-fixed; fi' >> ~/.bashrc
 RUN echo "source /app/entrypoint.sh" >> ~/.bashrc
 
-ENTRYPOINT [ "/bin/bash" ]
+CMD [ "/bin/bash" ]
