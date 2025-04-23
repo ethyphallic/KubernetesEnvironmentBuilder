@@ -9,14 +9,15 @@ function(
   },
   externalParameters={
     bootstrapServer: "",
-    inputTopic: ""
+    inputTopic: "",
+    namespace: ""
   }
 ) {
   apiVersion: "apps/v1",
   kind: "Deployment",
   metadata: {
     name: name,
-    namespace: "scalablemine-hkr-load"
+    namespace: externalParameters.namespace
   },
   spec: {
     selector: {

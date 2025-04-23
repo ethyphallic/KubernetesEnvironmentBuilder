@@ -19,7 +19,8 @@ function(context)
       definition=definition.load,
       externalParameters={
         inputTopic: context.functions.inputTopic,
-        bootstrapServer: context.functions.bootstrapServer
+        bootstrapServer: context.functions.bootstrapServer,
+        namespace: context.functions.loadNamespace
       }
     )
 }

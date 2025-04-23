@@ -16,6 +16,7 @@
           "metrics.k8s.io",
           "autoscaling",
           "monitoring.coreos.com/v1",
+          "kafka.strimzi.io"
         ],
         resources: ["*"],
         verbs: ["*"]

@@ -19,10 +19,6 @@ local buildComponent = function(component) [
 
 local output =
 clusterMain(context)
-#+ loadMain(context, path="warmup", key="warmup")
-#+ loadMain(context, path="load", key="load")
-#+ infraMain(context, path="infra", key="infra")
-#+ infraMain(context, path="chaos", key="chaos")
 + monitorMain(context);
 
 local components =
