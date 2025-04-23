@@ -3,12 +3,12 @@
   "load": {
     "data0": {
       "location": "kube1-3",
-      "intensity": 1,
+      "intensity": 3,
       "kafkaCluster": "zone1"
     },
     "data1": {
       "location": "kube1-4",
-      "intensity": 1,
+      "intensity": 3,
       "kafkaCluster": "zone2"
     }
   }
