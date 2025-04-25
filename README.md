@@ -3,11 +3,12 @@
 Ecoscape is a tool for testing distributed environments within Kubernetes.
 
 ## Getting Started
-
 To run the Ecoscape Benchmark it is required to have access to a Kubernetes cluster. It is assumed that you have the  
 KUBECONFIG environment variable set to the path of your kubeconfig. Additionally, Docker has to be installed on your machine.
 If you would like to work with different Kubernetes Namespaces
+
 ---
+
 To configure the systems you have to adopt the `config/config.jsonnet` file.
 It consists out of 5 main sections `infra`, `data`, `sut`, `load` and `monitor`.
 
