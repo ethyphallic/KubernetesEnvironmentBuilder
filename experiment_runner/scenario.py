@@ -65,8 +65,6 @@ class Scenario:
         try:
             self.ecoscape_client.deploy_sut()
             self.ecoscape_client.apply_infrastructure_constraints()
-            self.ecoscape_client.start_warmup_load()
-            self.ecoscape_client.stop_warmup_load()
             self.ecoscape_client.start_load()
             self.run_experiment()
         except KeyboardInterrupt:

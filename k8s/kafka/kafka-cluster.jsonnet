@@ -21,15 +21,6 @@ function(context, path="kafka") (
       },
       buildFunction=kafka
     )
-    + buildManifestsFromMap(
-      path + "/topic",
-      "topic",
-      context.config.data.kafka.topics,
-      buildFunction=kafkaTopic,
-      externalParameter={
-        namespace: context.functions.kafkaNamespace
-      }
-    )
     + buildManifests(
       path + "/ui",
       "kafka-ui",

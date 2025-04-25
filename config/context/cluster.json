@@ -1,5 +1,5 @@
 {
-  "prefix": "scalablemine-stu232548-",
+  "prefix": "scalablemine-hkr-",
   "cluster": "kube1-1",
   "operator": {
     "strimzi": true,

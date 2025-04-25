@@ -117,21 +117,6 @@ function start_load() {
     kubectl apply -f $DIR/build/load
 }
 
-function start_chaos() {
-    kubectl apply -f $DIR/build/chaos
-}
-
-function delete_chaos() {
-    kubectl delete -f $DIR/build/chaos
-}
-
-function kafka_deploy() {
-    kubectl apply -f $DIR/build/kafka
-}
-
-function kafka_destroy() {
-    kubectl delete -f $DIR/build/kafka
-}
 
 function deploy() {
     kubectl apply -f $DIR/build/$1

@@ -1,95 +1,38 @@
-# Installation Guide
-This project provides a local and an interactive docker container experience.
-## Local
-Please install the following programs:
-- [helm](https://helm.sh/docs/intro/install/) 
-- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+# Ecoscape
 
-Additionally, for setting up a local Kubernetes cluster, we recommend using [minikube](https://kubernetes.io/de/docs/tasks/tools/install-minikube/).
+Ecoscape is a tool for testing distributed environments within Kubernetes.
 
-## Interactive Docker Container
-All necessary tools are pre-installed in the Docker container
+## Getting Started
 
-Execute the following script to build the image and start the interactive Docker container:
-```bash
-./docker.sh
-```
-If a container already exists, the script will either start or attach to it.
-For further information about the script use `./docker.sh --help`.
+To run the Ecoscape Benchmark it is required to have access to a Kubernetes cluster. It is assumed that you have the  
+KUBECONFIG environment variable set to the path of your kubeconfig. Additionally, Docker has to be installed on your machine.
+If you would like to work with different Kubernetes Namespaces
+---
+To configure the systems you have to adopt the `config/config.jsonnet` file.
+It consists out of 5 main sections `infra`, `data`, `sut`, `load` and `monitor`.
 
-This will mount the project as well as the `~/.kube/config` file into the docker container and therefore the installation of [kubectl](https://kubernetes.io/docs/tasks/tools/) is recommended to have a valid `~/.kube/config` file.
+The `infra` describes the network topology and resource constraints within the computing setup.
+The `data` definition describes the middleware that stores the data.
+The `sut` defines the tested system while the `load` defines which data is produced to be handled.
 
-Edits outside of the docker container are reflected through the mount and vice versa. Additionally, the docker container has access to any cluster, that your system has access to.
+To interact with the cluster you have the following commands to be used. You can either install the tools locally 
+or you can use the docker container by running `ecoscape-tools.sh`.
 
-# Build steps
-## Minikube
-1. **Start minikube**
-```bash
-minikube start --memory 8192 --cpus 2
-```
+## Run Ecoscape
+After running the `ecoscape-tools.sh` you are in a docker container and you can run the commands referenced in the 
+`Useful Commands` section. 
+Before running the ecoscape benchmark a `build` has to be executed. By typing `ecoscape` you run the benchmark.
+You can explore the configuration options by running `ecoscape --help`.
+The results of the benchmarks are the stored in the `result` directory.
 
-2. **DNS**  
-Then create a DNS entry for minikube.
-```shell
-sudo -- sh -c -e "echo '$(minikube ip) minikube' >> /etc/hosts"
-```
+## Useful commands:
+`build`: Builds the Kubernetes Mainfest files
 
-## General
-The following steps build the necessary files for the cluster and apply them.
+`deploy {infra|sut|data|load}/{subcomponent}`: This deploys the part of the manifests that are specified. 
+For example `deploy infra/networkChaos` deploys the infraStructure for the networkChaos use-case.
 
-0. **Config**  
-Please ensure all values in the `config.json` file are up to date and match your needs, as these will be used in the following steps
+`delete {infra|sut|data|load}/{subcomponent}`: This deletes the manifests from the Kubernetes cluster
 
-1. **Kubernetes Operators**  
-Install the necessary Kubernetes operators using Helm:
-```bash
-helm/build-helm.sh
-```
+`kn {infra|sut|data|load|monitor}`: Switch between the namespaces.
 
-2. **Resource Files**  
-Generate the Kubernetes resource files:
-```bash
-./build-k8s.sh
-```
-
-3. **Build kafka resources.**  
-```bash
-kubectl apply -f build/kafka
-```
-Please wait after executing the command until all components are Ready. 
-You can monitor them by running:
-```bash
-kubectl get pods -n kafka -w
-```
-
-# Helpful tools
-To interact efficiently you can source the `interact.sh` script in your shell.
-```bash
-source interact.sh
-```
-This grants you access to additional interaction commands.  
-In case you are using the interactive docker container, this step is automatically executed for you.
-
-Provided Commands are :
-#### Kubernetes
-- `kn` - Allows for a quick contexts switch between namespaces.
-- `build` - Shortcut for `./build-k8s.sh`
-- `get_clusters` - List all the contexts in your kubeconfig file
-- `sc` - Set the current-context in a kubeconfig file
-
-#### Monitoring
-- `prometheus` - Displays prometheus' url
-- `grafana` - Displays grafanas url as well as the login data
-#### Load Generator
-- `start_load` - Starts the load generator depicted in `build/load`
-- `stop_load` - Stops the load generator
-#### Chaos Mesh
-- `start_chaos` - Start the chaos mesh depicted in `build/chaos`
-- `stop_chaos` - Stops the chaos mesh
-- `delete_chaos` - Removes the chaos mesh from the cluster
-#### Kafka
-- `kafka_deploy` - Applies all kafka files in `build/kafka`
-- `kafka_destroy` - Removes all kafka applications depicted in `build/kafka`
-- `kafka_operator_restart` - Restarts the strimzi cluster operator
-- `kafka` - Displays the kafka bootstrap server url
-- `kafka_ui` - Displays kafka_ui's url
+`kafka <kafkaName>` Gives the URL of the bootstrap server

@@ -19,7 +19,6 @@ from experiment_runner.sink.slo_value_printer_sink import SloValuePrinterSink
 from experiment_runner.sink.slo_violation_score_sink import SloViolationScoreSink
 from experiment_runner.sink.slo_visualizer_sink import SloVisualizerSink
 
-
 def query_registry():
     prometheus_connection = PrometheusConnect(url="http://kube1-1:30920")
     return {
@@ -75,11 +74,25 @@ if __name__ == '__main__':
                                  help="delay until the evaluation of the slo starts")
     argument_parser.add_argument("--repetitions", type=int, nargs='?', help="number of experiment runs")
 
+    argument_parser.add_argument("--dir_load", type=str, default="load/base", nargs='?', help="directory of the load specification")
+    argument_parser.add_argument("--dir_sut", type=str, default="sut/base", nargs='?', help="directory of the sut specification")
+    argument_parser.add_argument("--dir_sut_patch", type=str, default="sut/patch", nargs='?', help="directory of the patched sut specification")
+    argument_parser.add_argument("--dir_infra", type=str, default="infra/base", nargs='?', help="directory of the infrastructure specification")
+    argument_parser.add_argument("--dir_infra_patch", type=str, default="infra/patch", nargs='?', help="directory of the patched (chaotic) infrastructure specification")
+    argument_parser.add_argument("--dir_monitor", type=str, default="monitor", nargs='?', help="directory of the monitor specification")
+
     args = argument_parser.parse_args()
     load_delay = arg_or_default(args.load_delay, 15)
     repetitions = arg_or_default(args.repetitions, 1)
-
-    client1 = EcoscapeClient("build")
+    client1 = EcoscapeClient(
+        "build",
+        load_dir=args.dir_load,
+        sut_dir=args.dir_sut,
+        sut_patch_dir=args.dir_sut_patch,
+        infra_dir=args.dir_infra,
+        monitor_dir=args.dir_monitor,
+        chaos_dir=args.dir_infra_patch,
+    )
 
     for i in range(repetitions):
         Scenario(
@@ -100,7 +113,7 @@ if __name__ == '__main__':
         accuracy_visualizer_sink.start_new_experiment()
         energy_visualizer_sink.start_new_experiment()
         print("Wait to start new exeriment")
-        if i < repetitions-1:
+        if i < repetitions - 1:
             time.sleep(60)
 
     print(latency_score_sink.get_score())
