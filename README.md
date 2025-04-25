@@ -1,6 +1,7 @@
 # Ecoscape
 
-Ecoscape is a tool for testing distributed environments within Kubernetes.
+Ecoscape is a tool for testing distributed environments within Kubernetes. It is originally designed to test Kubernetes 
+remediation strategies.
 
 ## Getting Started
 To run the Ecoscape Benchmark it is required to have access to a Kubernetes cluster. It is assumed that you have the  
