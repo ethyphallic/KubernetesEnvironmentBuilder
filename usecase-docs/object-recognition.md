@@ -12,11 +12,9 @@ Then build the Kubernetes manifests with the `build` command.
 
 Run the following commands step by step to get the full setup:
 
-`k apply -f data/kafka`
-`k apply -f data/kafka/topic`
-`k apply -f data/kafka/ui`
-`k apply -f infra/infra`
-`k apply -f sut/original`
-`k apply -f load/load`
-
-
+`deploy data/kafka`
+`deploy data/kafka/topic`
+`deploy data/kafka/ui`
+`deploy infra/infra`
+`deploy sut/original`
+`deploy load/load`

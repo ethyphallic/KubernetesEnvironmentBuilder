@@ -1,0 +1,1 @@
+docker run -it --rm --network=host -v $KUBECONFIG:/root/.kube/config -v .:/app hendrikreiter/ecoscape:0.1.1

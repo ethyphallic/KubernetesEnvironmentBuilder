@@ -4,14 +4,18 @@ import traceback
 
 import kubernetes
 import yaml
-from kubernetes.config import load_config
+from kubernetes import config
 
 class K8sClient:
     def __init__(self):
-        load_config()
+        config.load_kube_config()
+
         self.client = kubernetes.dynamic.DynamicClient(
             kubernetes.client.api_client.ApiClient()
         )
+        c = self.client.configuration.get_default_copy()
+        c.verify_ssl = False
+        self.client.configuration.set_default(c)
 
     def apply_item(self, manifest: dict, verbose: bool = False, is_delete = False):
         api_version = manifest.get("apiVersion")

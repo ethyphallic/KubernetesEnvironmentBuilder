@@ -5,32 +5,21 @@ class EcoscapeClient:
     def __init__(
         self,
         base_dir,
-        load_warmup_dir="warmup",
         load_dir="load",
         sut_dir="sut0",
         sut_patch_dir="sut1",
         infra_dir="infra",
         monitor_dir="monitor",
-        chaos_dir="chaos",
-        kafka_dir="kafka/topic"
+        chaos_dir="chaos"
     ):
         self.k8s_client:K8sClient = K8sClient()
         self.base_dir = base_dir
         self.load_dir = load_dir
-        self.load_warmup_dir = load_warmup_dir
         self.sut_dir = sut_dir
         self.sut_patch_dir = sut_patch_dir
         self.infra_dir = infra_dir
         self.monitor_dir = monitor_dir
         self.chaos_dir = chaos_dir
-        self.kafka_dir = kafka_dir
-
-    def apply_warmup_load(self):
-        self.k8s_client.create_directory(self.base_dir + "/" + self.load_warmup_dir)
-
-    def stop_warmup_load(self):
-        self.k8s_client.delete_directory(self.base_dir + "/" + self.load_warmup_dir)
-
 
     def apply_load(self):
         self.k8s_client.create_directory(self.base_dir + "/" + self.load_dir)
@@ -40,7 +29,6 @@ class EcoscapeClient:
 
     def apply_sut(self):
         self.k8s_client.create_directory(self.base_dir + "/" + self.sut_dir)
-        self.k8s_client.create_directory(self.base_dir + "/" + self.kafka_dir)
 
     def apply_patched_sut(self):
         self.k8s_client.create_directory(self.base_dir + "/" + self.sut_patch_dir)
@@ -50,7 +38,6 @@ class EcoscapeClient:
 
     def delete_patched_sut(self):
         self.k8s_client.delete_directory(self.base_dir + "/" + self.sut_patch_dir)
-        self.k8s_client.delete_directory(self.base_dir + "/" + self.kafka_dir)
 
     def apply_infra(self):
         self.k8s_client.create_directory(self.base_dir + "/" + self.infra_dir)

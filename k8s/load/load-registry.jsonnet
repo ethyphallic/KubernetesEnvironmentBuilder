@@ -1,6 +1,7 @@
 local imageProducer = import 'image-producer.jsonnet';
 local eventFactory = import 'event-factory/event-factory-main.jsonnet';
 local buildManifestsFromMapWithIndex = import '../util/build/build-manifests-from-map-with-index.jsonnet';
+local buildManifestsFromMap = import '../util/build/build-manifests-from-map.jsonnet';
 
 function(context)
 {
@@ -22,5 +23,5 @@ function(context)
         bootstrapServer: context.functions.bootstrapServer,
         namespace: context.functions.loadNamespace
       }
-    )
+    ) + context.functions.createKafkaTopic(path, definition.topics)
 }

@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     golang-go \
-    python3 \
+    python3.12-venv \
     pip\
     # Helm specific:
     && curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null \
@@ -46,6 +46,10 @@ RUN mkdir -p /root/.kube
 WORKDIR /app
 
 COPY . /app
+
+RUN python3 -m venv .venv
+RUN echo "alias python3=/app/.venv/bin/python3" >> ~/.bashrc
+RUN /app/.venv/bin/python3 -m pip install -r /app/requirements.txt
 
 # Source interact script
 RUN echo "source /app/interact.sh" >> ~/.bashrc

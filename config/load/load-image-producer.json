@@ -11,5 +11,25 @@
       "intensity": 3,
       "kafkaCluster": "zone2"
     }
+  },
+  "topics": {
+    "z1-input": {
+      "partitions": 60,
+      "name": "input",
+      "cluster": "zone1"
+    },
+    "z2-input": {
+      "partitions": 60,
+      "name": "input",
+      "cluster": "zone2"
+    },
+    "z1-reporter": {
+      "name": "reporter",
+      "cluster": "zone1"
+    },
+    "z2-reporter": {
+      "name": "reporter",
+      "cluster": "zone2"
+    }
   }
 }
