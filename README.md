@@ -1,14 +1,61 @@
 # Ecoscape
 
-Ecoscape is a tool for testing distributed environments within Kubernetes. It is originally designed to test Kubernetes 
-remediation strategies.
+Ecoscape is a simulated edge-cloud continuum testbed and a benchmark for fault remediation strategies.
+Ecoscape leverages Kubernetes and the chaos engineering tool Chaos Mesh to simulate nodes within the edge-cloud
+continuum. Additionally, it provides benchmarking scripts that simulates faults on the simulated edge and cloud nodes.
+This enables the benchmark of remediation strategies. A remediation strategy is a set of actions to reconfigure a service
+to sustain its Service Level Objectives (SLOs).
+
+# Benchmark Definition
+
+The Ecoscape Benchmark three configuration: The `SLOs`, the `duration` and the `directories`.
+
+## SLO's
+
+The SLO's are your requirements to your deployed service. They are defined via a quantifiable metric and a threshold.
+The metrics are retrieved from Prometheus and are therefore formulated as Prometheus queries
+For the Ecoscape Benchmark the files are stored in the `slo.yaml` file.
+
+An examplary `slo.yaml` is the following:
+
+```yaml
+prometheus:
+  url: <prometheus-url>
+slos:
+  - name: "processing-latency"
+    query: "avg(latency{namespace=~'monitor'}!=0)"
+    threshold: 1.5
+    isBiggerBetter: false
+    weight: 1
+```
+
+## Benchmark Duration
+
+The Ecoscape Benchmark consists of different phases:
+- Deployment Phase (System under Test is deployed)
+- Warm-up Phase (Load Generator is deployed)
+- Happy Phase (Evaluation of SLO starts)
+- Chaos Phase (Faults are injected)
+
+The duration of those phases are configured in the `duration.yaml`. 
+Moreover, the number of repetitions are modified in that file.
+
+```yaml
+loadDelay: 20 #length of deployment phase in seconds
+evalDelay: 20 #length of warm-up phase in seconds
+chaosDelay: 20 #length of happy phase in seconds
+duration: 60 #length of chaos phase in seconds
+repetitions: 1
+```
+
+## Use-cases
+
+Ecoscape gives the opportunity to support different system configurations. 
+These are seTo change between different use cases parated in directories during the build process. 
 
 ## Getting Started
 To run the Ecoscape Benchmark it is required to have access to a Kubernetes cluster. It is assumed that you have the  
 KUBECONFIG environment variable set to the path of your kubeconfig. Additionally, Docker has to be installed on your machine.
-If you would like to work with different Kubernetes Namespaces
-
----
 
 To configure the systems you have to adopt the `config/config.jsonnet` file.
 It consists out of 5 main sections `infra`, `data`, `sut`, `load` and `monitor`.
