@@ -3,9 +3,9 @@
   "cluster": "kube1-1",
   "operator": {
     "strimzi": true,
-    "chaosMesh": false,
+    "chaosMesh": true,
     "kepler": false,
     "flinkOperator": false,
-    "prometheus": false
+    "prometheus": true
   }
 }

@@ -19,7 +19,13 @@ function(context)
       ]
     }
   ),
-  networkChaos(definition): {},
+  networkChaos(path, definition): buildManifest(
+    path=path,
+    manifestName="network-chaos",
+    buildFunction=networkChaos,
+    definition=definition,
+    externalParameters={}
+  ),
   cpuStress(path, definition): buildManifest(
     path=path,
     manifestName="cpu-stress",
